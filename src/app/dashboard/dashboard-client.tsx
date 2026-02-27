@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Dialog,
   DialogContent,
@@ -22,6 +23,7 @@ import {
 import { toast } from "sonner"
 import { Copy, Trash2, BarChart2, ExternalLink, ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { PasskeyManager } from "@/components/passkey-manager"
 
 interface ShortLink {
   id: string
@@ -127,119 +129,132 @@ export function DashboardClient({ user }: DashboardClientProps) {
       </header>
 
       <main className="mx-auto max-w-5xl px-4 py-6 sm:py-8">
-        {loading ? (
-          <div className="text-center text-muted-foreground py-16">Loading...</div>
-        ) : links.length === 0 ? (
-          <div className="text-center text-muted-foreground py-16">
-            <p>暂无链接。</p>
-            <Link href="/" className="text-foreground hover:underline text-sm mt-2 inline-block">
-              创建你的第一个短链
-            </Link>
-          </div>
-        ) : (
-          <div className="overflow-x-auto rounded-lg border bg-card">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="min-w-[120px]">短链</TableHead>
-                  <TableHead className="min-w-[160px]">目标</TableHead>
-                  <TableHead className="w-20 text-center hidden sm:table-cell">点击</TableHead>
-                  <TableHead className="w-28 hidden md:table-cell">创建时间</TableHead>
-                  <TableHead className="w-24 text-right">操作</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {links.map((link) => (
-                  <TableRow key={link.id}>
-                    <TableCell className="font-mono text-sm">
-                      <div className="flex items-center gap-1">
-                        <span className="text-muted-foreground truncate max-w-[100px]">
-                          /{link.slug}
-                        </span>
-                        <button
-                          onClick={() => handleCopy(link.slug)}
-                          className="text-muted-foreground hover:text-foreground shrink-0"
-                          title="Copy"
-                        >
-                          <Copy className="h-3 w-3" />
-                        </button>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 max-w-[200px] sm:max-w-xs">
-                        <span className="truncate text-sm text-muted-foreground">
-                          {link.originalUrl}
-                        </span>
-                        <a
-                          href={link.originalUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-muted-foreground hover:text-foreground shrink-0"
-                        >
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center hidden sm:table-cell">
-                      <Badge variant="secondary">{link.clicks}</Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground hidden md:table-cell">
-                      {formatDate(link.createdAt)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleViewLogs(link)}
-                          className="h-8 w-8 p-0"
-                          title="View logs"
-                        >
-                          <BarChart2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(link.id)}
-                          className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                          title="Delete"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+        <Tabs defaultValue="links">
+          <TabsList className="mb-6">
+            <TabsTrigger value="links">我的短链</TabsTrigger>
+            <TabsTrigger value="security">安全设置</TabsTrigger>
+          </TabsList>
 
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-4 text-sm text-muted-foreground">
-            <div>
-              共 {totalItems} 条短链，当前第 {page} / {totalPages} 页
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page <= 1}
-                onClick={() => setPage(p => p - 1)}
-              >
-                上一页
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page >= totalPages}
-                onClick={() => setPage(p => p + 1)}
-              >
-                下一页
-              </Button>
-            </div>
-          </div>
-        )}
+          <TabsContent value="links">
+            {loading ? (
+              <div className="text-center text-muted-foreground py-16">Loading...</div>
+            ) : links.length === 0 ? (
+              <div className="text-center text-muted-foreground py-16">
+                <p>暂无链接。</p>
+                <Link href="/" className="text-foreground hover:underline text-sm mt-2 inline-block">
+                  创建你的第一个短链
+                </Link>
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border bg-card">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="min-w-[120px]">短链</TableHead>
+                      <TableHead className="min-w-[160px]">目标</TableHead>
+                      <TableHead className="w-20 text-center hidden sm:table-cell">点击</TableHead>
+                      <TableHead className="w-28 hidden md:table-cell">创建时间</TableHead>
+                      <TableHead className="w-24 text-right">操作</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {links.map((link) => (
+                      <TableRow key={link.id}>
+                        <TableCell className="font-mono text-sm">
+                          <div className="flex items-center gap-1">
+                            <span className="text-muted-foreground truncate max-w-[100px]">
+                              /{link.slug}
+                            </span>
+                            <button
+                              onClick={() => handleCopy(link.slug)}
+                              className="text-muted-foreground hover:text-foreground shrink-0"
+                              title="Copy"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1 max-w-[200px] sm:max-w-xs">
+                            <span className="truncate text-sm text-muted-foreground">
+                              {link.originalUrl}
+                            </span>
+                            <a
+                              href={link.originalUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-muted-foreground hover:text-foreground shrink-0"
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center hidden sm:table-cell">
+                          <Badge variant="secondary">{link.clicks}</Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground hidden md:table-cell">
+                          {formatDate(link.createdAt)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleViewLogs(link)}
+                              className="h-8 w-8 p-0"
+                              title="View logs"
+                            >
+                              <BarChart2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDelete(link.id)}
+                              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                              title="Delete"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-4 text-sm text-muted-foreground">
+                <div>
+                  共 {totalItems} 条短链，当前第 {page} / {totalPages} 页
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page <= 1}
+                    onClick={() => setPage(p => p - 1)}
+                  >
+                    上一页
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page >= totalPages}
+                    onClick={() => setPage(p => p + 1)}
+                  >
+                    下一页
+                  </Button>
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="security">
+            <PasskeyManager />
+          </TabsContent>
+        </Tabs>
       </main>
 
       <Dialog open={logsDialogOpen} onOpenChange={setLogsDialogOpen}>

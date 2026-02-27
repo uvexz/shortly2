@@ -81,7 +81,10 @@ export function AdminClient({ user }: AdminClientProps) {
         fetch("/api/admin/users"),
         fetch("/api/admin/settings"),
       ])
-      if (linksRes.ok) setLinks(await linksRes.json())
+      if (linksRes.ok) {
+        const data = await linksRes.json()
+        setLinks(Array.isArray(data) ? data : data.data || [])
+      }
       if (usersRes.ok) setUsers(await usersRes.json())
       if (settingsRes.ok) {
         const s = await settingsRes.json()

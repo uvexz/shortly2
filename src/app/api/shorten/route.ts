@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
   }
 
   // --- Rate Limiting Logic ---
-  let creatorIp: string | null = getClientIp(
+  const creatorIp: string | null = getClientIp(
     null,
     headersList.get("x-forwarded-for"),
     headersList.get("x-real-ip")
