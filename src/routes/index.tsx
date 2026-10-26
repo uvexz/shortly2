@@ -181,7 +181,7 @@ function LandingPage() {
       <LandingNav />
 
       <main id="main-content" className="bg-kumo-canvas text-kumo-default">
-        <section className="mx-auto max-w-6xl px-4 pb-16 pt-24 sm:px-6 md:pb-24 lg:px-8">
+        <section className="mx-auto md:my-20 my-10 max-w-6xl px-4 pb-16 pt-24 sm:px-6 md:pb-24 lg:px-8">
           <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_420px] xl:gap-16">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-kumo-base px-3 py-2 text-xs font-medium text-kumo-subtle ring-1 ring-kumo-line">

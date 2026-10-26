@@ -25,6 +25,8 @@ export default [
       '.tanstack/**',
       'src/routeTree.gen.ts',
       'scripts/**',
+      '.cf-tgbot-worker/**',
+      '.cf-email-forwarding-worker/**',
     ],
   },
 ]

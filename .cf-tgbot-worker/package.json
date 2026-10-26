@@ -1,0 +1,22 @@
+{
+  "name": "shortly-telegram-bot-worker",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "check": "prettier --check src test"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250303.0",
+    "typescript": "^5.5.2",
+    "wrangler": "^3.111.0",
+    "prettier": "^3.4.2"
+  },
+  "dependencies": {
+    "hono": "^4.12.7"
+  }
+}

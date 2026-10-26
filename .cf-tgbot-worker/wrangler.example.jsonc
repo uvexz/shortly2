@@ -1,0 +1,50 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "shortly-telegram-bot-worker",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-03-10",
+	"observability": {
+		"enabled": true,
+	},
+	"compatibility_flags": ["nodejs_compat"],
+	"vars": {
+		"API_BASE_URL": "https://your-shortly-domain.com/v1",
+		"DEFAULT_SHORT_DOMAIN": "short.ly,go.short.ly",
+		"DEFAULT_EMAIL_DOMAIN": "mail.short.ly,inbox.short.ly",
+
+		// /v1/domains 结果的 KV 缓存时间（秒，默认 600）。
+		// 调小 = 后台新增/禁用域名后最多等这么久生效；调大 = 更省 /v1 请求。
+		"DOMAIN_CACHE_TTL_SECONDS": "600",
+
+		// "true" 时把 update_id 去重也写进 KV（5 分钟 TTL）。
+		// 好处：Worker 冷启动 / 多 isolate 时也不会重复处理同一条 update；
+		// 代价：每条 update 多一次 KV 写，容易吃免费额度，默认关闭。
+		"STRICT_UPDATE_DEDUPE": "false",
+	},
+	"kv_namespaces": [
+		{
+			"binding": "TGBOT_KV",
+			"id": "replace-with-your-kv-namespace-id",
+		},
+	],
+	// 敏感配置不要写在这个文件里，用 wrangler secret put：
+	//
+	//   wrangler secret put TELEGRAM_BOT_TOKEN
+	//     BotFather 给的 Bot Token，必需。
+	//
+	//   wrangler secret put TELEGRAM_WEBHOOK_SECRET
+	//     推荐。与 setWebhook 的 secret_token 保持一致；
+	//     设置后 Worker 会校验 X-Telegram-Bot-Api-Secret-Token，
+	//     不匹配直接返回 401，避免任何人伪造 update 打你的 Worker。
+	//     未设置时仍向后兼容（会打印一次告警），但等于 webhook 无鉴权。
+	//
+	// API_BASE_URL:
+	//   Shortly 主程序的 /v1 API 根地址（必须带 /v1，结尾斜杠可有可无）。
+	//
+	// DEFAULT_SHORT_DOMAIN / DEFAULT_EMAIL_DOMAIN:
+	//   逗号分隔的兜底域名，仅在 /v1/domains 不可用或返回为空时使用；
+	//   正常情况下 Worker 优先使用 Shortly 后台当前启用的默认域名。
+	//
+	// TGBOT_KV:
+	//   KV 命名空间，保存 chat 绑定、向导草稿、域名缓存、一次性邮件详情 token。
+}

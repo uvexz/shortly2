@@ -1,0 +1,32 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "shortly-email-inbound-worker",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-03-27",
+	"observability": {
+		"enabled": true
+	},
+	"vars": {
+		"APP_API_URL": "https://your-shortly-domain.com/v1/emails/inbound",
+		"ENABLE_ATTACHMENTS": "1"
+	},
+	"r2_buckets": [
+		{
+			"binding": "R2_BUCKET",
+			"bucket_name": "shortly-email-attachments"
+		}
+	]
+
+	// INBOUND_EMAIL_SECRET 是敏感信息，请不要写入 vars。
+	// 使用 `wrangler secret put INBOUND_EMAIL_SECRET` 注入。
+	//
+	// APP_API_URL:
+	// Shortly 应用的入站邮件接口地址，通常为 https://your-shortly-domain.com/v1/emails/inbound
+	//
+	// ENABLE_ATTACHMENTS:
+	// 1 = 上传附件到 R2 并把 r2Path 回传给 Shortly
+	// 0 = 不上传附件，只转发邮件正文与基础元数据
+	//
+	// R2_BUCKET:
+	// Shortly 临时邮箱附件使用的 Cloudflare R2 bucket 绑定
+}
