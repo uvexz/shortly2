@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as LegalRouteImport } from './routes/legal'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
@@ -86,6 +87,11 @@ const AdminRoute = AdminRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalRoute = LegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -371,6 +377,7 @@ export interface FileRoutesByFullPath {
   '/$slug': typeof SlugRoute
   '/admin': typeof AdminRouteWithChildren
   '/dashboard': typeof DashboardRouteWithChildren
+  '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/admin/domains': typeof AdminDomainsRoute
@@ -429,6 +436,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
+  '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/admin/domains': typeof AdminDomainsRoute
@@ -490,6 +498,7 @@ export interface FileRoutesById {
   '/$slug': typeof SlugRoute
   '/admin': typeof AdminRouteWithChildren
   '/dashboard': typeof DashboardRouteWithChildren
+  '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/admin/domains': typeof AdminDomainsRoute
@@ -552,6 +561,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/admin'
     | '/dashboard'
+    | '/legal'
     | '/login'
     | '/register'
     | '/admin/domains'
@@ -610,6 +620,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/$slug'
+    | '/legal'
     | '/login'
     | '/register'
     | '/admin/domains'
@@ -670,6 +681,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/admin'
     | '/dashboard'
+    | '/legal'
     | '/login'
     | '/register'
     | '/admin/domains'
@@ -731,6 +743,7 @@ export interface RootRouteChildren {
   SlugRoute: typeof SlugRoute
   AdminRoute: typeof AdminRouteWithChildren
   DashboardRoute: typeof DashboardRouteWithChildren
+  LegalRoute: typeof LegalRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
   ApiDomainsRoute: typeof ApiDomainsRoute
@@ -783,6 +796,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -1399,6 +1419,7 @@ const rootRouteChildren: RootRouteChildren = {
   SlugRoute: SlugRoute,
   AdminRoute: AdminRouteWithChildren,
   DashboardRoute: DashboardRouteWithChildren,
+  LegalRoute: LegalRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
   ApiDomainsRoute: ApiDomainsRoute,

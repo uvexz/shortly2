@@ -1,15 +1,21 @@
 @source "../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}";
 @import '@cloudflare/kumo/styles/tailwind';
 @import 'tailwindcss';
-@import '@fontsource-variable/inter';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+
+@theme {
+  --ease-base: cubic-bezier(0.22, 1, 0.36, 1);
+}
 
 :root {
   color-scheme: light;
   --font-sans:
-    'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Geist Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   --font-mono:
-    'SFMono-Regular', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    'Geist Mono Variable', 'SFMono-Regular', ui-monospace, 'SF Mono', Menlo,
+    Consolas, monospace;
 }
 
 @layer base {
@@ -18,6 +24,12 @@
     background: var(--color-kumo-canvas);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 
   body {
@@ -53,6 +65,36 @@
 
   .app-focus {
     @apply outline-none focus-visible:ring-2 focus-visible:ring-kumo-focus/60 focus-visible:ring-offset-2 focus-visible:ring-offset-kumo-canvas;
+  }
+
+  .focus-ring {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-kumo-contrast/40 focus-visible:ring-offset-2 focus-visible:ring-offset-kumo-canvas;
+  }
+
+  .focus-ring-inverse {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-kumo-contrast;
+  }
+
+  .landing-reveal {
+    opacity: 0;
+    transform: translate3d(0, 32px, 0);
+    transition:
+      opacity 700ms var(--ease-base),
+      transform 700ms var(--ease-base);
+  }
+
+  .landing-reveal[data-revealed='true'] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .tagline-word {
+    opacity: 0.3;
+    transition: opacity 500ms var(--ease-base);
+  }
+
+  .tagline-word[data-active='true'] {
+    opacity: 1;
   }
 
   .chart-grid {
@@ -92,5 +134,27 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .landing-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .tagline-word {
+    opacity: 1;
+    transition: none;
+  }
+}
+
+@media (scripting: none) {
+  .landing-reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .tagline-word {
+    opacity: 1;
   }
 }

@@ -8,7 +8,7 @@ Shortly 的 TanStack Start 版本：保留 v1 的全部后端 HTTP 契约与数�
 - **数据请求**：TanStack Query（浏览器端调用现有 HTTP API）
 - **数据库**：Drizzle ORM + `@libsql/client`（Turso / 本地 libSQL 文件）
 - **认证**：Better Auth（邮箱 OTP、GitHub OAuth、Passkey；不启用邮箱密码）
-- **样式**：Tailwind CSS v4 + Kumo UI 2（Base UI）+ Phosphor Icons + Inter
+- **样式**：Tailwind CSS v4 + Kumo UI 2（Base UI）+ Phosphor Icons + Geist / Geist Mono
 
 ## 快速开始
 

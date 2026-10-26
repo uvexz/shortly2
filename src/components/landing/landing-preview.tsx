@@ -1,11 +1,16 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Badge, Button, Input } from '@cloudflare/kumo'
-import { ArrowRight, CheckCircle, Sparkle } from '@phosphor-icons/react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  ArrowRight,
+  Check,
+  CheckCircle,
+  Copy,
+  EnvelopeSimple,
+} from '@phosphor-icons/react'
 import { usePublicDomains } from '@/hooks/settings'
 import { copyText } from '@/lib/clipboard'
 
 const SAMPLE_URL =
-  'https://example.com/products/2026-summer-collection?utm_source=newsletter'
+  'https://example.com/products/summer-preview?utm_source=newsletter&utm_campaign=launch'
 
 function toPreviewSlug(input: string): string {
   let hash = 2166136261
@@ -23,132 +28,197 @@ function toPreviewSlug(input: string): string {
   return slug
 }
 
+type NormalizedUrl = { ok: true; value: string } | { ok: false; error: string }
+
+function normalizeUrl(input: string): NormalizedUrl {
+  const trimmed = input.trim()
+  if (!trimmed) {
+    return { ok: false, error: '请先粘贴一个网址。' }
+  }
+
+  const withProtocol = /^https?:\/\//i.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`
+
+  try {
+    const parsed = new URL(withProtocol)
+    if (!parsed.hostname.includes('.')) {
+      return {
+        ok: false,
+        error: '请输入完整的网址，例如 https://example.com/page。',
+      }
+    }
+    return { ok: true, value: parsed.toString() }
+  } catch {
+    return { ok: false, error: '这个网址格式不对，请检查后再试。' }
+  }
+}
+
 export function LandingPreview() {
   const domains = usePublicDomains()
   const [url, setUrl] = useState(SAMPLE_URL)
   const [slug, setSlug] = useState(() => toPreviewSlug(SAMPLE_URL))
-  const [host, setHost] = useState('your-domain.com')
+  const [error, setError] = useState('')
+  const [copied, setCopied] = useState(false)
+  const [hosts, setHosts] = useState({
+    short: 'your-domain.com',
+    mail: 'example.com',
+  })
+  const copyTimer = useRef<number | null>(null)
 
   useEffect(() => {
-    setHost(
-      domains.data?.shortDomains[0]?.host ??
-        (typeof window !== 'undefined'
-          ? window.location.host
-          : 'your-domain.com'),
-    )
-  }, [domains.data?.shortDomains])
+    const shortHost =
+      domains.data?.shortDomains[0]?.host ||
+      window.location.host ||
+      'your-domain.com'
+    const mailHost =
+      domains.data?.emailDomains[0]?.host || shortHost || 'example.com'
 
-  const shortUrl = useMemo(() => `https://${host}/${slug}`, [host, slug])
+    setHosts({ short: shortHost, mail: mailHost })
+  }, [domains.data])
+
+  useEffect(() => {
+    return () => {
+      if (copyTimer.current) window.clearTimeout(copyTimer.current)
+    }
+  }, [])
+
+  const shortUrl = useMemo(
+    () => `https://${hosts.short}/${slug}`,
+    [hosts.short, slug],
+  )
+  const mailbox = `hello-k7qm@${hosts.mail}`
 
   function handleGenerate() {
-    const trimmed = url.trim() || SAMPLE_URL
-    setUrl(trimmed)
-    setSlug(toPreviewSlug(trimmed))
+    const result = normalizeUrl(url)
+    if (!result.ok) {
+      setError(result.error)
+      return
+    }
+
+    setError('')
+    setCopied(false)
+    if (copyTimer.current) window.clearTimeout(copyTimer.current)
+    setUrl(result.value)
+    setSlug(toPreviewSlug(result.value))
+  }
+
+  async function handleCopy() {
+    const success = await copyText(shortUrl, '示例链接已复制')
+    if (!success) return
+
+    setCopied(true)
+    if (copyTimer.current) window.clearTimeout(copyTimer.current)
+    copyTimer.current = window.setTimeout(() => setCopied(false), 1800)
   }
 
   return (
-    <div className="rounded-xl bg-kumo-base p-4 shadow-xs ring ring-kumo-line sm:p-5">
-      <div className="flex items-center justify-between gap-3 border-b border-kumo-hairline pb-4">
+    <div className="rounded-3xl bg-kumo-base p-4 shadow-sm ring-1 ring-kumo-line">
+      <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
-            <Sparkle className="size-4" />
-          </span>
-          <div>
-            <p className="text-base font-semibold text-kumo-strong">效果预览</p>
-            <p className="mt-0.5 text-xs text-kumo-placeholder">
-              示例数据 · 登录后生效
-            </p>
-          </div>
+          <span className="size-2 rounded-full bg-[var(--text-color-kumo-brand)]" />
+          <p className="text-sm font-medium text-kumo-strong">工作台预览</p>
         </div>
-        <Badge variant="secondary">示例</Badge>
+        <p className="text-xs text-kumo-placeholder">示例数据</p>
       </div>
 
-      <div className="mt-4 space-y-3">
-        <div>
-          <label className="mb-1.5 block text-xs font-medium text-kumo-subtle">
-            长网址
-          </label>
-          <Input
-            value={url}
-            onChange={(event) => setUrl(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') handleGenerate()
-            }}
-            aria-label="示例长网址"
-            className="w-full"
-          />
-        </div>
-        <Button
-          variant="primary"
-          className="w-full"
+      <div className="mt-4">
+        <label
+          htmlFor="landing-url"
+          className="text-xs font-medium text-kumo-subtle"
+        >
+          长网址
+        </label>
+        <input
+          id="landing-url"
+          type="url"
+          inputMode="url"
+          autoComplete="off"
+          spellCheck={false}
+          value={url}
+          onChange={(event) => {
+            setUrl(event.target.value)
+            if (error) setError('')
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault()
+              handleGenerate()
+            }
+          }}
+          aria-invalid={Boolean(error)}
+          aria-describedby={
+            error ? 'preview-url-error preview-note' : 'preview-note'
+          }
+          className="focus-ring mt-2 h-10 w-full rounded-lg bg-kumo-elevated px-3 text-base text-kumo-default ring-1 ring-kumo-line transition-colors duration-300 ease-base placeholder:text-kumo-placeholder"
+          placeholder="https://example.com/a-long-page"
+        />
+        {error ? (
+          <p
+            id="preview-url-error"
+            role="alert"
+            className="mt-2 text-sm text-kumo-danger text-pretty"
+          >
+            {error}
+          </p>
+        ) : null}
+        <button
+          type="button"
           onClick={handleGenerate}
-          icon={<ArrowRight className="size-4" />}
+          className="focus-ring mt-2 flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-kumo-contrast px-3 text-base font-semibold text-kumo-inverse transition duration-300 ease-base hover:bg-kumo-contrast/90 active:scale-[0.98]"
         >
           生成示例短链
-        </Button>
-        <div className="flex items-center gap-2 rounded-lg bg-kumo-elevated p-2.5 ring ring-kumo-hairline">
-          <CheckCircle className="size-4 shrink-0 text-kumo-success" />
-          <span className="min-w-0 flex-1 truncate font-mono text-xs text-kumo-default">
-            {shortUrl}
-          </span>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() =>
-              void copyText(shortUrl, '示例链接已复制 · 登录后可创建真实短链接')
-            }
-          >
-            复制
-          </Button>
-        </div>
-        <p className="text-xs leading-4 text-kumo-placeholder">
-          示例链接只用于展示效果，不会写入数据库。注册后可创建可管理、带访问记录的短链接。
-        </p>
+          <ArrowRight className="size-4" />
+        </button>
       </div>
 
-      <div className="mt-5 border-t border-kumo-hairline pt-4">
-        <div className="mb-3 flex items-center justify-between">
-          <p className="text-xs font-medium text-kumo-subtle">工作台预览</p>
-          <span className="text-xs text-kumo-placeholder">示例数据</span>
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            ['短链接', '128'],
-            ['访问量', '12,438'],
-            ['临时邮箱', '48'],
-          ].map(([label, value]) => (
-            <div
-              key={label}
-              className="rounded-lg p-2.5 ring ring-kumo-hairline"
-            >
-              <p className="text-xs text-kumo-placeholder">{label}</p>
-              <p className="numeric mt-1 text-base font-semibold text-kumo-strong">
-                {value}
-              </p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-3 space-y-2 rounded-lg p-3 ring ring-kumo-hairline">
-          {[
-            ['short.local/3f9k', '1,234'],
-            ['short.local/a7d2', '856'],
-            ['short.local/9kLm', '642'],
-          ].map(([label, value], index) => (
-            <div key={label} className="flex items-center gap-2 text-xs">
-              <span className="w-24 truncate font-medium text-kumo-default">
-                {label}
-              </span>
-              <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-kumo-fill">
-                <span
-                  className="block h-full rounded-full bg-kumo-brand"
-                  style={{ width: `${100 - index * 22}%` }}
-                />
-              </span>
-              <span className="numeric w-9 text-right text-kumo-placeholder">
-                {value}
-              </span>
-            </div>
-          ))}
+      <div
+        aria-live="polite"
+        className="mt-3 flex items-center gap-2 rounded-lg bg-kumo-elevated p-2 ring-1 ring-kumo-line"
+      >
+        <CheckCircle className="size-4 shrink-0 text-kumo-success" />
+        <span className="min-w-0 flex-1 truncate font-mono text-xs text-kumo-default">
+          {shortUrl}
+        </span>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="focus-ring flex h-8 shrink-0 items-center gap-1 rounded-lg px-2 text-xs font-medium text-kumo-subtle transition duration-300 ease-base hover:text-kumo-strong active:scale-[0.98]"
+          aria-label="复制示例短链接"
+        >
+          {copied ? (
+            <Check className="size-3.5 text-kumo-success" />
+          ) : (
+            <Copy className="size-3.5" />
+          )}
+          {copied ? '已复制' : '复制'}
+        </button>
+      </div>
+      <p
+        id="preview-note"
+        className="mt-2 text-xs text-kumo-placeholder text-pretty"
+      >
+        示例链接只用于展示效果，不会写入数据库。
+      </p>
+
+      <div className="mt-4 h-px bg-kumo-hairline" />
+
+      <div className="mt-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <p className="text-sm font-medium text-kumo-strong">临时邮箱</p>
+        <p className="truncate font-mono text-xs text-kumo-subtle">{mailbox}</p>
+      </div>
+
+      <div className="mt-2 flex items-start gap-3 rounded-lg bg-kumo-elevated p-3 ring-1 ring-kumo-line">
+        <EnvelopeSimple className="mt-0.5 size-4 shrink-0 text-kumo-subtle" />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs font-medium text-kumo-strong">Resend</p>
+            <p className="text-xs text-kumo-placeholder">刚刚</p>
+          </div>
+          <p className="mt-1 truncate text-sm text-kumo-default">
+            Your verification code
+          </p>
+          <p className="mt-1 font-mono text-xs text-kumo-subtle">482 916</p>
         </div>
       </div>
     </div>

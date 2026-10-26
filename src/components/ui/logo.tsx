@@ -6,11 +6,13 @@ export function Logo({
   siteName,
   compact = false,
   showTools = true,
+  currentPage = false,
   className,
 }: {
   siteName: string
   compact?: boolean
   showTools?: boolean
+  currentPage?: boolean
   className?: string
 }) {
   return (
@@ -21,6 +23,7 @@ export function Logo({
         className,
       )}
       aria-label={`${siteName} 首页`}
+      aria-current={currentPage ? 'page' : undefined}
     >
       <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--text-color-kumo-brand)] text-white">
         <LinkSimple className="size-[18px]" weight="bold" />
@@ -31,7 +34,7 @@ export function Logo({
             {siteName}
           </span>
           {showTools ? (
-            <span className="rounded-md bg-kumo-tint px-1.5 py-0.5 text-xs font-medium text-kumo-subtle">
+            <span className="rounded-md bg-kumo-tint px-2 py-0.5 text-xs font-medium text-kumo-subtle">
               工具
             </span>
           ) : null}

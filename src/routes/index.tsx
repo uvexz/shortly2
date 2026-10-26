@@ -1,334 +1,517 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import {
   ArrowRight,
-  CheckCircle,
-  Code,
+  Camera,
   EnvelopeSimple,
-  Key,
+  Fingerprint,
+  IdentificationCard,
   LinkSimple,
-  ShieldCheck,
+  PaperPlaneTilt,
+  Terminal,
 } from '@phosphor-icons/react'
-import { useBootstrap } from '@/lib/bootstrap'
-import { AccountMenu } from '@/components/layout/account-menu'
+import { LandingFaq, FAQ_ITEMS } from '@/components/landing/landing-faq'
+import { LandingNav } from '@/components/landing/landing-nav'
 import { LandingPreview } from '@/components/landing/landing-preview'
+import { Reveal } from '@/components/landing/reveal'
+import { TaglineReveal } from '@/components/landing/tagline-reveal'
 import { ButtonLink } from '@/components/ui/button-link'
-import { Logo } from '@/components/ui/logo'
 import { CodeBlock } from '@/components/ui/code-block'
+import { Logo } from '@/components/ui/logo'
+import { useBootstrap } from '@/lib/bootstrap'
+import type { BootstrapData } from '@/lib/server-fns'
 
-export const Route = createFileRoute('/')({ component: LandingPage })
+const FEATURES = [
+  {
+    icon: LinkSimple,
+    title: '一条链接，全程可查',
+    description:
+      '自定义后缀、有效期和点击上限。每次访问都会留下记录，链接也可以随时收回。',
+    detail: '自定义后缀 / 有效期 / 点击上限',
+  },
+  {
+    icon: EnvelopeSimple,
+    title: '收验证码，不交出主邮箱',
+    description:
+      '创建一次性收件地址，接收验证码、测试邮件和附件；HTML 邮件在沙箱中渲染。',
+    detail: 'HTML / 附件元数据 / 多邮箱',
+  },
+  {
+    icon: Terminal,
+    title: '脚本和客户端直接接',
+    description:
+      '创建 API Key 后调用 /v1 接口；ShareX 上传器和兼容别名端点都能复用。',
+    detail: 'Bearer / REST / API Key',
+  },
+  {
+    icon: Fingerprint,
+    title: '登录方式由你决定',
+    description:
+      'GitHub、Passkey 或邮箱验证码。不启用邮箱密码，少一个泄露入口。',
+    detail: 'GitHub / Passkey / OTP',
+  },
+] as const
+
+const STEPS = [
+  {
+    title: '创建账户',
+    description: <>用 GitHub、Passkey 或邮箱验证码登录。</>,
+  },
+  {
+    title: '粘贴或新建',
+    description: (
+      <>
+        粘贴网址，设置后缀、有效期和点击上限；
+        <br />
+        或新建临时邮箱。
+      </>
+    ),
+  },
+  {
+    title: '分享并追踪',
+    description: (
+      <>
+        复制短链，或把地址交给表单。
+        <br />
+        访问记录和邮件都在工作台。
+      </>
+    ),
+  },
+] as const
+
+const INTEGRATIONS = [
+  {
+    icon: Camera,
+    title: 'ShareX',
+    description: '把上传器指向 /v1/shorten，截图完成时直接拿到短链。',
+  },
+  {
+    icon: IdentificationCard,
+    title: 'Bitwarden 与 Addy.io',
+    description: '通过兼容别名端点，在浏览器的生成器里创建收件地址。',
+  },
+  {
+    icon: PaperPlaneTilt,
+    title: 'Telegram',
+    description: '绑定机器人，新邮件到达时推送到对话。',
+  },
+] as const
+
+const API_EXAMPLE = `curl -X POST "$API/v1/shorten" \\
+  -H "Authorization: Bearer $KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "url": "https://example.com",
+    "customSlug": "pricing"
+  }'`
+
+export const Route = createFileRoute('/')({
+  head: ({ matches }) => {
+    const rootMatch = matches.find(
+      (match) => (match.routeId as string) === '__root__',
+    )
+    const rootData = rootMatch?.loaderData as BootstrapData | undefined
+    const siteName = rootData?.siteName ?? 'Shortly'
+    const title = `${siteName} — 短链接与一次性收件箱`
+    const description =
+      '给独立开发者的短链接与临时邮箱：自定义后缀、访问记录与 API 接入，收件不暴露主邮箱。'
+    const origin = rootData?.siteUrl?.replace(/\/$/, '')
+    const ogImage = origin ? `${origin}/og.png` : '/og.png'
+
+    return {
+      meta: [
+        { title },
+        { name: 'description', content: description },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: description },
+        { property: 'og:image', content: ogImage },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        {
+          property: 'og:image:alt',
+          content: 'Shortly 的短链接与临时邮箱工作台预览',
+        },
+        { property: 'og:site_name', content: siteName },
+        { property: 'og:locale', content: 'zh_CN' },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: title },
+        { name: 'twitter:description', content: description },
+        { name: 'twitter:image', content: ogImage },
+        {
+          name: 'twitter:image:alt',
+          content: 'Shortly 的短链接与临时邮箱工作台预览',
+        },
+        {
+          'script:ld+json': {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: FAQ_ITEMS.map((item) => ({
+              '@type': 'Question',
+              name: item.question,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: item.answer,
+              },
+            })),
+          },
+        },
+      ],
+    }
+  },
+  component: LandingPage,
+})
 
 function LandingPage() {
   const { siteName, user } = useBootstrap()
   const primaryHref = user ? '/dashboard' : '/register'
-  const secondaryHref = user ? '/dashboard/inbox' : '/login'
-  const primaryLabel = user ? '进入工作台' : '创建账户'
-  const secondaryLabel = user ? '临时邮箱' : '登录'
-
-  const features = [
-    {
-      icon: LinkSimple,
-      title: '短链接管理',
-      description:
-        '自定义后缀、有效期和点击上限；复制、查看访问日志，随时回收链接。',
-      href: user ? '/dashboard/links' : '/register',
-      action: '管理短链接',
-    },
-    {
-      icon: EnvelopeSimple,
-      title: '临时邮箱',
-      description:
-        '创建一次性收件地址，隔离主邮箱；支持 HTML 邮件、附件元数据与多邮箱筛选。',
-      href: user ? '/dashboard/inbox' : '/register',
-      action: '查看收件箱',
-    },
-    {
-      icon: Code,
-      title: 'API 与自动化',
-      description:
-        '使用 API Key 接入 /v1 接口，支持 ShareX、Bitwarden/Addy.io 别名和 Telegram 通知。',
-      href: user ? '/dashboard/api' : '/register',
-      action: '查看 API',
-    },
-  ]
+  const primaryLabel = user ? '进入工作台' : '免费创建账户'
+  const footerAccountHref = user ? '/dashboard' : '/login'
+  const footerAccountLabel = user ? '工作台' : '登录'
+  const currentYear = new Date().getFullYear()
 
   return (
-    <main className="min-h-screen bg-kumo-canvas text-kumo-default selection:bg-kumo-brand selection:text-white">
-      <header className="sticky top-0 z-30 border-b border-kumo-line bg-kumo-canvas/90 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          <Logo siteName={siteName} />
-          <nav className="hidden items-center gap-6 text-sm text-kumo-subtle md:flex">
-            <a href="#features" className="hover:text-kumo-strong">
-              功能
-            </a>
-            <a href="#api" className="hover:text-kumo-strong">
-              API
-            </a>
-            <a href="#security" className="hover:text-kumo-strong">
-              安全
-            </a>
-          </nav>
-          <div className="flex items-center gap-2">
-            {user ? (
-              <>
-                <ButtonLink to="/dashboard" size="sm">
-                  工作台
-                </ButtonLink>
-                <AccountMenu />
-              </>
-            ) : (
-              <>
-                <ButtonLink to="/login" variant="ghost" size="sm">
-                  登录
-                </ButtonLink>
-                <ButtonLink to="/register" size="sm">
-                  注册
-                </ButtonLink>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
-
-      <section className="relative overflow-hidden">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.35]"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle at 1px 1px, var(--color-kumo-interact) 1px, transparent 0)',
-            backgroundSize: '24px 24px',
-            maskImage: 'linear-gradient(to bottom, black, transparent 75%)',
-          }}
-        />
-        <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(340px,420px)] lg:gap-16 lg:px-8 lg:py-24">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full bg-kumo-base px-3 py-1.5 text-xs font-medium text-kumo-subtle ring ring-kumo-line">
-              <span className="size-1.5 rounded-full bg-[var(--text-color-kumo-brand)]" />
-              短链接 / 临时邮箱 / API
-            </div>
-            <h1 className="mt-6 max-w-2xl text-4xl font-semibold leading-[1.08] text-kumo-strong sm:text-5xl lg:text-6xl">
-              更短的分享链接，
-              <br />
-              一次性的收件地址。
-            </h1>
-            <p className="mt-5 max-w-xl text-base leading-7 text-kumo-subtle">
-              需要公开分享时，生成可管理、带访问记录的短链接；需要接收验证码或测试邮件时，用临时邮箱隔离你的主邮箱。所有能力集中在一个安静、可控的工作台里。
-            </p>
-
-            <div className="mt-8 flex flex-col gap-2 sm:flex-row">
-              <ButtonLink to={primaryHref} size="lg">
-                {primaryLabel}
-                <ArrowRight className="size-4" />
-              </ButtonLink>
-              <ButtonLink to={secondaryHref} variant="secondary" size="lg">
-                {secondaryLabel}
-              </ButtonLink>
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-kumo-placeholder">
-              <span className="inline-flex items-center gap-1.5">
-                <CheckCircle className="size-3.5" />
-                GitHub OAuth · Passkey · 邮箱验证码
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <CheckCircle className="size-3.5" />
-                API Key 自动化
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <CheckCircle className="size-3.5" />
-                现有数据与接口保持兼容
-              </span>
-            </div>
-          </div>
-
-          <LandingPreview />
-        </div>
-      </section>
-
-      <section
-        id="features"
-        className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8"
+    <>
+      <a
+        href="#main-content"
+        className="focus-ring sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-kumo-contrast focus:px-3 focus:py-2 focus:text-sm focus:text-kumo-inverse"
       >
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="text-xs font-medium text-kumo-subtle">核心能力</p>
-            <h2 className="mt-2 text-2xl font-semibold text-kumo-strong">
-              一个工作台，覆盖日常分享与收件。
-            </h2>
-          </div>
-          <p className="max-w-md text-sm leading-6 text-kumo-subtle">
-            不追求花哨的仪表盘，只把创建、复制、检查、回收这些动作做得直接可靠。
-          </p>
-        </div>
+        跳到主要内容
+      </a>
 
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-          {features.map((feature) => {
-            const Icon = feature.icon
-            return (
-              <Link
-                key={feature.title}
-                to={feature.href as never}
-                className="group rounded-xl bg-kumo-base p-5 shadow-xs ring ring-kumo-line hover:ring-kumo-interact"
-              >
-                <span className="flex size-10 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
-                  <Icon className="size-5" />
-                </span>
-                <h3 className="mt-4 text-base font-semibold text-kumo-strong">
-                  {feature.title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-kumo-subtle">
-                  {feature.description}
-                </p>
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-kumo-link">
-                  {feature.action}
-                  <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
-                </span>
-              </Link>
-            )
-          })}
-        </div>
-      </section>
+      <LandingNav />
 
-      <section
-        id="api"
-        className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8"
-      >
-        <div className="grid grid-cols-1 gap-6 rounded-xl bg-kumo-base p-5 shadow-xs ring ring-kumo-line sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
-          <div>
-            <span className="flex size-10 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
-              <Key className="size-5" />
-            </span>
-            <h2 className="mt-4 text-2xl font-semibold text-kumo-strong">
-              用 API 把短链接接进你的工作流。
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-kumo-subtle">
-              创建 API Key 后，可调用 /v1/shorten、/v1/emails 等接口。支持
-              Bearer 头、ShareX 自定义上传器和 Addy.io 兼容别名。
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              <ButtonLink
-                to={user ? '/dashboard/api' : '/register'}
-                variant="primary"
-                size="md"
-              >
-                管理 API Key
-              </ButtonLink>
-              <ButtonLink to="/login" variant="secondary" size="md">
-                已有账户
-              </ButtonLink>
-            </div>
-          </div>
-          <CodeBlock
-            title="POST /v1/shorten"
-            code={`curl -X POST 'https://your-domain.com/v1/shorten' \\
-  -H 'Content-Type: application/json' \\
-  -H 'Authorization: Bearer YOUR_API_KEY' \\
-  -d '{
-    "url": "https://example.com/long-page",
-    "customSlug": "my-link"
-  }'`}
-          />
-        </div>
-      </section>
+      <main id="main-content" className="bg-kumo-canvas text-kumo-default">
+        <section className="mx-auto max-w-6xl px-4 pb-16 pt-24 sm:px-6 md:pb-24 lg:px-8">
+          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_420px] xl:gap-16">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-kumo-base px-3 py-2 text-xs font-medium text-kumo-subtle ring-1 ring-kumo-line">
+                <span className="size-1.5 rounded-full bg-[var(--text-color-kumo-brand)]" />
+                短链接 · 临时邮箱 · 开放 API
+              </div>
 
-      <section
-        id="security"
-        className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8"
-      >
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {[
-            {
-              icon: ShieldCheck,
-              title: '会话安全',
-              description:
-                'Better Auth 会话、OAuth Token 加密存储，管理端可即时封禁账户。',
-            },
-            {
-              icon: Key,
-              title: '密钥只存哈希',
-              description:
-                'API Key 只在创建时展示一次，数据库仅保存前缀与加盐哈希。',
-            },
-            {
-              icon: EnvelopeSimple,
-              title: '隔离收件',
-              description:
-                '临时邮箱与主邮箱分离；HTML 邮件在沙箱 iframe 中渲染。',
-            },
-          ].map((item) => {
-            const Icon = item.icon
-            return (
-              <div
-                key={item.title}
-                className="rounded-xl bg-kumo-base p-5 shadow-xs ring ring-kumo-line"
-              >
-                <Icon className="size-5 text-kumo-brand" />
-                <h3 className="mt-3 text-base font-semibold text-kumo-strong">
-                  {item.title}
-                </h3>
-                <p className="mt-1.5 text-sm leading-6 text-kumo-subtle">
-                  {item.description}
+              <h1 className="mt-6 max-w-[680px] bg-gradient-to-r from-black to-[#666666] bg-clip-text text-4xl font-semibold text-balance text-transparent sm:text-5xl lg:text-6xl">
+                更短的分享链接，
+                <br />
+                一次性的收件地址。
+              </h1>
+
+              <p className="mt-4 max-w-[680px] text-base text-kumo-subtle text-pretty sm:text-lg">
+                给独立开发者的短链接与临时邮箱：
+                <br className="xl:hidden" />
+                自定义后缀、访问记录和 API 接入。
+              </p>
+
+              <div className="mt-8">
+                <ButtonLink to={primaryHref} className="group">
+                  {primaryLabel}
+                  <ArrowRight className="size-4 transition-transform duration-300 ease-base group-hover:translate-x-0.5" />
+                </ButtonLink>
+                <p className="mt-3 text-sm text-kumo-placeholder">
+                  免费使用，无需绑定信用卡。
                 </p>
               </div>
-            )
-          })}
-        </div>
-      </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
-        <div className="rounded-xl bg-kumo-contrast p-6 text-kumo-inverse sm:p-10">
-          <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-xs font-medium text-kumo-inverse/60">
-                {siteName}
-              </p>
-              <h2 className="mt-3 max-w-xl text-2xl font-semibold text-kumo-inverse sm:text-3xl">
-                从一条短链接开始，整理你的网络工具。
-              </h2>
-              <p className="mt-2 max-w-lg text-sm leading-6 text-kumo-inverse/70">
-                登录后即可创建、管理和追踪短链接与临时邮箱。现有 API
-                与数据保持不变。
-              </p>
+              <div className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-kumo-subtle">
+                <span className="font-medium text-kumo-strong">兼容</span>
+                <span>ShareX、Bitwarden、Addy.io 与 Telegram</span>
+              </div>
             </div>
-            <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-              <ButtonLink
-                to={primaryHref}
-                size="lg"
-                className="bg-white text-kumo-contrast hover:bg-white/90"
-              >
-                {primaryLabel}
-              </ButtonLink>
-              <ButtonLink
-                to={secondaryHref}
-                size="lg"
-                variant="ghost"
-                className="text-kumo-inverse ring ring-white/20 hover:bg-white/10 hover:text-kumo-inverse"
-              >
-                {secondaryLabel}
-              </ButtonLink>
+
+            <div className="mx-auto w-full max-w-[420px] lg:mx-0 lg:justify-self-end">
+              <LandingPreview />
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section id="problem" className="border-t border-kumo-line">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+            <Reveal>
+              <p className="text-xs font-medium text-kumo-subtle">问题</p>
+              <h2 className="mt-3 max-w-[680px] text-3xl font-semibold text-balance text-kumo-strong md:text-4xl">
+                分享和收件，
+                <br className="lg:hidden" />
+                本来不该互相暴露。
+              </h2>
+            </Reveal>
+
+            <div className="mt-8 grid gap-4 md:grid-cols-2">
+              <Reveal delay={80}>
+                <div className="h-full rounded-2xl bg-kumo-base p-6 ring-1 ring-kumo-line">
+                  <p className="text-sm font-medium text-kumo-placeholder">
+                    公开分享时
+                  </p>
+                  <p className="mt-3 break-all font-mono text-sm text-kumo-strong">
+                    {
+                      'https://shop.example.com/collections/summer-2026?utm_source=newsletter&utm_campaign=launch'
+                    }
+                  </p>
+                  <p className="mt-4 text-base text-kumo-subtle text-pretty">
+                    跟踪参数、内部路径和临时域名一起出现在对话里。
+                  </p>
+                </div>
+              </Reveal>
+
+              <Reveal delay={160}>
+                <div className="h-full rounded-2xl bg-kumo-base p-6 ring-1 ring-kumo-line">
+                  <p className="text-sm font-medium text-kumo-placeholder">
+                    接收验证码时
+                  </p>
+                  <ul className="mt-3 flex flex-col gap-2 text-sm text-kumo-strong">
+                    <li>Your verification code</li>
+                    <li>Confirm your new device</li>
+                    <li>Reset your password</li>
+                  </ul>
+                  <p className="mt-4 text-base text-kumo-subtle text-pretty">
+                    主邮箱开始堆满一次性验证码和测试邮件。
+                  </p>
+                </div>
+              </Reveal>
+            </div>
+
+            <Reveal delay={200}>
+              <p className="mt-8 max-w-[680px] text-lg font-medium text-kumo-strong text-pretty">
+                {siteName}{' '}
+                把这两件事收进同一个工作台：链接归你管理，收件归你隔离。
+              </p>
+            </Reveal>
+          </div>
+        </section>
+
+        <section
+          id="capabilities"
+          className="scroll-mt-24 border-t border-kumo-line"
+        >
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+            <Reveal>
+              <p className="text-xs font-medium text-kumo-subtle">能力</p>
+              <h2 className="mt-3 max-w-[680px] text-3xl font-semibold text-balance text-kumo-strong md:text-4xl">
+                分享和收件，
+                <br className="lg:hidden" />
+                都在一个工作台里完成。
+              </h2>
+              <p className="mt-3 max-w-[680px] text-base text-kumo-subtle text-pretty">
+                不追求花哨的仪表盘，只把创建、复制、检查和回收做得直接可靠。
+              </p>
+            </Reveal>
+
+            <div className="mt-8 grid gap-4 md:grid-cols-2">
+              {FEATURES.map((feature, index) => {
+                const Icon = feature.icon
+                return (
+                  <Reveal key={feature.title} delay={index * 80}>
+                    <div className="h-full rounded-2xl bg-kumo-base p-6 shadow-xs ring-1 ring-kumo-line">
+                      <Icon className="size-5 text-kumo-strong" />
+                      <h3 className="mt-4 text-lg font-semibold text-kumo-strong">
+                        {feature.title}
+                      </h3>
+                      <p className="mt-2 text-base text-kumo-subtle text-pretty">
+                        {feature.description}
+                      </p>
+                      <p className="mt-4 font-mono text-xs text-kumo-placeholder">
+                        {feature.detail}
+                      </p>
+                    </div>
+                  </Reveal>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+        <TaglineReveal />
+
+        <section
+          id="workflow"
+          className="scroll-mt-24 border-t border-kumo-line"
+        >
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+            <Reveal>
+              <p className="text-xs font-medium text-kumo-subtle">工作流</p>
+              <h2 className="mt-3 max-w-[680px] text-3xl font-semibold text-balance text-kumo-strong md:text-4xl">
+                从创建到分享，
+                <br className="lg:hidden" />
+                只需三步。
+              </h2>
+            </Reveal>
+
+            <div className="mt-8 grid gap-6 lg:grid-cols-3 lg:gap-4">
+              {STEPS.map((step, index) => (
+                <Reveal key={step.title} delay={index * 80}>
+                  <div className="border-t border-kumo-line pt-4">
+                    <p className="font-mono text-sm text-kumo-placeholder">
+                      {String(index + 1).padStart(2, '0')}
+                    </p>
+                    <h3 className="mt-2 text-lg font-semibold text-kumo-strong">
+                      {step.title}
+                    </h3>
+                    <p className="mt-2 text-base text-kumo-subtle text-pretty">
+                      {step.description}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="integrations"
+          className="scroll-mt-24 border-t border-kumo-line"
+        >
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-16">
+              <Reveal>
+                <p className="text-xs font-medium text-kumo-subtle">
+                  集成与 API
+                </p>
+                <h2 className="mt-3 max-w-[680px] text-3xl font-semibold text-balance text-kumo-strong md:text-4xl">
+                  接进你已经在用的工具。
+                </h2>
+                <p className="mt-3 max-w-[680px] text-base text-kumo-subtle text-pretty">
+                  用现有账户配置，不需要额外部署服务。
+                </p>
+
+                <ul className="mt-6 flex flex-col gap-4">
+                  {INTEGRATIONS.map((integration) => {
+                    const Icon = integration.icon
+                    return (
+                      <li key={integration.title} className="flex gap-3">
+                        <Icon className="mt-0.5 size-5 shrink-0 text-kumo-strong" />
+                        <div>
+                          <h3 className="text-base font-semibold text-kumo-strong">
+                            {integration.title}
+                          </h3>
+                          <p className="mt-1 text-sm text-kumo-subtle text-pretty">
+                            {integration.description}
+                          </p>
+                        </div>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </Reveal>
+
+              <Reveal delay={100} className="min-w-0">
+                <CodeBlock title="POST /v1/shorten" code={API_EXAMPLE} />
+                <p className="mt-3 text-xs text-kumo-placeholder text-pretty">
+                  在 API 管理页创建 Key 后即可调用。示例使用 Bearer 认证。
+                </p>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        <section id="faq" className="scroll-mt-24 border-t border-kumo-line">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] lg:gap-16">
+              <Reveal>
+                <p className="text-xs font-medium text-kumo-subtle">常见问题</p>
+                <h2 className="mt-3 max-w-[680px] text-3xl font-semibold text-balance text-kumo-strong md:text-4xl">
+                  先把顾虑说清楚。
+                </h2>
+                <p className="mt-3 max-w-[680px] text-base text-kumo-subtle text-pretty">
+                  价格、数据保留、API 接入和登录方式，都在这里。
+                </p>
+              </Reveal>
+
+              <Reveal delay={80}>
+                <LandingFaq />
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        <section className="pb-16 md:pb-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <Reveal>
+              <div className="rounded-3xl bg-kumo-contrast p-8 md:p-12">
+                <p className="text-xs font-medium text-kumo-inverse/60">
+                  免费开始
+                </p>
+                <h2 className="mt-4 max-w-[680px] text-3xl font-semibold text-balance text-kumo-inverse md:text-4xl">
+                  把下一条长链接，
+                  <br className="lg:hidden" />
+                  交给 {siteName}。
+                </h2>
+                <p className="mt-3 max-w-[680px] text-base text-kumo-inverse/70 text-pretty">
+                  免费使用，无需绑定信用卡。链接和邮箱都可以随时删除。
+                </p>
+                <div className="mt-8">
+                  <ButtonLink
+                    to={primaryHref}
+                    variant="inverse"
+                    className="group"
+                  >
+                    {primaryLabel}
+                    <ArrowRight className="size-4 transition-transform duration-300 ease-base group-hover:translate-x-0.5" />
+                  </ButtonLink>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+      </main>
 
       <footer className="border-t border-kumo-line">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-kumo-subtle sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <p>{siteName} 提供短链接与临时邮箱服务。</p>
-          <div className="flex items-center gap-4">
-            <a href="#features" className="hover:text-kumo-strong">
-              功能
-            </a>
-            <a href="#api" className="hover:text-kumo-strong">
-              API
-            </a>
-            <Link
-              to={user ? '/dashboard' : '/login'}
-              className="hover:text-kumo-strong"
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+              <Logo siteName={siteName} showTools={false} />
+              <p className="text-sm text-kumo-subtle text-pretty">
+                短链接与临时邮箱，一个账户管理。
+              </p>
+            </div>
+
+            <nav
+              aria-label="页脚"
+              className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-kumo-subtle"
             >
-              {user ? '工作台' : '登录'}
-            </Link>
+              <a
+                href="#capabilities"
+                className="focus-ring rounded-lg transition-colors duration-300 ease-base hover:text-kumo-strong"
+              >
+                能力
+              </a>
+              <a
+                href="#integrations"
+                className="focus-ring rounded-lg transition-colors duration-300 ease-base hover:text-kumo-strong"
+              >
+                集成
+              </a>
+              <a
+                href="#faq"
+                className="focus-ring rounded-lg transition-colors duration-300 ease-base hover:text-kumo-strong"
+              >
+                常见问题
+              </a>
+              <Link
+                to="/legal"
+                hash="privacy"
+                className="focus-ring rounded-lg transition-colors duration-300 ease-base hover:text-kumo-strong"
+              >
+                隐私政策
+              </Link>
+              <Link
+                to="/legal"
+                hash="terms"
+                className="focus-ring rounded-lg transition-colors duration-300 ease-base hover:text-kumo-strong"
+              >
+                服务条款
+              </Link>
+              <Link
+                to={footerAccountHref}
+                className="focus-ring rounded-lg transition-colors duration-300 ease-base hover:text-kumo-strong"
+              >
+                {footerAccountLabel}
+              </Link>
+            </nav>
           </div>
+
+          <p className="mt-6 text-xs text-kumo-placeholder">
+            © {currentYear} {siteName}。短链接与临时邮箱服务。
+          </p>
         </div>
       </footer>
-    </main>
+    </>
   )
 }

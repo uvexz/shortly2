@@ -24,7 +24,7 @@ bun run db:seed        # 本地种子：short.local + admin/user + 示例邮件
 ## 技术栈
 
 - TanStack Start + TanStack Router + TanStack Query + Vite + Nitro
-- Tailwind CSS v4 + Kumo UI 2（Base UI）+ Phosphor Icons + Inter
+- Tailwind CSS v4 + Kumo UI 2（Base UI）+ Phosphor Icons + Geist / Geist Mono
 - Drizzle ORM + `@libsql/client`（Turso / 本地 `file:local.db`）
 - Better Auth：邮箱 OTP、GitHub OAuth、Passkey；**不启用邮箱密码**
 

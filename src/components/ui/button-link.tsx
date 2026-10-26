@@ -3,10 +3,13 @@ import { Link } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 
 const variants = {
-  primary: 'bg-kumo-brand text-white hover:bg-kumo-brand-hover',
+  primary:
+    'focus-ring bg-kumo-contrast text-kumo-inverse hover:bg-kumo-contrast/90',
   secondary:
-    'bg-kumo-base text-kumo-default ring ring-kumo-line hover:bg-kumo-tint',
-  ghost: 'text-kumo-default hover:bg-kumo-tint',
+    'focus-ring bg-kumo-base text-kumo-strong ring-1 ring-kumo-line hover:bg-kumo-tint',
+  ghost:
+    'focus-ring text-kumo-subtle hover:bg-kumo-tint hover:text-kumo-strong',
+  inverse: 'focus-ring-inverse bg-white text-kumo-contrast hover:bg-white/90',
 }
 
 export function ButtonLink({
@@ -20,16 +23,15 @@ export function ButtonLink({
   children: ReactNode
   variant?: keyof typeof variants
   className?: string
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md'
 }) {
   return (
     <Link
       to={to as never}
       className={cn(
-        'app-focus inline-flex items-center justify-center gap-1.5 rounded-lg font-medium',
-        size === 'sm' && 'h-8 px-3 text-sm',
-        size === 'md' && 'h-9 px-3 text-base',
-        size === 'lg' && 'h-10 px-4 text-base',
+        'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-semibold transition duration-300 ease-base active:scale-[0.98]',
+        size === 'sm' && 'h-9 px-3 text-sm',
+        size === 'md' && 'h-10 px-3 text-base',
         variants[variant],
         className,
       )}
