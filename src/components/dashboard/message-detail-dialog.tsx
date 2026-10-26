@@ -66,22 +66,21 @@ export function MessageDetailDialog({
     <>
       <Dialog.Root open={open} onOpenChange={onOpenChange}>
         <Dialog size="xl" className="w-[calc(100vw-2rem)] p-0">
-          <div className="border-b border-neutral-100 p-5">
+          <div className="border-b border-kumo-hairline p-5">
             {query.isPending ? (
-              <div className="h-12 animate-pulse rounded-lg bg-neutral-100" />
+              <div className="h-12 animate-pulse rounded-lg bg-kumo-tint" />
             ) : query.isError ? (
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <Dialog.Title className="text-base font-semibold text-neutral-900">
+                  <Dialog.Title className="text-base font-semibold text-kumo-strong">
                     邮件加载失败
                   </Dialog.Title>
-                  <Dialog.Description className="mt-1 text-xs text-neutral-500">
+                  <Dialog.Description className="mt-1 text-xs text-kumo-subtle">
                     {getErrorMessage(query.error, '请稍后重试')}
                   </Dialog.Description>
                 </div>
                 <Button
                   variant="secondary"
-                  className="h-9 px-3 text-xs"
                   onClick={() => void query.refetch()}
                 >
                   重试
@@ -91,10 +90,10 @@ export function MessageDetailDialog({
               <>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <Dialog.Title className="break-words text-base font-semibold text-neutral-900">
+                    <Dialog.Title className="break-words text-lg font-semibold text-kumo-strong">
                       {detail.subject || '（无主题）'}
                     </Dialog.Title>
-                    <Dialog.Description className="mt-1 break-all text-xs text-neutral-500">
+                    <Dialog.Description className="mt-1 break-all text-sm text-kumo-subtle">
                       {getSenderLabel(detail.from, detail.fromName)} ·{' '}
                       {detail.from}
                     </Dialog.Description>
@@ -121,18 +120,18 @@ export function MessageDetailDialog({
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-1 gap-2 text-[11px] text-neutral-500 sm:grid-cols-2">
+                <div className="mt-4 grid grid-cols-1 gap-2 text-sm text-kumo-subtle sm:grid-cols-2">
                   <p className="truncate">
-                    <span className="text-neutral-400">收件地址：</span>
+                    <span className="text-kumo-placeholder">收件地址：</span>
                     {detail.mailboxEmailAddress}
                   </p>
                   <p className="truncate">
-                    <span className="text-neutral-400">接收时间：</span>
+                    <span className="text-kumo-placeholder">接收时间：</span>
                     {formatDateTime(detail.receivedAt)}
                   </p>
                   {detail.replyTo.length ? (
                     <p className="truncate">
-                      <span className="text-neutral-400">回复地址：</span>
+                      <span className="text-kumo-placeholder">回复地址：</span>
                       {detail.replyTo
                         .map((item) => item.address ?? item.name ?? '—')
                         .join(', ')}
@@ -140,7 +139,7 @@ export function MessageDetailDialog({
                   ) : null}
                   {detail.cc.length ? (
                     <p className="truncate">
-                      <span className="text-neutral-400">抄送：</span>
+                      <span className="text-kumo-placeholder">抄送：</span>
                       {detail.cc
                         .map((item) => item.address ?? item.name ?? '—')
                         .join(', ')}
@@ -149,8 +148,8 @@ export function MessageDetailDialog({
                 </div>
 
                 {detail.hasAttachments ? (
-                  <div className="mt-4 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
-                    <p className="flex items-center gap-1.5 text-[11px] font-medium text-neutral-700">
+                  <div className="mt-4 rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
+                    <p className="flex items-center gap-1.5 text-sm font-medium text-kumo-default">
                       <Paperclip className="size-3.5" />
                       附件 {detail.attachments.length} 个
                     </p>
@@ -158,7 +157,7 @@ export function MessageDetailDialog({
                       {detail.attachments.map((attachment) => (
                         <div
                           key={attachment.id}
-                          className="flex items-center justify-between gap-3 text-[10px] text-neutral-500"
+                          className="flex items-center justify-between gap-3 text-xs text-kumo-subtle"
                         >
                           <span className="truncate">
                             {attachment.filename}
@@ -185,7 +184,7 @@ export function MessageDetailDialog({
 
           {detail ? (
             <>
-              <div className="border-b border-neutral-100 px-5 pt-3">
+              <div className="border-b border-kumo-hairline px-5 pt-3">
                 <Tabs
                   tabs={tabItems}
                   value={tab}
@@ -197,7 +196,7 @@ export function MessageDetailDialog({
               <div className="max-h-[55vh] overflow-y-auto scrollbar-thin p-5">
                 {tab === 'text' ? (
                   detail.hasText ? (
-                    <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-6 text-neutral-800">
+                    <pre className="whitespace-pre-wrap break-words font-sans text-base leading-6 text-kumo-default">
                       {detail.text}
                     </pre>
                   ) : (
@@ -211,7 +210,7 @@ export function MessageDetailDialog({
                       title="邮件 HTML 内容"
                       sandbox=""
                       srcDoc={buildEmailIframeSrcDoc(detail.html)}
-                      className="h-[420px] w-full rounded-lg border border-neutral-200 bg-white"
+                      className="h-[420px] w-full rounded-lg bg-kumo-base ring ring-kumo-line"
                     />
                   ) : (
                     <EmptyText label="这封邮件没有 HTML 内容" />
@@ -227,7 +226,7 @@ export function MessageDetailDialog({
                         variant="secondary"
                       />
                     </div>
-                    <pre className="max-h-[420px] overflow-auto whitespace-pre-wrap break-all rounded-lg bg-neutral-950 p-4 pr-12 font-mono text-[11px] leading-5 text-neutral-200 scrollbar-thin">
+                    <pre className="max-h-[420px] overflow-auto whitespace-pre-wrap break-all rounded-lg bg-kumo-contrast p-4 pr-12 font-mono text-sm leading-5 text-kumo-inverse/85 scrollbar-thin">
                       {buildEmailSource(detail)}
                     </pre>
                   </div>
@@ -235,16 +234,16 @@ export function MessageDetailDialog({
 
                 {tab === 'headers' ? (
                   detail.headers.length ? (
-                    <div className="divide-y divide-neutral-100 rounded-lg border border-neutral-200">
+                    <div className="divide-y divide-kumo-hairline rounded-lg ring ring-kumo-line">
                       {detail.headers.map((header, index) => (
                         <div
                           key={`${header.name}-${index}`}
-                          className="grid grid-cols-1 gap-1 p-3 text-[11px] sm:grid-cols-[160px_minmax(0,1fr)]"
+                          className="grid grid-cols-1 gap-1 p-3 text-sm sm:grid-cols-[160px_minmax(0,1fr)]"
                         >
-                          <span className="font-medium text-neutral-500">
+                          <span className="font-medium text-kumo-subtle">
                             {header.name}
                           </span>
-                          <span className="break-all text-neutral-700">
+                          <span className="break-all text-kumo-default">
                             {header.value}
                           </span>
                         </div>
@@ -260,12 +259,8 @@ export function MessageDetailDialog({
             <LoadingBlock rows={5} className="max-h-80" />
           ) : null}
 
-          <div className="flex justify-end border-t border-neutral-100 p-4">
-            <Button
-              variant="secondary"
-              className="h-9 px-3 text-xs"
-              onClick={() => onOpenChange(false)}
-            >
+          <div className="flex justify-end border-t border-kumo-hairline p-4">
+            <Button variant="secondary" onClick={() => onOpenChange(false)}>
               关闭
             </Button>
           </div>
@@ -288,7 +283,7 @@ export function MessageDetailDialog({
 
 function EmptyText({ label }: { label: string }) {
   return (
-    <div className="flex h-32 flex-col items-center justify-center gap-2 text-xs text-neutral-400">
+    <div className="flex h-32 flex-col items-center justify-center gap-2 text-xs text-kumo-placeholder">
       <ArrowSquareOut className="size-5" />
       {label}
     </div>

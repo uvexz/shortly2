@@ -3,10 +3,10 @@ import { Link } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 
 const variants = {
-  primary: 'bg-neutral-900 text-white shadow-sm hover:bg-neutral-700',
+  primary: 'bg-kumo-brand text-white hover:bg-kumo-brand-hover',
   secondary:
-    'border border-neutral-200 bg-white text-neutral-800 hover:bg-neutral-50',
-  ghost: 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900',
+    'bg-kumo-base text-kumo-default ring ring-kumo-line hover:bg-kumo-tint',
+  ghost: 'text-kumo-default hover:bg-kumo-tint',
 }
 
 export function ButtonLink({
@@ -26,10 +26,10 @@ export function ButtonLink({
     <Link
       to={to as never}
       className={cn(
-        'app-focus inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors',
-        size === 'sm' && 'h-9 px-3 text-xs',
-        size === 'md' && 'h-10 px-4 text-xs',
-        size === 'lg' && 'h-11 px-5 text-sm',
+        'app-focus inline-flex items-center justify-center gap-1.5 rounded-lg font-medium',
+        size === 'sm' && 'h-8 px-3 text-sm',
+        size === 'md' && 'h-9 px-3 text-base',
+        size === 'lg' && 'h-10 px-4 text-base',
         variants[variant],
         className,
       )}

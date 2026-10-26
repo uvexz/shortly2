@@ -22,17 +22,17 @@ export function Logo({
       )}
       aria-label={`${siteName} 首页`}
     >
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-neutral-900 text-white">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--text-color-kumo-brand)] text-white">
         <LinkSimple className="size-[18px]" weight="bold" />
       </span>
       {compact ? null : (
         <>
-          <span className="truncate text-xl font-bold tracking-tight text-neutral-900">
+          <span className="truncate text-xl font-semibold text-kumo-strong">
             {siteName}
           </span>
           {showTools ? (
-            <span className="text-[10px] font-medium tracking-[0.12em] text-neutral-400">
-              TOOLS
+            <span className="rounded-md bg-kumo-tint px-1.5 py-0.5 text-xs font-medium text-kumo-subtle">
+              工具
             </span>
           ) : null}
         </>

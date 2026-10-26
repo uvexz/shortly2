@@ -12,7 +12,7 @@ export function LoadingBlock({
       {Array.from({ length: rows }).map((_, index) => (
         <div
           key={index}
-          className="h-10 animate-pulse rounded-lg bg-neutral-100"
+          className="h-10 animate-pulse rounded-lg bg-kumo-tint"
           style={{ width: `${100 - index * 8}%` }}
         />
       ))}
@@ -26,7 +26,7 @@ export function TableLoading({ rows = 5 }: { rows?: number }) {
       {Array.from({ length: rows }).map((_, index) => (
         <div
           key={index}
-          className="h-12 animate-pulse rounded-lg bg-neutral-100"
+          className="h-12 animate-pulse rounded-lg bg-kumo-tint"
         />
       ))}
     </div>

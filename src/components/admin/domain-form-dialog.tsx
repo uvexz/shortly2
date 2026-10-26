@@ -157,17 +157,17 @@ export function DomainFormDialog({
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog size="lg" className="w-[calc(100vw-2rem)] p-0">
         <form onSubmit={handleSubmit}>
-          <div className="border-b border-neutral-100 p-5">
+          <div className="border-b border-kumo-hairline p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <Dialog.Title className="text-lg font-semibold tracking-tight text-neutral-900">
+                <Dialog.Title className="text-lg font-semibold text-kumo-strong">
                   {domain ? '编辑域名' : '添加域名'}
                 </Dialog.Title>
-                <Dialog.Description className="mt-1 text-xs leading-5 text-neutral-500">
+                <Dialog.Description className="mt-1 text-sm leading-5 text-kumo-subtle">
                   配置域名可用于短链接、临时邮箱，或两者同时启用。
                 </Dialog.Description>
               </div>
-              <span className="flex size-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+              <span className="flex size-9 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
                 <GlobeHemisphereWest className="size-4" />
               </span>
             </div>
@@ -183,9 +183,10 @@ export function DomainFormDialog({
               description="只填写主机名，不要包含协议、路径或端口。"
               disabled={pending}
               autoFocus
+              className="w-full"
             />
 
-            <div className="space-y-3 rounded-xl border border-neutral-200 p-3">
+            <div className="space-y-3 rounded-lg p-3 ring ring-kumo-line">
               <Switch
                 label="启用短链接"
                 variant="neutral"
@@ -206,11 +207,12 @@ export function DomainFormDialog({
                     update('shortLinkMinSlugLength', event.target.value)
                   }
                   disabled={pending}
+                  className="w-full"
                 />
               ) : null}
             </div>
 
-            <div className="space-y-3 rounded-xl border border-neutral-200 p-3">
+            <div className="space-y-3 rounded-lg p-3 ring ring-kumo-line">
               <Switch
                 label="启用临时邮箱"
                 variant="neutral"
@@ -231,11 +233,12 @@ export function DomainFormDialog({
                     update('tempEmailMinLocalPartLength', event.target.value)
                   }
                   disabled={pending}
+                  className="w-full"
                 />
               ) : null}
             </div>
 
-            <div className="space-y-3 rounded-xl border border-neutral-200 p-3">
+            <div className="space-y-3 rounded-lg p-3 ring ring-kumo-line">
               <Switch
                 label="域名启用中"
                 variant="neutral"
@@ -264,22 +267,21 @@ export function DomainFormDialog({
             </div>
 
             {error ? (
-              <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">
+              <p className="rounded-lg bg-kumo-danger-tint px-3 py-2 text-sm text-kumo-danger">
                 {error}
               </p>
             ) : null}
 
-            <p className="text-[10px] leading-4 text-neutral-400">
+            <p className="text-sm leading-5 text-kumo-placeholder">
               v2 不包含 DNS
               验证流程；请先在域名服务商完成解析并配置入站邮件路由，再将域名添加到此处。
             </p>
           </div>
 
-          <div className="flex justify-end gap-2 border-t border-neutral-100 p-4">
+          <div className="flex justify-end gap-2 border-t border-kumo-hairline p-4">
             <Button
               type="button"
               variant="secondary"
-              className="h-9 px-3 text-xs"
               onClick={() => onOpenChange(false)}
               disabled={pending}
             >
@@ -288,7 +290,6 @@ export function DomainFormDialog({
             <Button
               type="submit"
               variant="primary"
-              className="h-9 px-3 text-xs"
               loading={pending}
               disabled={pending}
             >

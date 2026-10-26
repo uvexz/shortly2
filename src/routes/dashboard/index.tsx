@@ -79,9 +79,21 @@ function DashboardOverview() {
       else counts.healthy += 1
     }
     return [
-      { label: '正常', value: counts.healthy, color: '#262626' },
-      { label: '即将到期', value: counts.expiring, color: '#a3a3a3' },
-      { label: '已过期', value: counts.expired, color: '#d4d4d4' },
+      {
+        label: '正常',
+        value: counts.healthy,
+        color: 'var(--color-kumo-success)',
+      },
+      {
+        label: '即将到期',
+        value: counts.expiring,
+        color: 'var(--color-kumo-warning)',
+      },
+      {
+        label: '已过期',
+        value: counts.expired,
+        color: 'var(--color-kumo-danger)',
+      },
     ]
   }, [links])
 
@@ -122,17 +134,15 @@ function DashboardOverview() {
           <>
             <Button
               variant="primary"
-              className="h-10 gap-2 px-4 text-xs"
               onClick={openCreateLink}
-              icon={<Plus className="size-3.5" weight="bold" />}
+              icon={<Plus className="size-4" weight="bold" />}
             >
               创建短链接
             </Button>
             <Button
               variant="secondary"
-              className="h-10 gap-2 px-4 text-xs"
               onClick={openCreateMailbox}
-              icon={<Plus className="size-3.5" weight="bold" />}
+              icon={<Plus className="size-4" weight="bold" />}
             >
               生成临时邮箱
             </Button>
@@ -141,14 +151,15 @@ function DashboardOverview() {
       />
 
       {hasQueryError ? (
-        <div className="mb-4 flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 p-3 sm:flex-row sm:items-center">
-          <div className="flex min-w-0 items-start gap-2 text-xs text-red-700">
+        <div className="mb-4 flex flex-col gap-3 rounded-lg bg-kumo-danger-tint p-3 text-kumo-danger sm:flex-row sm:items-center">
+          <div className="flex min-w-0 items-start gap-2 text-sm">
             <WarningCircle className="mt-0.5 size-4 shrink-0" />
             <span>部分仪表盘数据加载失败，统计可能不完整。</span>
           </div>
           <Button
             variant="secondary"
-            className="h-8 shrink-0 px-2.5 text-[10px] sm:ml-auto"
+            size="sm"
+            className="shrink-0 sm:ml-auto"
             onClick={() => {
               void recentLinks.refetch()
               void mailboxes.refetch()
@@ -196,18 +207,18 @@ function DashboardOverview() {
       <div className="mt-4 grid grid-cols-1 gap-4 2xl:grid-cols-[minmax(0,1fr)_320px]">
         <div className="min-w-0 space-y-4">
           <Panel>
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 px-4 py-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-kumo-hairline px-4 py-3">
               <div>
-                <h2 className="text-sm font-semibold text-neutral-900">
+                <h2 className="text-base font-semibold text-kumo-strong">
                   最近链接表现
                 </h2>
-                <p className="mt-0.5 text-[10px] text-neutral-400">
+                <p className="mt-1 text-xs text-kumo-placeholder">
                   基于最近 {links.length || 0} 条短链接的真实点击数据
                 </p>
               </div>
               <Link
                 to="/dashboard/analytics"
-                className="text-xs text-neutral-500 transition-colors hover:text-neutral-900"
+                className="text-sm font-medium text-kumo-link hover:underline"
               >
                 访问分析 →
               </Link>
@@ -215,10 +226,10 @@ function DashboardOverview() {
             <div className="grid grid-cols-1 gap-5 p-4 lg:grid-cols-[minmax(0,1fr)_210px]">
               <div>
                 <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-neutral-900">
+                  <h3 className="text-base font-semibold text-kumo-strong">
                     链接访问排行
                   </h3>
-                  <span className="text-[10px] text-neutral-400">
+                  <span className="text-xs text-kumo-placeholder">
                     {sampled ? '最近 500 条样本' : '全部链接'}
                   </span>
                 </div>
@@ -228,8 +239,8 @@ function DashboardOverview() {
                   className="min-h-52 content-center"
                 />
               </div>
-              <div className="border-t border-neutral-100 pt-4 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0">
-                <h3 className="text-sm font-semibold text-neutral-900">
+              <div className="border-t border-kumo-hairline pt-4 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0">
+                <h3 className="text-base font-semibold text-kumo-strong">
                   链接状态构成
                 </h3>
                 <div className="mt-5">
@@ -241,7 +252,7 @@ function DashboardOverview() {
               </div>
             </div>
             {sampled ? (
-              <p className="border-t border-neutral-100 px-4 py-2.5 text-[10px] text-neutral-400">
+              <p className="border-t border-kumo-hairline px-4 py-2.5 text-xs text-kumo-placeholder">
                 为保证零后端新增，图表只统计最近最多 500
                 条短链接；完整数据请在链接管理中分页查看。
               </p>
@@ -254,7 +265,7 @@ function DashboardOverview() {
               action={
                 <Link
                   to="/dashboard/links"
-                  className="text-xs text-neutral-500 transition-colors hover:text-neutral-900"
+                  className="text-sm font-medium text-kumo-link hover:underline"
                 >
                   查看全部 →
                 </Link>
@@ -265,11 +276,7 @@ function DashboardOverview() {
               loading={recentLinks.isPending}
               onViewLogs={setLogsLink}
               emptyAction={
-                <Button
-                  variant="primary"
-                  className="h-9 px-3 text-xs"
-                  onClick={openCreateLink}
-                >
+                <Button variant="primary" onClick={openCreateLink}>
                   创建短链接
                 </Button>
               }
@@ -280,12 +287,12 @@ function DashboardOverview() {
         <aside className="space-y-4">
           <Panel className="p-4">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-neutral-900">
+              <h2 className="text-base font-semibold text-kumo-strong">
                 最近动态
               </h2>
               <Link
                 to="/dashboard/inbox"
-                className="text-[10px] text-neutral-400 hover:text-neutral-700"
+                className="text-xs font-medium text-kumo-link hover:underline"
               >
                 全部 →
               </Link>
@@ -295,20 +302,20 @@ function DashboardOverview() {
 
           <Panel className="p-4">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-neutral-900">
+              <h2 className="text-base font-semibold text-kumo-strong">
                 临时邮箱
               </h2>
               <Link
                 to="/dashboard/inbox"
-                className="text-[10px] text-neutral-400 hover:text-neutral-700"
+                className="text-xs font-medium text-kumo-link hover:underline"
               >
                 收件箱 →
               </Link>
             </div>
             {latestMailbox ? (
-              <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-3">
+              <div className="rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="truncate text-xs font-medium text-neutral-900">
+                  <span className="truncate text-sm font-medium text-kumo-default">
                     {latestMailbox.emailAddress}
                   </span>
                   <CopyButton
@@ -317,13 +324,13 @@ function DashboardOverview() {
                     variant="secondary"
                   />
                 </div>
-                <div className="mt-2 flex items-center justify-between text-[10px] text-neutral-500">
+                <div className="mt-2 flex items-center justify-between text-xs text-kumo-subtle">
                   <span>{latestMailbox.messageCount} 封邮件</span>
                   <span>{latestMailbox.unreadCount} 封未读</span>
                 </div>
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-neutral-200">
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-kumo-fill">
                   <div
-                    className="h-full rounded-full bg-neutral-700"
+                    className="h-full rounded-full bg-kumo-brand"
                     style={{
                       width: `${
                         latestMailbox.messageCount
@@ -349,30 +356,32 @@ function DashboardOverview() {
             )}
             <Button
               variant="secondary"
-              className="mt-3 h-9 w-full gap-2 text-xs"
+              className="mt-3 w-full"
               onClick={openCreateMailbox}
-              icon={<Plus className="size-3.5" />}
+              icon={<Plus className="size-4" />}
             >
               生成新邮箱
             </Button>
-            <p className="mt-3 text-[10px] leading-4 text-neutral-400">
+            <p className="mt-3 text-xs leading-4 text-kumo-placeholder">
               临时邮箱用于接收邮件，请勿用于重要账户或敏感信息。
             </p>
           </Panel>
 
-          <Panel className="border-neutral-900 bg-neutral-900 p-4 text-white">
+          <Panel className="bg-kumo-info-tint p-4">
             <div className="flex items-center gap-2">
-              <span className="flex size-8 items-center justify-center rounded-lg bg-white/10">
+              <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-base text-kumo-link ring ring-kumo-line">
                 <ShieldCheck className="size-4" />
               </span>
-              <h2 className="text-xs font-semibold">隐私优先的工具体验</h2>
+              <h2 className="text-base font-semibold text-kumo-strong">
+                隐私优先的工具体验
+              </h2>
             </div>
-            <p className="mt-3 text-[11px] leading-5 text-neutral-300">
+            <p className="mt-3 text-sm leading-6 text-kumo-default/80">
               集中管理短链接与临时邮箱，让日常网络操作更简单。你的链接数据只属于你。
             </p>
             <Link
               to="/dashboard/settings"
-              className="mt-3 inline-block text-[11px] text-white underline decoration-white/40 underline-offset-4"
+              className="mt-3 inline-block text-sm font-medium text-kumo-link hover:underline"
             >
               查看账户设置
             </Link>
@@ -382,7 +391,7 @@ function DashboardOverview() {
 
       <section className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Panel className="p-4">
-          <h2 className="text-sm font-semibold text-neutral-900">快速创建</h2>
+          <h2 className="text-base font-semibold text-kumo-strong">快速创建</h2>
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <QuickAction
               icon={<LinkSimple className="size-5" />}
@@ -399,7 +408,7 @@ function DashboardOverview() {
           </div>
         </Panel>
         <Panel className="p-4">
-          <h2 className="text-sm font-semibold text-neutral-900">快捷入口</h2>
+          <h2 className="text-base font-semibold text-kumo-strong">快捷入口</h2>
           <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
             <Shortcut
               icon={<ChartLineUp className="size-4" />}
@@ -425,7 +434,7 @@ function DashboardOverview() {
         </Panel>
       </section>
 
-      <p className="mt-5 text-[10px] text-neutral-400">
+      <p className="mt-5 text-xs text-kumo-placeholder">
         可用短链域名 {publicDomains.data?.shortDomains.length ?? 0} 个 ·
         可用邮箱域名 {publicDomains.data?.emailDomains.length ?? 0} 个 ·
         数据刷新于 {formatRelativeTime(new Date())}
@@ -457,20 +466,20 @@ function QuickAction({
     <button
       type="button"
       onClick={onClick}
-      className="group flex items-center gap-3 rounded-lg border border-neutral-200 p-3 text-left transition-colors hover:border-neutral-400 hover:bg-neutral-50"
+      className="group flex items-center gap-3 rounded-lg p-3 text-left ring ring-kumo-line hover:bg-kumo-tint hover:ring-kumo-interact"
     >
-      <span className="flex size-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+      <span className="flex size-10 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
         {icon}
       </span>
       <span className="min-w-0 flex-1">
-        <strong className="block text-xs font-medium text-neutral-900">
+        <strong className="block text-sm font-medium text-kumo-default">
           {title}
         </strong>
-        <small className="mt-1 block text-[10px] text-neutral-500">
+        <small className="mt-1 block text-xs text-kumo-subtle">
           {description}
         </small>
       </span>
-      <ArrowRight className="size-4 text-neutral-400 transition-transform group-hover:translate-x-0.5" />
+      <ArrowRight className="size-4 text-kumo-placeholder transition-transform group-hover:translate-x-0.5" />
     </button>
   )
 }
@@ -487,12 +496,12 @@ function Shortcut({
   return (
     <Link
       to={to as never}
-      className="rounded-lg border border-neutral-100 p-3 text-center transition-colors hover:bg-neutral-50"
+      className="rounded-lg p-3 text-center ring ring-kumo-hairline hover:bg-kumo-tint"
     >
-      <span className="mx-auto flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+      <span className="mx-auto flex size-8 items-center justify-center rounded-lg bg-kumo-tint text-kumo-subtle">
         {icon}
       </span>
-      <span className="mt-2 block text-[11px] text-neutral-700">{label}</span>
+      <span className="mt-2 block text-sm text-kumo-default">{label}</span>
     </Link>
   )
 }

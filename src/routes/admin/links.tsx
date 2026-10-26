@@ -74,7 +74,7 @@ function AdminLinksPage() {
       />
 
       <Panel className="overflow-hidden">
-        <div className="flex flex-col gap-3 border-b border-neutral-100 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border-b border-kumo-hairline p-4 sm:flex-row sm:items-center sm:justify-between">
           <form
             className="flex flex-1 items-center gap-2"
             onSubmit={(event) => {
@@ -86,27 +86,22 @@ function AdminLinksPage() {
             }}
           >
             <div className="relative flex-1 sm:max-w-sm">
-              <MagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
+              <MagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-kumo-placeholder" />
               <Input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="在当前页筛选..."
-                className="pl-9"
+                className="w-full pl-9"
                 aria-label="筛选当前页链接"
               />
             </div>
-            <Button
-              type="submit"
-              variant="secondary"
-              className="h-10 px-3 text-xs"
-            >
+            <Button type="submit" variant="secondary">
               筛选
             </Button>
             {q ? (
               <Button
                 type="button"
                 variant="ghost"
-                className="h-10 px-3 text-xs"
                 onClick={() => {
                   setQuery('')
                   void navigate({
@@ -121,7 +116,6 @@ function AdminLinksPage() {
           </form>
           <Button
             variant="ghost"
-            className="h-9 gap-2 px-3 text-xs"
             onClick={() => void linksQuery.refetch()}
             icon={<ArrowsClockwise className="size-3.5" />}
           >
@@ -130,7 +124,7 @@ function AdminLinksPage() {
         </div>
 
         {q ? (
-          <div className="border-b border-neutral-100 bg-neutral-50 px-4 py-2 text-[10px] text-neutral-500">
+          <div className="border-b border-kumo-hairline bg-kumo-elevated px-4 py-2 text-xs text-kumo-subtle">
             管理端接口不支持搜索参数，当前仅在本页{' '}
             {linksQuery.data?.data.length ?? 0} 条记录中筛选。
           </div>
@@ -143,7 +137,6 @@ function AdminLinksPage() {
             action={
               <Button
                 variant="secondary"
-                className="h-9 px-3 text-xs"
                 onClick={() => void linksQuery.refetch()}
               >
                 重试

@@ -157,19 +157,19 @@ export function AuthForm({
   if (step === 'add-passkey') {
     return (
       <div className="flex flex-col items-center gap-6 py-2 text-center">
-        <span className="flex size-12 items-center justify-center rounded-xl bg-neutral-100 text-neutral-900">
+        <span className="flex size-12 items-center justify-center rounded-lg bg-kumo-success-tint text-kumo-success">
           <CheckCircle className="size-6" weight="fill" />
         </span>
         <div>
-          <p className="text-lg font-semibold text-neutral-900">账户创建成功</p>
-          <p className="mt-2 max-w-xs text-sm leading-6 text-neutral-500">
+          <p className="text-lg font-semibold text-kumo-strong">账户创建成功</p>
+          <p className="mt-2 max-w-xs text-base leading-6 text-kumo-subtle">
             保存 Passkey，以便下次无需验证码即可立即登录。
           </p>
         </div>
         <div className="flex w-full flex-col gap-2">
           <Button
             variant="primary"
-            className="h-10 w-full gap-2 text-xs"
+            className="w-full"
             loading={loading}
             onClick={() => void handleAddPasskey()}
             icon={<Key className="size-4" />}
@@ -178,7 +178,7 @@ export function AuthForm({
           </Button>
           <Button
             variant="ghost"
-            className="h-10 w-full text-xs"
+            className="w-full"
             disabled={loading}
             onClick={() => void finish()}
           >
@@ -191,7 +191,7 @@ export function AuthForm({
 
   if (!enableEmail && !hasSecondaryProviders) {
     return (
-      <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-xs leading-5 text-neutral-500">
+      <div className="rounded-lg bg-kumo-elevated p-4 text-sm leading-5 text-kumo-subtle ring ring-kumo-hairline">
         当前没有启用可用的登录方式。请稍后再试，或联系站点管理员。
       </div>
     )
@@ -205,12 +205,12 @@ export function AuthForm({
             <div>
               <label
                 htmlFor="auth-email"
-                className="mb-2 block text-xs font-medium text-neutral-700"
+                className="mb-2 block text-sm font-medium text-kumo-default"
               >
                 电子邮箱地址
               </label>
               <div className="relative">
-                <EnvelopeSimple className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
+                <EnvelopeSimple className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-kumo-placeholder" />
                 <Input
                   id="auth-email"
                   type="email"
@@ -230,7 +230,7 @@ export function AuthForm({
             </div>
             <Button
               variant="primary"
-              className="h-10 w-full gap-2 text-xs"
+              className="w-full"
               loading={loading}
               disabled={loading || !email.trim()}
               onClick={() => void handleSendOtp()}
@@ -244,13 +244,13 @@ export function AuthForm({
             <div>
               <label
                 htmlFor="auth-otp"
-                className="mb-2 block text-xs font-medium text-neutral-700"
+                className="mb-2 block text-sm font-medium text-kumo-default"
               >
                 输入验证码
               </label>
-              <div className="mb-3 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
-                <p className="text-[10px] text-neutral-400">验证码已发送至</p>
-                <p className="mt-1 break-all text-xs font-medium text-neutral-800">
+              <div className="mb-3 rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
+                <p className="text-xs text-kumo-placeholder">验证码已发送至</p>
+                <p className="mt-1 break-all text-sm font-medium text-kumo-default">
                   {email}
                 </p>
               </div>
@@ -275,7 +275,7 @@ export function AuthForm({
             </div>
             <Button
               variant="primary"
-              className="h-10 w-full text-xs"
+              className="w-full"
               loading={loading}
               disabled={loading || otp.length < 6}
               onClick={() => void handleVerifyOtp()}
@@ -286,7 +286,7 @@ export function AuthForm({
               <Button
                 type="button"
                 variant="ghost"
-                className="h-9 gap-2 px-2 text-xs"
+                className="gap-2 px-2"
                 disabled={loading}
                 onClick={() => {
                   setStep('email')
@@ -299,7 +299,7 @@ export function AuthForm({
               <Button
                 type="button"
                 variant="ghost"
-                className="h-9 px-2 text-xs"
+                className="px-2"
                 disabled={loading}
                 onClick={() => void handleSendOtp()}
               >
@@ -312,14 +312,14 @@ export function AuthForm({
 
       {step === 'email' && enableEmail && hasSecondaryProviders ? (
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 py-1">
-          <span className="h-px bg-neutral-200" />
-          <span className="text-[10px] text-neutral-400">或使用其他方式</span>
-          <span className="h-px bg-neutral-200" />
+          <span className="h-px bg-kumo-fill" />
+          <span className="text-xs text-kumo-placeholder">或使用其他方式</span>
+          <span className="h-px bg-kumo-fill" />
         </div>
       ) : null}
 
       {!enableEmail && !enableGithub && hasPasskeyLogin ? (
-        <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-3 text-[11px] leading-5 text-neutral-500">
+        <div className="rounded-lg bg-kumo-elevated p-3 text-sm leading-5 text-kumo-subtle ring ring-kumo-hairline">
           当前站点仅启用了 Passkey 登录。请使用已注册通行密钥的设备，并在 HTTPS
           或 localhost 环境下继续。
         </div>
@@ -336,7 +336,7 @@ export function AuthForm({
           {enableGithub ? (
             <Button
               variant="secondary"
-              className="h-10 w-full gap-2 text-xs"
+              className="w-full"
               disabled={loading}
               onClick={() => void handleGithub()}
               icon={<GithubLogo className="size-4" />}
@@ -347,7 +347,7 @@ export function AuthForm({
           {hasPasskeyLogin ? (
             <Button
               variant="secondary"
-              className="h-10 w-full gap-2 text-xs"
+              className="w-full"
               disabled={loading}
               onClick={() => void handlePasskeyLogin()}
               icon={<Fingerprint className="size-4" />}

@@ -114,29 +114,29 @@ export function CreateLinkDialog({
         <div className="p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <Dialog.Title className="text-lg font-semibold tracking-tight text-neutral-900">
+              <Dialog.Title className="text-lg font-semibold text-kumo-strong">
                 {createdUrl ? '短链接已生成' : '创建短链接'}
               </Dialog.Title>
-              <Dialog.Description className="mt-1 text-xs leading-5 text-neutral-500">
+              <Dialog.Description className="mt-1 text-sm leading-5 text-kumo-subtle">
                 {createdUrl
                   ? '复制链接即可开始分享。'
                   : '将长网址转换为简洁、易分享的链接。'}
               </Dialog.Description>
             </div>
-            <span className="flex size-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+            <span className="flex size-9 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
               <LinkSimple className="size-4" weight="bold" />
             </span>
           </div>
 
           {createdUrl ? (
             <div className="mt-5 space-y-4">
-              <div className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-neutral-50 p-3">
-                <CheckCircle className="size-5 shrink-0 text-emerald-600" />
+              <div className="flex items-center gap-3 rounded-lg bg-kumo-success-tint p-3 ring ring-kumo-hairline">
+                <CheckCircle className="size-5 shrink-0 text-kumo-success" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-neutral-900">
+                  <p className="truncate text-sm font-medium text-kumo-default">
                     {createdUrl}
                   </p>
-                  <p className="mt-0.5 truncate text-[11px] text-neutral-500">
+                  <p className="mt-0.5 truncate text-sm text-kumo-subtle">
                     {url}
                   </p>
                 </div>
@@ -147,11 +147,10 @@ export function CreateLinkDialog({
                   showLabel
                 />
               </div>
-              <div className="flex justify-end gap-2 border-t border-neutral-100 pt-4">
+              <div className="flex justify-end gap-2 border-t border-kumo-hairline pt-4">
                 <Button
                   type="button"
                   variant="secondary"
-                  className="h-9 px-3 text-xs"
                   onClick={() => {
                     setCreatedUrl(null)
                     setUrl('')
@@ -164,7 +163,6 @@ export function CreateLinkDialog({
                 <Button
                   type="button"
                   variant="primary"
-                  className="h-9 px-3 text-xs"
                   onClick={() => handleClose(false)}
                 >
                   完成
@@ -183,10 +181,11 @@ export function CreateLinkDialog({
                 onChange={(event) => setUrl(event.target.value)}
                 disabled={createLink.isPending}
                 autoFocus
+                className="w-full"
               />
 
               <div>
-                <label className="mb-2 block text-xs font-medium text-neutral-700">
+                <label className="mb-2 block text-sm font-medium text-kumo-default">
                   短链接域名与后缀
                 </label>
                 <div className="flex flex-col gap-2 sm:flex-row">
@@ -199,13 +198,13 @@ export function CreateLinkDialog({
                     placeholder={domains.length ? '选择域名' : '暂无可用域名'}
                     disabled={!domains.length || createLink.isPending}
                   />
-                  <div className="flex min-w-0 flex-1 items-center rounded-lg border border-neutral-200 bg-white px-3">
-                    <span className="truncate text-xs text-neutral-400">
+                  <div className="flex min-w-0 flex-1 items-center rounded-lg bg-kumo-base ring ring-kumo-line px-3">
+                    <span className="truncate text-sm text-kumo-placeholder">
                       {domain || 'domain'}
                     </span>
-                    <span className="px-1 text-xs text-neutral-300">/</span>
+                    <span className="px-1 text-sm text-kumo-inactive">/</span>
                     <input
-                      className="h-10 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-neutral-400"
+                      className="h-10 min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-kumo-placeholder"
                       placeholder="随机生成"
                       value={customSlug}
                       onChange={(event) =>
@@ -220,11 +219,11 @@ export function CreateLinkDialog({
                   </div>
                 </div>
                 {domains.length ? (
-                  <p className="mt-1.5 text-[10px] text-neutral-400">
+                  <p className="mt-1.5 text-xs text-kumo-placeholder">
                     留空将自动生成 5 位后缀；可用字符：字母、数字、-、_
                   </p>
                 ) : (
-                  <p className="mt-1.5 text-[10px] text-amber-600">
+                  <p className="mt-1.5 text-xs text-kumo-warning">
                     管理员尚未启用短链域名，暂时无法创建。
                   </p>
                 )}
@@ -247,20 +246,20 @@ export function CreateLinkDialog({
                   value={maxClicks}
                   onChange={(event) => setMaxClicks(event.target.value)}
                   disabled={createLink.isPending}
+                  className="w-full"
                 />
               </div>
 
               {error ? (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">
+                <p className="rounded-lg bg-kumo-danger-tint px-3 py-2 text-sm text-kumo-danger">
                   {error}
                 </p>
               ) : null}
 
-              <div className="flex justify-end gap-2 border-t border-neutral-100 pt-4">
+              <div className="flex justify-end gap-2 border-t border-kumo-hairline pt-4">
                 <Button
                   type="button"
                   variant="secondary"
-                  className="h-9 px-3 text-xs"
                   onClick={() => handleClose(false)}
                   disabled={createLink.isPending}
                 >
@@ -269,7 +268,6 @@ export function CreateLinkDialog({
                 <Button
                   type="submit"
                   variant="primary"
-                  className="h-9 gap-2 px-3 text-xs"
                   loading={createLink.isPending}
                   disabled={!domains.length || createLink.isPending}
                   icon={<ArrowRight className="size-3.5" />}

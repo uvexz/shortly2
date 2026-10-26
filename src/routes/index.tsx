@@ -52,24 +52,18 @@ function LandingPage() {
   ]
 
   return (
-    <main className="min-h-screen bg-[#f7f7f6] text-neutral-900 selection:bg-neutral-900 selection:text-white">
-      <header className="sticky top-0 z-30 border-b border-neutral-200/80 bg-[#f7f7f6]/90 backdrop-blur">
+    <main className="min-h-screen bg-kumo-canvas text-kumo-default selection:bg-kumo-brand selection:text-white">
+      <header className="sticky top-0 z-30 border-b border-kumo-line bg-kumo-canvas/90 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <Logo siteName={siteName} />
-          <nav className="hidden items-center gap-6 text-xs text-neutral-500 md:flex">
-            <a
-              href="#features"
-              className="transition-colors hover:text-neutral-900"
-            >
+          <nav className="hidden items-center gap-6 text-sm text-kumo-subtle md:flex">
+            <a href="#features" className="hover:text-kumo-strong">
               功能
             </a>
-            <a href="#api" className="transition-colors hover:text-neutral-900">
+            <a href="#api" className="hover:text-kumo-strong">
               API
             </a>
-            <a
-              href="#security"
-              className="transition-colors hover:text-neutral-900"
-            >
+            <a href="#security" className="hover:text-kumo-strong">
               安全
             </a>
           </nav>
@@ -100,23 +94,23 @@ function LandingPage() {
           className="pointer-events-none absolute inset-0 opacity-[0.35]"
           style={{
             backgroundImage:
-              'radial-gradient(circle at 1px 1px, #d4d4d4 1px, transparent 0)',
+              'radial-gradient(circle at 1px 1px, var(--color-kumo-interact) 1px, transparent 0)',
             backgroundSize: '24px 24px',
             maskImage: 'linear-gradient(to bottom, black, transparent 75%)',
           }}
         />
         <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(340px,420px)] lg:gap-16 lg:px-8 lg:py-24">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-[10px] font-medium text-neutral-500">
-              <span className="size-1.5 rounded-full bg-neutral-900" />
+            <div className="inline-flex items-center gap-2 rounded-full bg-kumo-base px-3 py-1.5 text-xs font-medium text-kumo-subtle ring ring-kumo-line">
+              <span className="size-1.5 rounded-full bg-[var(--text-color-kumo-brand)]" />
               短链接 / 临时邮箱 / API
             </div>
-            <h1 className="mt-6 max-w-2xl text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="mt-6 max-w-2xl text-4xl font-semibold leading-[1.08] text-kumo-strong sm:text-5xl lg:text-6xl">
               更短的分享链接，
               <br />
               一次性的收件地址。
             </h1>
-            <p className="mt-5 max-w-xl text-sm leading-7 text-neutral-500 sm:text-base">
+            <p className="mt-5 max-w-xl text-base leading-7 text-kumo-subtle">
               需要公开分享时，生成可管理、带访问记录的短链接；需要接收验证码或测试邮件时，用临时邮箱隔离你的主邮箱。所有能力集中在一个安静、可控的工作台里。
             </p>
 
@@ -130,7 +124,7 @@ function LandingPage() {
               </ButtonLink>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] text-neutral-400">
+            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-kumo-placeholder">
               <span className="inline-flex items-center gap-1.5">
                 <CheckCircle className="size-3.5" />
                 GitHub OAuth · Passkey · 邮箱验证码
@@ -156,14 +150,12 @@ function LandingPage() {
       >
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-400">
-              核心能力
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+            <p className="text-xs font-medium text-kumo-subtle">核心能力</p>
+            <h2 className="mt-2 text-2xl font-semibold text-kumo-strong">
               一个工作台，覆盖日常分享与收件。
             </h2>
           </div>
-          <p className="max-w-md text-xs leading-5 text-neutral-500">
+          <p className="max-w-md text-sm leading-6 text-kumo-subtle">
             不追求花哨的仪表盘，只把创建、复制、检查、回收这些动作做得直接可靠。
           </p>
         </div>
@@ -175,18 +167,18 @@ function LandingPage() {
               <Link
                 key={feature.title}
                 to={feature.href as never}
-                className="group rounded-xl border border-neutral-200 bg-white p-5 app-shadow transition-colors hover:border-neutral-400"
+                className="group rounded-xl bg-kumo-base p-5 shadow-xs ring ring-kumo-line hover:ring-kumo-interact"
               >
-                <span className="flex size-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-800">
+                <span className="flex size-10 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
                   <Icon className="size-5" />
                 </span>
-                <h3 className="mt-4 text-sm font-semibold text-neutral-900">
+                <h3 className="mt-4 text-base font-semibold text-kumo-strong">
                   {feature.title}
                 </h3>
-                <p className="mt-2 text-xs leading-6 text-neutral-500">
+                <p className="mt-2 text-sm leading-6 text-kumo-subtle">
                   {feature.description}
                 </p>
-                <span className="mt-4 inline-flex items-center gap-1 text-[11px] font-medium text-neutral-700">
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-kumo-link">
                   {feature.action}
                   <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
                 </span>
@@ -200,15 +192,15 @@ function LandingPage() {
         id="api"
         className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8"
       >
-        <div className="grid grid-cols-1 gap-6 rounded-2xl border border-neutral-200 bg-white p-5 app-shadow sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
+        <div className="grid grid-cols-1 gap-6 rounded-xl bg-kumo-base p-5 shadow-xs ring ring-kumo-line sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
           <div>
-            <span className="flex size-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-800">
+            <span className="flex size-10 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
               <Key className="size-5" />
             </span>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight">
+            <h2 className="mt-4 text-2xl font-semibold text-kumo-strong">
               用 API 把短链接接进你的工作流。
             </h2>
-            <p className="mt-3 text-xs leading-6 text-neutral-500">
+            <p className="mt-3 text-sm leading-6 text-kumo-subtle">
               创建 API Key 后，可调用 /v1/shorten、/v1/emails 等接口。支持
               Bearer 头、ShareX 自定义上传器和 Addy.io 兼容别名。
             </p>
@@ -267,13 +259,13 @@ function LandingPage() {
             return (
               <div
                 key={item.title}
-                className="rounded-xl border border-neutral-200 bg-white p-5 app-shadow"
+                className="rounded-xl bg-kumo-base p-5 shadow-xs ring ring-kumo-line"
               >
-                <Icon className="size-5 text-neutral-700" />
-                <h3 className="mt-3 text-sm font-semibold text-neutral-900">
+                <Icon className="size-5 text-kumo-brand" />
+                <h3 className="mt-3 text-base font-semibold text-kumo-strong">
                   {item.title}
                 </h3>
-                <p className="mt-1.5 text-xs leading-5 text-neutral-500">
+                <p className="mt-1.5 text-sm leading-6 text-kumo-subtle">
                   {item.description}
                 </p>
               </div>
@@ -283,16 +275,16 @@ function LandingPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
-        <div className="rounded-2xl bg-neutral-900 p-6 text-white sm:p-10">
+        <div className="rounded-xl bg-kumo-contrast p-6 text-kumo-inverse sm:p-10">
           <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <div>
-              <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-400">
+              <p className="text-xs font-medium text-kumo-inverse/60">
                 {siteName}
               </p>
-              <h2 className="mt-3 max-w-xl text-2xl font-semibold tracking-tight sm:text-3xl">
+              <h2 className="mt-3 max-w-xl text-2xl font-semibold text-kumo-inverse sm:text-3xl">
                 从一条短链接开始，整理你的网络工具。
               </h2>
-              <p className="mt-2 max-w-lg text-xs leading-6 text-neutral-400">
+              <p className="mt-2 max-w-lg text-sm leading-6 text-kumo-inverse/70">
                 登录后即可创建、管理和追踪短链接与临时邮箱。现有 API
                 与数据保持不变。
               </p>
@@ -301,7 +293,7 @@ function LandingPage() {
               <ButtonLink
                 to={primaryHref}
                 size="lg"
-                className="bg-white text-neutral-900 hover:bg-neutral-100"
+                className="bg-white text-kumo-contrast hover:bg-white/90"
               >
                 {primaryLabel}
               </ButtonLink>
@@ -309,7 +301,7 @@ function LandingPage() {
                 to={secondaryHref}
                 size="lg"
                 variant="ghost"
-                className="border border-white/20 text-white hover:bg-white/10 hover:text-white"
+                className="text-kumo-inverse ring ring-white/20 hover:bg-white/10 hover:text-kumo-inverse"
               >
                 {secondaryLabel}
               </ButtonLink>
@@ -318,22 +310,19 @@ function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-neutral-200/80">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-xs text-neutral-400 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <footer className="border-t border-kumo-line">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-kumo-subtle sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p>{siteName} 提供短链接与临时邮箱服务。</p>
           <div className="flex items-center gap-4">
-            <a
-              href="#features"
-              className="transition-colors hover:text-neutral-900"
-            >
+            <a href="#features" className="hover:text-kumo-strong">
               功能
             </a>
-            <a href="#api" className="transition-colors hover:text-neutral-900">
+            <a href="#api" className="hover:text-kumo-strong">
               API
             </a>
             <Link
               to={user ? '/dashboard' : '/login'}
-              className="transition-colors hover:text-neutral-900"
+              className="hover:text-kumo-strong"
             >
               {user ? '工作台' : '登录'}
             </Link>

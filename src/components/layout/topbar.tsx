@@ -48,14 +48,14 @@ export function Topbar({ admin = false }: { admin?: boolean }) {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-[58px] items-center justify-between gap-3 border-b border-neutral-200/80 bg-white/90 px-4 backdrop-blur md:px-8">
-      <div className="flex min-w-0 items-center gap-2 text-xs text-neutral-400">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-kumo-line bg-kumo-base/90 px-4 backdrop-blur md:px-8">
+      <div className="flex min-w-0 items-center gap-2 text-sm text-kumo-placeholder">
         <Sidebar.Trigger />
-        <span className="hidden font-semibold text-neutral-800 sm:inline">
+        <span className="hidden font-semibold text-kumo-strong sm:inline">
           {siteName}
         </span>
-        <span className="hidden sm:inline">/</span>
-        <span className="truncate font-medium text-neutral-600">
+        <span className="hidden text-kumo-placeholder sm:inline">/</span>
+        <span className="truncate font-medium text-kumo-subtle">
           {admin ? `管理 · ${title}` : title}
         </span>
       </div>
@@ -64,13 +64,13 @@ export function Topbar({ admin = false }: { admin?: boolean }) {
         {!admin ? (
           <form
             onSubmit={handleSearch}
-            className="hidden items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-2.5 sm:flex"
+            className="hidden items-center gap-2 rounded-lg bg-kumo-base px-2.5 ring ring-kumo-line focus-within:ring-2 focus-within:ring-kumo-focus/25 sm:flex"
           >
-            <MagnifyingGlass className="size-4 text-neutral-400" />
+            <MagnifyingGlass className="size-4 text-kumo-placeholder" />
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              className="h-8 w-40 bg-transparent text-xs outline-none placeholder:text-neutral-400 lg:w-48"
+              className="h-8 w-40 bg-transparent text-base outline-none placeholder:text-kumo-placeholder lg:w-48"
               placeholder={
                 location.pathname === '/dashboard/inbox'
                   ? '搜索邮件...'
@@ -88,12 +88,12 @@ export function Topbar({ admin = false }: { admin?: boolean }) {
         {!admin ? (
           <Link
             to="/dashboard/inbox"
-            className="app-focus relative flex size-9 items-center justify-center rounded-lg text-neutral-500 transition-colors hover:bg-neutral-100"
+            className="app-focus relative flex size-9 items-center justify-center rounded-lg text-kumo-subtle hover:bg-kumo-tint"
             aria-label={unread > 0 ? `收件箱，${unread} 封未读` : '收件箱'}
           >
             <Bell className="size-[18px]" />
             {unread > 0 ? (
-              <span className="absolute right-1.5 top-1.5 flex min-w-3 items-center justify-center rounded-full bg-neutral-900 px-1 text-[8px] font-semibold leading-3 text-white">
+              <span className="absolute right-1.5 top-1.5 flex min-w-3.5 items-center justify-center rounded-full bg-kumo-brand px-1 text-xs font-medium leading-3.5 text-white">
                 {unread > 99 ? '99+' : unread}
               </span>
             ) : null}

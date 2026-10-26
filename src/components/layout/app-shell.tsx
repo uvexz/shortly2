@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { Icon } from '@phosphor-icons/react'
-import { Sidebar, useSidebar } from '@cloudflare/kumo'
+import { Badge, Sidebar, useSidebar } from '@cloudflare/kumo'
 import {
   ArrowLeft,
   ChartLineUp,
@@ -57,11 +57,7 @@ function SidebarBrand({
       )}
     >
       <Logo siteName={siteName} compact={!expanded} showTools={!admin} />
-      {admin && expanded ? (
-        <span className="rounded-md bg-neutral-900 px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-white">
-          ADMIN
-        </span>
-      ) : null}
+      {admin && expanded ? <Badge variant="orange">管理员</Badge> : null}
     </div>
   )
 }
@@ -162,38 +158,29 @@ export function AppShell({
     <Sidebar.Provider
       defaultOpen
       mobileBreakpoint={768}
-      className="min-h-screen bg-[#f7f7f6]"
+      className="min-h-screen bg-kumo-canvas"
       style={{ '--sidebar-width': '208px' } as React.CSSProperties}
     >
-      <Sidebar className="border-neutral-200/80 max-md:w-[280px]">
-        <Sidebar.Header className="h-[72px] px-3">
+      <Sidebar className="border-kumo-line max-md:w-[280px] md:sticky md:top-0 md:h-svh md:self-start">
+        <Sidebar.Header className="h-16 px-3">
           <SidebarBrand siteName={siteName} admin={admin} />
         </Sidebar.Header>
 
         <Sidebar.Content className="scrollbar-thin px-2">
           {groups.map((group) => (
             <Sidebar.Group key={group.label}>
-              <Sidebar.GroupLabel className="px-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
-                {group.label}
-              </Sidebar.GroupLabel>
+              <Sidebar.GroupLabel>{group.label}</Sidebar.GroupLabel>
               <Sidebar.Menu>
                 {group.items.map((item) => {
                   const Icon = item.icon
                   const active = isActive(item)
-                  const className = cn(
-                    'h-9 rounded-lg px-2.5 text-[13px]',
-                    active
-                      ? 'bg-[#e9e9e7] font-semibold text-neutral-900'
-                      : 'text-neutral-600',
-                  )
 
                   if (item.action === 'create-link') {
                     return (
                       <Sidebar.MenuButton
                         key={item.label}
-                        icon={<Icon className="size-[17px] shrink-0" />}
+                        icon={<Icon className="size-4 text-kumo-subtle" />}
                         tooltip={item.label}
-                        className={className}
                         onClick={openCreateLink}
                       >
                         {item.label}
@@ -205,10 +192,16 @@ export function AppShell({
                     <Sidebar.MenuButton
                       key={item.label}
                       href={item.to}
-                      icon={<Icon className="size-[17px] shrink-0" />}
+                      icon={
+                        <Icon
+                          className={cn(
+                            'size-4',
+                            active ? 'text-kumo-strong' : 'text-kumo-subtle',
+                          )}
+                        />
+                      }
                       active={active}
                       tooltip={item.label}
-                      className={className}
                     >
                       {item.label}
                       {item.badge && item.badge > 0 ? (
@@ -224,26 +217,7 @@ export function AppShell({
           ))}
         </Sidebar.Content>
 
-        <Sidebar.Footer className="h-auto flex-col items-stretch whitespace-normal border-neutral-100 p-2">
-          <div className="group-data-[state=collapsed]/sidebar-wrapper:hidden">
-            <div className="mb-3 rounded-xl border border-neutral-200 bg-neutral-50 p-3.5">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-neutral-900 text-white">
-                {admin ? (
-                  <ShieldCheck className="size-4" weight="bold" />
-                ) : (
-                  <LinkSimple className="size-4" weight="bold" />
-                )}
-              </div>
-              <p className="mt-3 text-xs font-semibold text-neutral-800">
-                {admin ? '管理员控制台' : '简单、快速、可靠'}
-              </p>
-              <p className="mt-1 text-[10px] leading-4 text-neutral-500">
-                {admin
-                  ? '管理全站链接、用户、域名与站点设置。'
-                  : '短链接与临时邮箱，一站式管理你的网络工具。'}
-              </p>
-            </div>
-          </div>
+        <Sidebar.Footer className="h-auto flex-col items-stretch whitespace-normal border-kumo-hairline p-2">
           <AccountMenu variant="panel" />
         </Sidebar.Footer>
       </Sidebar>

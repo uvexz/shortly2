@@ -51,32 +51,26 @@ export function LinkTable({
         <Table className="min-w-[680px]">
           <Table.Header>
             <Table.Row>
-              <Table.Head className="px-4 py-3 text-[10px]">短链接</Table.Head>
-              <Table.Head className="px-4 py-3 text-[10px]">
-                原始链接
-              </Table.Head>
-              <Table.Head className="px-4 py-3 text-[10px]">访问量</Table.Head>
-              <Table.Head className="px-4 py-3 text-[10px]">
-                创建时间
-              </Table.Head>
-              <Table.Head className="px-4 py-3 text-[10px]">状态</Table.Head>
-              <Table.Head className="px-4 py-3 text-right text-[10px]">
-                操作
-              </Table.Head>
+              <Table.Head>短链接</Table.Head>
+              <Table.Head>原始链接</Table.Head>
+              <Table.Head>访问量</Table.Head>
+              <Table.Head>创建时间</Table.Head>
+              <Table.Head>状态</Table.Head>
+              <Table.Head className="text-right">操作</Table.Head>
             </Table.Row>
           </Table.Header>
           <Table.Body>
             {links.map((link) => {
               const health = getLinkHealth(link)
               return (
-                <Table.Row key={link.id} className="text-xs">
-                  <Table.Cell className="px-4 py-3">
+                <Table.Row key={link.id}>
+                  <Table.Cell>
                     <div className="flex items-center gap-1.5">
                       <a
                         href={link.shortUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium text-neutral-900 hover:underline"
+                        className="font-medium text-kumo-link hover:underline"
                       >
                         {link.shortUrl.replace(/^https?:\/\//, '')}
                       </a>
@@ -86,19 +80,19 @@ export function LinkTable({
                       />
                     </div>
                   </Table.Cell>
-                  <Table.Cell className="max-w-[220px] truncate px-4 py-3 text-neutral-500">
+                  <Table.Cell className="max-w-[220px] truncate text-kumo-subtle">
                     {link.originalUrl}
                   </Table.Cell>
-                  <Table.Cell className="numeric px-4 py-3 text-neutral-700">
+                  <Table.Cell className="numeric text-kumo-default">
                     {formatNumber(link.clicks)}
                   </Table.Cell>
-                  <Table.Cell className="whitespace-nowrap px-4 py-3 text-neutral-500">
+                  <Table.Cell className="whitespace-nowrap text-kumo-subtle">
                     {formatRelativeTime(link.createdAt)}
                   </Table.Cell>
-                  <Table.Cell className="px-4 py-3">
+                  <Table.Cell>
                     <StatusBadge label={health.label} tone={health.tone} />
                   </Table.Cell>
-                  <Table.Cell className="px-4 py-3 text-right">
+                  <Table.Cell className="text-right">
                     <div className="flex items-center justify-end gap-1">
                       <Button
                         type="button"
@@ -173,24 +167,24 @@ export function LinkTable({
         </Table>
       </div>
 
-      <div className="divide-y divide-neutral-100 md:hidden">
+      <div className="divide-y divide-kumo-hairline md:hidden">
         {links.map((link) => {
           const health = getLinkHealth(link)
           return (
             <div key={link.id} className="p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate text-xs font-semibold text-neutral-900">
+                  <p className="truncate text-base font-semibold text-kumo-link">
                     {link.shortUrl.replace(/^https?:\/\//, '')}
                   </p>
-                  <p className="mt-1 truncate text-[10px] text-neutral-500">
+                  <p className="mt-1 truncate text-xs text-kumo-subtle">
                     {link.originalUrl}
                   </p>
                 </div>
                 <StatusBadge label={health.label} tone={health.tone} />
               </div>
               <div className="mt-3 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 text-[10px] text-neutral-500">
+                <div className="flex items-center gap-3 text-xs text-kumo-subtle">
                   <span>{formatNumber(link.clicks)} 次访问</span>
                   <span>{formatRelativeTime(link.createdAt)}</span>
                 </div>

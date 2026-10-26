@@ -66,7 +66,7 @@ function SettingsPage() {
                 />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="truncate text-lg font-semibold text-neutral-900">
+                    <h2 className="truncate text-lg font-semibold text-kumo-strong">
                       {user?.name ?? '用户'}
                     </h2>
                     <StatusBadge
@@ -88,7 +88,7 @@ function SettingsPage() {
                       }
                     />
                   </div>
-                  <p className="mt-1 break-all text-xs text-neutral-500">
+                  <p className="mt-1 break-all text-sm text-kumo-subtle">
                     {user?.email ?? '—'}
                   </p>
                 </div>
@@ -110,7 +110,7 @@ function SettingsPage() {
                 <Info label="账户 ID" value={user?.id ?? '—'} mono />
               </div>
 
-              <p className="mt-4 rounded-lg bg-neutral-50 p-3 text-[10px] leading-4 text-neutral-400">
+              <p className="mt-4 rounded-lg bg-kumo-elevated p-3 text-sm leading-5 text-kumo-placeholder ring ring-kumo-hairline">
                 为保证后端接口不变，v2
                 暂不提供资料编辑接口；邮箱与姓名由登录方式提供。
               </p>
@@ -142,41 +142,41 @@ function SettingsPage() {
         <aside className="space-y-4">
           <Panel className="p-4">
             <div className="flex items-center gap-2">
-              <span className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+              <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
                 <GlobeHemisphereWest className="size-4" />
               </span>
-              <h2 className="text-sm font-semibold text-neutral-900">
+              <h2 className="text-base font-semibold text-kumo-strong">
                 站点信息
               </h2>
             </div>
-            <div className="mt-4 space-y-3 text-xs">
+            <div className="mt-4 space-y-3 text-sm">
               <div className="flex items-center justify-between gap-3">
-                <span className="text-neutral-500">站点名称</span>
-                <span className="truncate font-medium text-neutral-800">
+                <span className="text-kumo-subtle">站点名称</span>
+                <span className="truncate font-medium text-kumo-default">
                   {bootstrap.siteName}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3">
-                <span className="text-neutral-500">站点地址</span>
-                <span className="max-w-48 truncate text-neutral-700">
+                <span className="text-kumo-subtle">站点地址</span>
+                <span className="max-w-48 truncate text-kumo-default">
                   {bootstrap.siteUrl || '未配置'}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3">
-                <span className="text-neutral-500">短链域名</span>
-                <span className="numeric text-neutral-700">
+                <span className="text-kumo-subtle">短链域名</span>
+                <span className="numeric text-kumo-default">
                   {domains.data?.shortDomains.length ?? 0} 个
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3">
-                <span className="text-neutral-500">邮箱域名</span>
-                <span className="numeric text-neutral-700">
+                <span className="text-kumo-subtle">邮箱域名</span>
+                <span className="numeric text-kumo-default">
                   {domains.data?.emailDomains.length ?? 0} 个
                 </span>
               </div>
             </div>
             {domains.data?.telegramBotUsername ? (
-              <p className="mt-4 rounded-lg bg-neutral-50 p-3 text-[10px] leading-4 text-neutral-500">
+              <p className="mt-4 rounded-lg bg-kumo-elevated p-3 text-xs leading-4 text-kumo-subtle ring ring-kumo-hairline">
                 Telegram 通知已启用：@
                 {domains.data.telegramBotUsername.replace(/^@+/, '')}
               </p>
@@ -185,39 +185,41 @@ function SettingsPage() {
 
           <Panel className="p-4">
             <div className="flex items-center gap-2">
-              <span className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+              <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
                 <EnvelopeSimple className="size-4" />
               </span>
-              <h2 className="text-sm font-semibold text-neutral-900">
+              <h2 className="text-base font-semibold text-kumo-strong">
                 本版本说明
               </h2>
             </div>
-            <ul className="mt-3 space-y-2 text-[11px] leading-5 text-neutral-500">
+            <ul className="mt-3 space-y-2 text-sm leading-5 text-kumo-subtle">
               <li className="flex gap-2">
-                <CheckCircle className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+                <CheckCircle className="mt-0.5 size-3.5 shrink-0 text-kumo-success" />
                 现有 API 与短链跳转行为保持不变。
               </li>
               <li className="flex gap-2">
-                <CheckCircle className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+                <CheckCircle className="mt-0.5 size-3.5 shrink-0 text-kumo-success" />
                 仪表盘统计基于最近链接样本，并在页面中标注。
               </li>
               <li className="flex gap-2">
-                <CheckCircle className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+                <CheckCircle className="mt-0.5 size-3.5 shrink-0 text-kumo-success" />
                 临时邮箱不设有效期，需手动删除。
               </li>
             </ul>
           </Panel>
 
-          <Panel className="border-neutral-900 bg-neutral-900 p-4 text-white">
-            <h2 className="text-xs font-semibold">退出当前账户</h2>
-            <p className="mt-2 text-[11px] leading-5 text-neutral-300">
+          <Panel className="p-4">
+            <h2 className="text-base font-semibold text-kumo-strong">
+              退出当前账户
+            </h2>
+            <p className="mt-2 text-sm leading-5 text-kumo-subtle">
               退出后需要重新通过邮箱验证码、GitHub 或 Passkey 登录。
             </p>
             <Button
-              variant="secondary"
-              className="mt-4 h-9 w-full gap-2 text-xs"
+              variant="secondary-destructive"
+              className="mt-4 w-full"
               onClick={handleSignOut}
-              icon={<SignOut className="size-3.5" />}
+              icon={<SignOut className="size-4" />}
             >
               退出登录
             </Button>
@@ -238,10 +240,10 @@ function Info({
   mono?: boolean
 }) {
   return (
-    <div className="rounded-lg bg-neutral-50 p-3">
-      <p className="text-[10px] text-neutral-400">{label}</p>
+    <div className="rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
+      <p className="text-xs text-kumo-placeholder">{label}</p>
       <p
-        className={`mt-1 truncate text-xs text-neutral-700 ${mono ? 'font-mono' : ''}`}
+        className={`mt-1 truncate text-sm text-kumo-default ${mono ? 'font-mono' : ''}`}
         title={value}
       >
         {value}
@@ -264,20 +266,20 @@ function SettingsLink({
   return (
     <Link
       to={to as never}
-      className="group flex items-center gap-3 rounded-lg border border-neutral-200 p-3 transition-colors hover:border-neutral-400 hover:bg-neutral-50"
+      className="group flex items-center gap-3 rounded-lg p-3 ring ring-kumo-line hover:bg-kumo-tint hover:ring-kumo-interact"
     >
-      <span className="flex size-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+      <span className="flex size-9 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
         {icon}
       </span>
       <span className="min-w-0 flex-1">
-        <strong className="block text-xs font-medium text-neutral-900">
+        <strong className="block text-sm font-medium text-kumo-default">
           {title}
         </strong>
-        <small className="mt-1 block text-[10px] leading-4 text-neutral-500">
+        <small className="mt-1 block text-xs leading-4 text-kumo-subtle">
           {description}
         </small>
       </span>
-      <ArrowRight className="size-4 text-neutral-400 transition-transform group-hover:translate-x-0.5" />
+      <ArrowRight className="size-4 text-kumo-placeholder transition-transform group-hover:translate-x-0.5" />
     </Link>
   )
 }

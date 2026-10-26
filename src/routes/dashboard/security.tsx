@@ -130,7 +130,6 @@ function SecurityPage() {
           supportsPasskey ? (
             <Button
               variant="primary"
-              className="h-10 gap-2 px-4 text-xs"
               loading={adding}
               onClick={() => void handleAddPasskey()}
               icon={<Plus className="size-3.5" weight="bold" />}
@@ -176,7 +175,6 @@ function SecurityPage() {
             supportsPasskey ? (
               <Button
                 variant="secondary"
-                className="h-9 gap-2 px-3 text-xs"
                 loading={adding}
                 onClick={() => void handleAddPasskey()}
                 icon={<Plus className="size-3.5" />}
@@ -202,7 +200,6 @@ function SecurityPage() {
               supportsPasskey ? (
                 <Button
                   variant="primary"
-                  className="h-9 px-3 text-xs"
                   onClick={() => void handleAddPasskey()}
                 >
                   添加通行密钥
@@ -216,37 +213,29 @@ function SecurityPage() {
               <Table className="min-w-[640px]">
                 <Table.Header>
                   <Table.Row>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      名称
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      设备类型
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      备份
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      创建时间
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-right text-[10px]">
+                    <Table.Head className="px-4 py-3">名称</Table.Head>
+                    <Table.Head className="px-4 py-3">设备类型</Table.Head>
+                    <Table.Head className="px-4 py-3">备份</Table.Head>
+                    <Table.Head className="px-4 py-3">创建时间</Table.Head>
+                    <Table.Head className="px-4 py-3 text-right">
                       操作
                     </Table.Head>
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
                   {passkeys.map((passkey) => (
-                    <Table.Row key={passkey.id} className="text-xs">
+                    <Table.Row key={passkey.id}>
                       <Table.Cell className="px-4 py-3">
-                        <p className="font-medium text-neutral-900">
+                        <p className="font-medium text-kumo-default">
                           {passkey.name || '未命名通行密钥'}
                         </p>
                         {passkey.credentialID ? (
-                          <p className="mt-0.5 max-w-56 truncate font-mono text-[10px] text-neutral-400">
+                          <p className="mt-0.5 max-w-56 truncate font-mono text-xs text-kumo-placeholder">
                             {passkey.credentialID}
                           </p>
                         ) : null}
                       </Table.Cell>
-                      <Table.Cell className="px-4 py-3 text-neutral-500">
+                      <Table.Cell className="px-4 py-3 text-kumo-subtle">
                         {passkey.deviceType || '—'}
                       </Table.Cell>
                       <Table.Cell className="px-4 py-3">
@@ -255,7 +244,7 @@ function SecurityPage() {
                           tone={passkey.backedUp ? 'success' : 'neutral'}
                         />
                       </Table.Cell>
-                      <Table.Cell className="px-4 py-3 text-neutral-500">
+                      <Table.Cell className="px-4 py-3 text-kumo-subtle">
                         {formatDate(passkey.createdAt)}
                       </Table.Cell>
                       <Table.Cell className="px-4 py-3 text-right">
@@ -283,15 +272,15 @@ function SecurityPage() {
               </Table>
             </div>
 
-            <div className="divide-y divide-neutral-100 md:hidden">
+            <div className="divide-y divide-kumo-hairline md:hidden">
               {passkeys.map((passkey) => (
                 <div key={passkey.id} className="p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-xs font-semibold text-neutral-900">
+                      <p className="truncate text-sm font-semibold text-kumo-strong">
                         {passkey.name || '未命名通行密钥'}
                       </p>
-                      <p className="mt-1 text-[10px] text-neutral-500">
+                      <p className="mt-1 text-xs text-kumo-subtle">
                         {passkey.deviceType || '—'} ·{' '}
                         {formatDate(passkey.createdAt)}
                       </p>
@@ -314,7 +303,6 @@ function SecurityPage() {
                     <Button
                       type="button"
                       variant="secondary-destructive"
-                      className="h-9 px-3 text-xs"
                       onClick={() => setPendingDelete(passkey)}
                     >
                       删除
@@ -327,9 +315,11 @@ function SecurityPage() {
         )}
       </Panel>
 
-      <div className="mt-4 rounded-xl border border-neutral-200 bg-white p-4 app-shadow">
-        <h2 className="text-sm font-semibold text-neutral-900">登录保护说明</h2>
-        <ul className="mt-2 space-y-1.5 text-[11px] leading-5 text-neutral-500">
+      <div className="mt-4 rounded-lg bg-kumo-info-tint p-4">
+        <h2 className="text-base font-semibold text-kumo-strong">
+          登录保护说明
+        </h2>
+        <ul className="mt-2 space-y-1.5 text-sm leading-5 text-kumo-default/80">
           <li>
             · 通行密钥使用指纹、面容或设备密码完成验证，不依赖短信或邮箱验证码。
           </li>
@@ -373,15 +363,15 @@ function Metric({
   description: string
 }) {
   return (
-    <div className="rounded-xl border border-neutral-200/80 bg-white p-4 app-shadow">
-      <span className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+    <div className="rounded-lg bg-kumo-base p-4 shadow-xs ring ring-kumo-line">
+      <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
         <Icon className="size-4" />
       </span>
-      <p className="mt-3 text-xs text-neutral-500">{label}</p>
-      <p className="mt-1 truncate text-lg font-semibold tracking-tight text-neutral-900">
+      <p className="mt-3 text-sm text-kumo-subtle">{label}</p>
+      <p className="mt-1 truncate text-lg font-semibold text-kumo-strong">
         {value}
       </p>
-      <p className="mt-1 truncate text-[10px] text-neutral-400">
+      <p className="mt-1 truncate text-xs text-kumo-placeholder">
         {description}
       </p>
     </div>

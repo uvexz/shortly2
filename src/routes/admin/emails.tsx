@@ -102,7 +102,7 @@ function AdminEmailsPage() {
       />
 
       <Panel className="overflow-hidden">
-        <div className="flex flex-col gap-3 border-b border-neutral-100 px-4 pt-3 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-col gap-3 border-b border-kumo-hairline px-4 pt-3 lg:flex-row lg:items-end lg:justify-between">
           <Tabs
             tabs={[
               { value: 'mailboxes', label: '邮箱' },
@@ -129,7 +129,7 @@ function AdminEmailsPage() {
             }}
           >
             <div className="relative">
-              <MagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
+              <MagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-kumo-placeholder" />
               <Input
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
@@ -138,18 +138,13 @@ function AdminEmailsPage() {
                 aria-label="搜索邮件"
               />
             </div>
-            <Button
-              type="submit"
-              variant="secondary"
-              className="h-10 px-3 text-xs"
-            >
+            <Button type="submit" variant="secondary">
               搜索
             </Button>
             {searchTerm ? (
               <Button
                 type="button"
                 variant="ghost"
-                className="h-10 px-3 text-xs"
                 onClick={() => {
                   setSearchInput('')
                   updateSearch({ tab, search: '', page: 1 })
@@ -168,7 +163,6 @@ function AdminEmailsPage() {
             action={
               <Button
                 variant="secondary"
-                className="h-9 px-3 text-xs"
                 onClick={() => void activeQuery.refetch()}
               >
                 重试
@@ -233,32 +227,30 @@ function MailboxesTable({ data }: { data: AdminMailboxDto[] }) {
       <Table className="min-w-[820px]">
         <Table.Header>
           <Table.Row>
-            <Table.Head className="px-4 py-3 text-[10px]">邮箱地址</Table.Head>
-            <Table.Head className="px-4 py-3 text-[10px]">所属用户</Table.Head>
-            <Table.Head className="px-4 py-3 text-[10px]">
-              邮件 / 未读
-            </Table.Head>
-            <Table.Head className="px-4 py-3 text-[10px]">状态</Table.Head>
-            <Table.Head className="px-4 py-3 text-[10px]">创建时间</Table.Head>
+            <Table.Head className="px-4 py-3">邮箱地址</Table.Head>
+            <Table.Head className="px-4 py-3">所属用户</Table.Head>
+            <Table.Head className="px-4 py-3">邮件 / 未读</Table.Head>
+            <Table.Head className="px-4 py-3">状态</Table.Head>
+            <Table.Head className="px-4 py-3">创建时间</Table.Head>
           </Table.Row>
         </Table.Header>
         <Table.Body>
           {data.map((mailbox) => (
-            <Table.Row key={mailbox.id} className="text-xs">
-              <Table.Cell className="px-4 py-3 font-medium text-neutral-900">
+            <Table.Row key={mailbox.id}>
+              <Table.Cell className="px-4 py-3 font-medium text-kumo-default">
                 {mailbox.emailAddress}
               </Table.Cell>
               <Table.Cell className="px-4 py-3">
-                <p className="max-w-44 truncate text-neutral-700">
+                <p className="max-w-44 truncate text-kumo-default">
                   {mailbox.userName || '—'}
                 </p>
-                <p className="max-w-44 truncate text-[10px] text-neutral-400">
+                <p className="max-w-44 truncate text-xs text-kumo-placeholder">
                   {mailbox.userEmail || '—'}
                 </p>
               </Table.Cell>
-              <Table.Cell className="numeric px-4 py-3 text-neutral-600">
+              <Table.Cell className="numeric px-4 py-3 text-kumo-subtle">
                 {formatNumber(mailbox.messageCount)} /{' '}
-                <span className="text-neutral-900">
+                <span className="text-kumo-default">
                   {formatNumber(mailbox.unreadCount)}
                 </span>
               </Table.Cell>
@@ -268,7 +260,7 @@ function MailboxesTable({ data }: { data: AdminMailboxDto[] }) {
                   tone={mailbox.isActive ? 'success' : 'neutral'}
                 />
               </Table.Cell>
-              <Table.Cell className="whitespace-nowrap px-4 py-3 text-neutral-500">
+              <Table.Cell className="whitespace-nowrap px-4 py-3 text-kumo-subtle">
                 {formatDateTime(mailbox.createdAt)}
               </Table.Cell>
             </Table.Row>
@@ -301,46 +293,42 @@ function MessagesTable({
       <Table className="min-w-[900px]">
         <Table.Header>
           <Table.Row>
-            <Table.Head className="px-4 py-3 text-[10px]">
-              主题 / 发件人
-            </Table.Head>
-            <Table.Head className="px-4 py-3 text-[10px]">收件邮箱</Table.Head>
-            <Table.Head className="px-4 py-3 text-[10px]">所属用户</Table.Head>
-            <Table.Head className="px-4 py-3 text-[10px]">接收时间</Table.Head>
-            <Table.Head className="px-4 py-3 text-[10px]">状态</Table.Head>
-            <Table.Head className="px-4 py-3 text-right text-[10px]">
-              操作
-            </Table.Head>
+            <Table.Head className="px-4 py-3">主题 / 发件人</Table.Head>
+            <Table.Head className="px-4 py-3">收件邮箱</Table.Head>
+            <Table.Head className="px-4 py-3">所属用户</Table.Head>
+            <Table.Head className="px-4 py-3">接收时间</Table.Head>
+            <Table.Head className="px-4 py-3">状态</Table.Head>
+            <Table.Head className="px-4 py-3 text-right">操作</Table.Head>
           </Table.Row>
         </Table.Header>
         <Table.Body>
           {data.map((message) => (
             <Table.Row
               key={message.id}
-              className="cursor-pointer text-xs transition-colors hover:bg-neutral-50"
+              className="cursor-pointer hover:bg-kumo-tint"
               onClick={() => onOpen(message)}
             >
               <Table.Cell className="max-w-72 px-4 py-3">
-                <p className="truncate font-medium text-neutral-900">
+                <p className="truncate font-medium text-kumo-default">
                   {message.subject || '（无主题）'}
                 </p>
-                <p className="mt-0.5 truncate text-[10px] text-neutral-400">
+                <p className="mt-0.5 truncate text-xs text-kumo-placeholder">
                   {getSenderLabel(message.from, message.fromName)} ·{' '}
                   {message.from}
                 </p>
               </Table.Cell>
-              <Table.Cell className="max-w-52 truncate px-4 py-3 text-neutral-500">
+              <Table.Cell className="max-w-52 truncate px-4 py-3 text-kumo-subtle">
                 {message.mailboxEmailAddress}
               </Table.Cell>
               <Table.Cell className="px-4 py-3">
-                <p className="max-w-40 truncate text-neutral-700">
+                <p className="max-w-40 truncate text-kumo-default">
                   {message.userName || '—'}
                 </p>
-                <p className="max-w-40 truncate text-[10px] text-neutral-400">
+                <p className="max-w-40 truncate text-xs text-kumo-placeholder">
                   {message.userEmail || '—'}
                 </p>
               </Table.Cell>
-              <Table.Cell className="whitespace-nowrap px-4 py-3 text-neutral-500">
+              <Table.Cell className="whitespace-nowrap px-4 py-3 text-kumo-subtle">
                 <span title={formatDateTime(message.receivedAt)}>
                   {formatRelativeTime(message.receivedAt)}
                 </span>
@@ -355,7 +343,6 @@ function MessagesTable({
                 <Button
                   type="button"
                   variant="secondary"
-                  className="h-8 px-2.5 text-[10px]"
                   onClick={(event) => {
                     event.stopPropagation()
                     onOpen(message)
@@ -394,47 +381,42 @@ function ArchivesTable({
       <Table className="min-w-[860px]">
         <Table.Header>
           <Table.Row>
-            <Table.Head className="px-4 py-3 text-[10px]">
-              主题 / 发件人
-            </Table.Head>
-            <Table.Head className="px-4 py-3 text-[10px]">目标地址</Table.Head>
-            <Table.Head className="px-4 py-3 text-[10px]">失败原因</Table.Head>
-            <Table.Head className="px-4 py-3 text-[10px]">接收时间</Table.Head>
-            <Table.Head className="px-4 py-3 text-right text-[10px]">
-              操作
-            </Table.Head>
+            <Table.Head className="px-4 py-3">主题 / 发件人</Table.Head>
+            <Table.Head className="px-4 py-3">目标地址</Table.Head>
+            <Table.Head className="px-4 py-3">失败原因</Table.Head>
+            <Table.Head className="px-4 py-3">接收时间</Table.Head>
+            <Table.Head className="px-4 py-3 text-right">操作</Table.Head>
           </Table.Row>
         </Table.Header>
         <Table.Body>
           {data.map((archive) => (
             <Table.Row
               key={archive.id}
-              className="cursor-pointer text-xs transition-colors hover:bg-neutral-50"
+              className="cursor-pointer hover:bg-kumo-tint"
               onClick={() => onOpen(archive)}
             >
               <Table.Cell className="max-w-80 px-4 py-3">
-                <p className="truncate font-medium text-neutral-900">
+                <p className="truncate font-medium text-kumo-default">
                   {archive.subject || '（无主题）'}
                 </p>
-                <p className="mt-0.5 truncate text-[10px] text-neutral-400">
+                <p className="mt-0.5 truncate text-xs text-kumo-placeholder">
                   {getSenderLabel(archive.from, archive.fromName)} ·{' '}
                   {archive.from}
                 </p>
               </Table.Cell>
-              <Table.Cell className="max-w-56 truncate px-4 py-3 text-neutral-500">
+              <Table.Cell className="max-w-56 truncate px-4 py-3 text-kumo-subtle">
                 {archive.toEmail}
               </Table.Cell>
               <Table.Cell className="px-4 py-3">
                 <StatusBadge label={archive.failureReason} tone="warning" />
               </Table.Cell>
-              <Table.Cell className="whitespace-nowrap px-4 py-3 text-neutral-500">
+              <Table.Cell className="whitespace-nowrap px-4 py-3 text-kumo-subtle">
                 {formatRelativeTime(archive.receivedAt)}
               </Table.Cell>
               <Table.Cell className="px-4 py-3 text-right">
                 <Button
                   type="button"
                   variant="secondary"
-                  className="h-8 px-2.5 text-[10px]"
                   onClick={(event) => {
                     event.stopPropagation()
                     onOpen(archive)

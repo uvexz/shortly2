@@ -102,7 +102,6 @@ function LinksPage() {
         actions={
           <Button
             variant="primary"
-            className="h-10 gap-2 px-4 text-xs"
             onClick={openCreateLink}
             icon={<Plus className="size-3.5" weight="bold" />}
           >
@@ -112,33 +111,28 @@ function LinksPage() {
       />
 
       <Panel className="overflow-hidden">
-        <div className="flex flex-col gap-3 border-b border-neutral-100 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border-b border-kumo-hairline p-4 sm:flex-row sm:items-center sm:justify-between">
           <form
             onSubmit={handleSearch}
             className="flex flex-1 items-center gap-2"
           >
             <div className="relative flex-1 sm:max-w-sm">
-              <MagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
+              <MagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-kumo-placeholder" />
               <Input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="搜索短链接、目标地址..."
-                className="pl-9"
+                className="w-full pl-9"
                 aria-label="搜索短链接"
               />
             </div>
-            <Button
-              type="submit"
-              variant="secondary"
-              className="h-10 px-3 text-xs"
-            >
+            <Button type="submit" variant="secondary">
               搜索
             </Button>
             {isSearching ? (
               <Button
                 type="button"
                 variant="ghost"
-                className="h-10 px-3 text-xs"
                 onClick={() => {
                   setQuery('')
                   void navigate({ to: '/dashboard/links', search: {} })
@@ -151,7 +145,6 @@ function LinksPage() {
           <Button
             type="button"
             variant="ghost"
-            className="h-9 gap-2 px-3 text-xs"
             onClick={() => {
               if (isSearching) void recent.refetch()
               else void linksPage.refetch()
@@ -163,7 +156,7 @@ function LinksPage() {
         </div>
 
         {isSearching ? (
-          <div className="border-b border-neutral-100 bg-neutral-50 px-4 py-2 text-[10px] text-neutral-500">
+          <div className="border-b border-kumo-hairline bg-kumo-elevated px-4 py-2 text-xs text-kumo-subtle">
             当前搜索最近最多 500 条链接，找到 {filtered.length} 条结果
             {recent.data?.sampled ? '（更早的记录未包含）' : ''}。
           </div>
@@ -176,7 +169,6 @@ function LinksPage() {
             action={
               <Button
                 variant="secondary"
-                className="h-9 px-3 text-xs"
                 onClick={() =>
                   isSearching ? void recent.refetch() : void linksPage.refetch()
                 }
@@ -199,11 +191,7 @@ function LinksPage() {
                 })
               }
               emptyAction={
-                <Button
-                  variant="primary"
-                  className="h-9 px-3 text-xs"
-                  onClick={openCreateLink}
-                >
+                <Button variant="primary" onClick={openCreateLink}>
                   创建短链接
                 </Button>
               }

@@ -35,10 +35,7 @@ export function CopyButton({
       onClick={handleCopy}
       aria-label={label ?? '复制'}
       title={label ?? '复制'}
-      className={cn(
-        showLabel ? 'h-9 gap-2 px-3 text-xs' : 'size-8 p-0',
-        className,
-      )}
+      className={cn(showLabel ? 'gap-1.5' : 'size-8 p-0', className)}
       icon={
         copied ? (
           <Check className="size-3.5" weight="bold" />

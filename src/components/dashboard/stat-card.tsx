@@ -19,25 +19,25 @@ export function StatCard({
   return (
     <article
       className={cn(
-        'rounded-xl border border-neutral-200/80 bg-white p-4 app-shadow',
+        'rounded-lg bg-kumo-base p-4 shadow-xs ring ring-kumo-line',
         className,
       )}
     >
       <div className="flex items-start justify-between gap-3">
-        <span className="flex size-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-800">
+        <span className="flex size-9 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
           <IconComponent className="size-[18px]" />
         </span>
         {meta ? (
-          <span className="text-[10px] text-neutral-400">{meta}</span>
+          <span className="text-xs text-kumo-placeholder">{meta}</span>
         ) : null}
       </div>
-      <p className="mt-4 text-xs text-neutral-500">{label}</p>
+      <p className="mt-4 text-base text-kumo-subtle">{label}</p>
       <div className="mt-1 flex items-end justify-between gap-3">
-        <strong className="numeric text-2xl font-semibold tracking-tight text-neutral-900">
+        <strong className="numeric text-2xl font-semibold text-kumo-strong">
           {value}
         </strong>
         {hint ? (
-          <span className="pb-0.5 text-right text-[10px] leading-4 text-neutral-500">
+          <span className="pb-0.5 text-right text-xs leading-4 text-kumo-subtle">
             {hint}
           </span>
         ) : null}

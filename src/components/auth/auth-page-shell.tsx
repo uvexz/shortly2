@@ -26,9 +26,9 @@ export function AuthPageShell({
       ]
 
   return (
-    <main className="min-h-screen bg-[#f7f7f6]">
+    <main className="min-h-screen bg-kumo-canvas">
       <div className="mx-auto grid min-h-screen max-w-6xl grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(380px,440px)]">
-        <section className="relative hidden overflow-hidden bg-neutral-900 p-10 text-white lg:flex lg:flex-col lg:justify-between">
+        <section className="relative hidden overflow-hidden bg-kumo-contrast p-10 text-kumo-inverse lg:flex lg:flex-col lg:justify-between">
           <div
             className="pointer-events-none absolute inset-0 opacity-[0.07]"
             style={{
@@ -42,26 +42,26 @@ export function AuthPageShell({
               to="/"
               className="app-focus inline-flex items-center gap-2 rounded-lg"
             >
-              <span className="flex size-8 items-center justify-center rounded-xl bg-white text-neutral-900">
+              <span className="flex size-8 items-center justify-center rounded-lg bg-[var(--text-color-kumo-brand)] text-white">
                 <LinkSimple className="size-[18px]" weight="bold" />
               </span>
-              <span className="text-xl font-bold tracking-tight">
+              <span className="text-xl font-semibold text-kumo-inverse">
                 {siteName}
               </span>
-              <span className="text-[10px] tracking-[0.12em] text-neutral-400">
-                TOOLS
+              <span className="rounded-md bg-kumo-inverse/10 px-1.5 py-0.5 text-xs text-kumo-inverse/70">
+                工具
               </span>
             </Link>
           </div>
 
           <div className="relative max-w-md">
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-neutral-400">
+            <p className="text-xs font-medium text-kumo-inverse/60">
               {isLogin ? '账户访问' : '新账户设置'}
             </p>
-            <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-tight">
+            <h2 className="mt-4 text-3xl font-semibold leading-tight text-kumo-inverse">
               {isLogin ? '欢迎回来。' : '开始管理你的网络工具。'}
             </h2>
-            <p className="mt-4 text-sm leading-7 text-neutral-300">
+            <p className="mt-4 text-base leading-7 text-kumo-inverse/70">
               {isLogin
                 ? '继续进入你的工作台，查看短链接、临时邮箱与 API 使用情况。'
                 : '创建账户后，你可以生成短链接、接收临时邮件，并使用 API 自动化日常操作。'}
@@ -70,16 +70,16 @@ export function AuthPageShell({
               {benefits.map((benefit) => (
                 <li
                   key={benefit}
-                  className="flex items-start gap-2.5 text-xs leading-5 text-neutral-300"
+                  className="flex items-start gap-2.5 text-sm leading-5 text-kumo-inverse/70"
                 >
-                  <CheckCircle className="mt-0.5 size-4 shrink-0 text-neutral-400" />
+                  <CheckCircle className="mt-0.5 size-4 shrink-0 text-kumo-inverse/50" />
                   {benefit}
                 </li>
               ))}
             </ul>
           </div>
 
-          <p className="relative flex items-center gap-2 text-[10px] text-neutral-500">
+          <p className="relative flex items-center gap-2 text-xs text-kumo-inverse/50">
             <ShieldCheck className="size-3.5" />
             会话由 Better Auth 保护；临时邮箱请勿用于敏感信息。
           </p>
@@ -88,7 +88,7 @@ export function AuthPageShell({
         <section className="flex min-h-screen flex-col px-5 py-8 sm:px-8 lg:px-10">
           <div className="mb-10 flex items-center justify-between lg:hidden">
             <Logo siteName={siteName} />
-            <Link to="/" className="text-xs text-neutral-500">
+            <Link to="/" className="text-sm text-kumo-subtle">
               返回首页
             </Link>
           </div>
@@ -96,13 +96,13 @@ export function AuthPageShell({
           <div className="flex flex-1 flex-col justify-center">
             <div className="mx-auto w-full max-w-sm">
               <div className="mb-7 space-y-2">
-                <p className="text-sm font-medium text-neutral-500">
+                <p className="text-sm font-medium text-kumo-subtle">
                   {isLogin ? '账户访问' : '创建账户'}
                 </p>
-                <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
+                <h1 className="text-2xl font-semibold text-kumo-strong">
                   {isLogin ? '登录 Shortly' : '注册 Shortly'}
                 </h1>
-                <p className="text-sm leading-6 text-neutral-500">
+                <p className="text-base leading-6 text-kumo-subtle">
                   {isLogin
                     ? '选择一种可用的登录方式继续。'
                     : '使用邮箱验证码创建账户，可选择保存 Passkey。'}
@@ -111,17 +111,14 @@ export function AuthPageShell({
 
               {children}
 
-              <div className="mt-8 flex items-center justify-center gap-3 text-xs text-neutral-400">
-                <Link
-                  to="/"
-                  className="transition-colors hover:text-neutral-900"
-                >
+              <div className="mt-8 flex items-center justify-center gap-3 text-sm text-kumo-subtle">
+                <Link to="/" className="hover:text-kumo-strong">
                   返回首页
                 </Link>
-                <span className="size-1 rounded-full bg-neutral-300" />
+                <span className="size-1 rounded-full bg-kumo-inactive" />
                 <Link
                   to={isLogin ? '/register' : '/login'}
-                  className="transition-colors hover:text-neutral-900"
+                  className="hover:text-kumo-strong"
                 >
                   {isLogin ? '创建账户' : '已有账户'}
                 </Link>
@@ -129,7 +126,7 @@ export function AuthPageShell({
             </div>
           </div>
 
-          <p className="mt-8 text-center text-[10px] leading-4 text-neutral-400">
+          <p className="mt-8 text-center text-xs leading-4 text-kumo-placeholder">
             登录即表示你同意合理使用本服务。临时邮箱不适合接收重要账户或敏感信息。
           </p>
         </section>

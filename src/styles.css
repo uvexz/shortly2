@@ -3,31 +3,6 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter';
 
-@theme {
-  --color-kumo-canvas: #f7f7f6;
-  --color-kumo-elevated: #ffffff;
-  --color-kumo-recessed: #f2f2f1;
-  --color-kumo-base: #ffffff;
-  --color-kumo-tint: #f2f2f1;
-  --color-kumo-contrast: #171717;
-  --color-kumo-overlay: #ffffff;
-  --color-kumo-control: #ffffff;
-  --color-kumo-interact: #d4d4d4;
-  --color-kumo-fill: #e9e9e7;
-  --color-kumo-fill-hover: #f1f1ef;
-  --color-kumo-brand: #171717;
-  --color-kumo-brand-hover: #333333;
-  --color-kumo-line: rgba(15, 23, 42, 0.08);
-  --color-kumo-hairline: #ececea;
-  --color-kumo-focus: #171717;
-  --color-kumo-info: #525252;
-  --color-kumo-info-tint: #f2f2f1;
-  --text-color-kumo-link: #171717;
-  --text-color-kumo-brand: #171717;
-  --shadow-soft:
-    0 1px 2px rgba(15, 23, 42, 0.03), 0 8px 24px rgba(15, 23, 42, 0.025);
-}
-
 :root {
   color-scheme: light;
   --font-sans:
@@ -38,13 +13,9 @@
 }
 
 @layer base {
-  * {
-    border-color: var(--color-neutral-200);
-  }
-
   html {
     min-height: 100%;
-    background: #f7f7f6;
+    background: var(--color-kumo-canvas);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -52,9 +23,11 @@
   body {
     min-height: 100%;
     margin: 0;
-    background: #f7f7f6;
-    color: #171717;
+    background: var(--color-kumo-canvas);
+    color: var(--text-color-kumo-default);
     font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
     overflow-x: hidden;
   }
 
@@ -68,8 +41,7 @@
   }
 
   ::selection {
-    background: #171717;
-    color: #ffffff;
+    background: color-mix(in oklab, var(--color-kumo-brand) 22%, transparent);
   }
 }
 
@@ -79,18 +51,16 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .app-shadow {
-    box-shadow:
-      0 1px 2px rgba(15, 23, 42, 0.03),
-      0 8px 24px rgba(15, 23, 42, 0.025);
-  }
-
   .app-focus {
-    @apply outline-none focus-visible:ring-2 focus-visible:ring-neutral-900/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f7f7f6];
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-kumo-focus/60 focus-visible:ring-offset-2 focus-visible:ring-offset-kumo-canvas;
   }
 
   .chart-grid {
-    background-image: linear-gradient(to bottom, #ececea 1px, transparent 1px);
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-kumo-hairline) 1px,
+      transparent 1px
+    );
     background-size: 100% 25%;
   }
 
@@ -100,7 +70,7 @@
 
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: #d4d4d4 transparent;
+    scrollbar-color: var(--color-kumo-interact) transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -110,7 +80,7 @@
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
     border-radius: 9999px;
-    background: #d4d4d4;
+    background: var(--color-kumo-interact);
   }
 }
 

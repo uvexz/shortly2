@@ -21,12 +21,12 @@ export function EmptyState({
         className,
       )}
     >
-      <div className="flex size-12 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500">
+      <div className="flex size-12 items-center justify-center rounded-lg bg-kumo-tint text-kumo-subtle">
         {icon ?? <span className="text-lg">⌘</span>}
       </div>
-      <p className="mt-3 text-sm font-medium text-neutral-800">{title}</p>
+      <p className="mt-3 text-base font-medium text-kumo-default">{title}</p>
       {description ? (
-        <p className="mt-1 max-w-sm text-xs leading-5 text-neutral-500">
+        <p className="mt-1.5 max-w-sm text-sm leading-6 text-kumo-subtle">
           {description}
         </p>
       ) : null}

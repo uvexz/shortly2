@@ -118,7 +118,6 @@ function AnalyticsPage() {
           selectedLink ? (
             <Button
               variant="secondary"
-              className="h-10 gap-2 px-4 text-xs"
               onClick={() => setLogsOpen(true)}
               icon={<ClockCounterClockwise className="size-3.5" />}
             >
@@ -145,10 +144,10 @@ function AnalyticsPage() {
           <Panel className="p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
-                <h2 className="text-sm font-semibold text-neutral-900">
+                <h2 className="text-base font-semibold text-kumo-strong">
                   选择短链接
                 </h2>
-                <p className="mt-0.5 text-[10px] text-neutral-400">
+                <p className="mt-0.5 text-xs text-kumo-placeholder">
                   数据来自现有 /api/logs/:linkId，不进行跨链接聚合
                 </p>
               </div>
@@ -201,7 +200,7 @@ function AnalyticsPage() {
                     action={
                       <Button
                         variant="ghost"
-                        className="h-8 px-2 text-xs"
+                        size="sm"
                         onClick={() => setLogsOpen(true)}
                       >
                         全部日志 →
@@ -220,36 +219,28 @@ function AnalyticsPage() {
                       <Table className="min-w-[620px]">
                         <Table.Header>
                           <Table.Row>
-                            <Table.Head className="px-4 py-3 text-[10px]">
-                              事件
-                            </Table.Head>
-                            <Table.Head className="px-4 py-3 text-[10px]">
-                              时间
-                            </Table.Head>
-                            <Table.Head className="px-4 py-3 text-[10px]">
-                              来源
-                            </Table.Head>
-                            <Table.Head className="px-4 py-3 text-[10px]">
-                              状态码
-                            </Table.Head>
+                            <Table.Head>事件</Table.Head>
+                            <Table.Head>时间</Table.Head>
+                            <Table.Head>来源</Table.Head>
+                            <Table.Head>状态码</Table.Head>
                           </Table.Row>
                         </Table.Header>
                         <Table.Body>
                           {logs.data.data.slice(0, 20).map((log) => (
-                            <Table.Row key={log.id} className="text-xs">
-                              <Table.Cell className="px-4 py-2.5">
+                            <Table.Row key={log.id}>
+                              <Table.Cell>
                                 <StatusBadge
                                   label={getLogEventLabel(log.eventType)}
                                   tone={getLogEventTone(log.eventType)}
                                 />
                               </Table.Cell>
-                              <Table.Cell className="whitespace-nowrap px-4 py-2.5 text-neutral-500">
+                              <Table.Cell className="whitespace-nowrap text-kumo-subtle">
                                 {formatDateTime(log.createdAt)}
                               </Table.Cell>
-                              <Table.Cell className="px-4 py-2.5 text-neutral-500">
+                              <Table.Cell className="text-kumo-subtle">
                                 {getSourceLabel(log.referrer)}
                               </Table.Cell>
-                              <Table.Cell className="numeric px-4 py-2.5 text-neutral-500">
+                              <Table.Cell className="numeric text-kumo-subtle">
                                 {log.statusCode ?? '—'}
                               </Table.Cell>
                             </Table.Row>
@@ -262,14 +253,14 @@ function AnalyticsPage() {
 
                 <aside className="space-y-4">
                   <Panel className="p-4">
-                    <h2 className="text-sm font-semibold text-neutral-900">
+                    <h2 className="text-base font-semibold text-kumo-strong">
                       链接概况
                     </h2>
                     <div className="mt-3 space-y-3 text-xs">
                       <div className="flex items-center justify-between gap-3">
-                        <span className="text-neutral-500">短链接</span>
+                        <span className="text-kumo-subtle">短链接</span>
                         <span className="flex min-w-0 items-center gap-1">
-                          <span className="truncate font-medium text-neutral-800">
+                          <span className="truncate font-medium text-kumo-default">
                             {selectedLink.shortUrl.replace(/^https?:\/\//, '')}
                           </span>
                           <CopyButton
@@ -279,7 +270,7 @@ function AnalyticsPage() {
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-3">
-                        <span className="text-neutral-500">状态</span>
+                        <span className="text-kumo-subtle">状态</span>
                         {health ? (
                           <StatusBadge
                             label={health.label}
@@ -288,24 +279,24 @@ function AnalyticsPage() {
                         ) : null}
                       </div>
                       <div className="flex items-center justify-between gap-3">
-                        <span className="text-neutral-500">点击上限</span>
-                        <span className="text-neutral-700">
+                        <span className="text-kumo-subtle">点击上限</span>
+                        <span className="text-kumo-default">
                           {selectedLink.maxClicks
                             ? formatNumber(selectedLink.maxClicks)
                             : '不限'}
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-3">
-                        <span className="text-neutral-500">有效期至</span>
-                        <span className="text-right text-neutral-700">
+                        <span className="text-kumo-subtle">有效期至</span>
+                        <span className="text-right text-kumo-default">
                           {selectedLink.expiresAt
                             ? formatDateTime(selectedLink.expiresAt)
                             : '永久有效'}
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-3">
-                        <span className="text-neutral-500">创建时间</span>
-                        <span className="text-right text-neutral-700">
+                        <span className="text-kumo-subtle">创建时间</span>
+                        <span className="text-right text-kumo-default">
                           {formatDateTime(selectedLink.createdAt)}
                         </span>
                       </div>
@@ -313,7 +304,7 @@ function AnalyticsPage() {
                   </Panel>
 
                   <Panel className="p-4">
-                    <h2 className="text-sm font-semibold text-neutral-900">
+                    <h2 className="text-base font-semibold text-kumo-strong">
                       事件构成
                     </h2>
                     <div className="mt-4">
@@ -322,14 +313,17 @@ function AnalyticsPage() {
                           segments={eventBreakdown.map((item, index) => ({
                             label: item.label,
                             value: item.value,
-                            color: ['#262626', '#737373', '#a3a3a3', '#d4d4d4'][
-                              index % 4
-                            ],
+                            color: [
+                              'var(--color-kumo-badge-blue)',
+                              'var(--color-kumo-badge-teal)',
+                              'var(--color-kumo-badge-orange)',
+                              'var(--color-kumo-badge-purple)',
+                            ][index % 4],
                           }))}
                           totalLabel="事件样本"
                         />
                       ) : (
-                        <p className="py-6 text-center text-xs text-neutral-400">
+                        <p className="py-6 text-center text-xs text-kumo-placeholder">
                           暂无事件
                         </p>
                       )}
@@ -337,7 +331,7 @@ function AnalyticsPage() {
                   </Panel>
 
                   <Panel className="p-4">
-                    <h2 className="text-sm font-semibold text-neutral-900">
+                    <h2 className="text-base font-semibold text-kumo-strong">
                       访问来源
                     </h2>
                     <div className="mt-4">
@@ -351,7 +345,7 @@ function AnalyticsPage() {
               </div>
 
               {logs.data && logs.data.total > LOG_SAMPLE_SIZE ? (
-                <p className="text-[10px] text-neutral-400">
+                <p className="text-xs text-kumo-placeholder">
                   聚合数据仅基于最近 {LOG_SAMPLE_SIZE}{' '}
                   条事件；完整日志请点击「查看完整日志」。
                 </p>
@@ -380,12 +374,12 @@ function Metric({
   meta: string
 }) {
   return (
-    <div className="rounded-xl border border-neutral-200/80 bg-white p-4 app-shadow">
-      <p className="text-xs text-neutral-500">{label}</p>
-      <p className="numeric mt-1 text-2xl font-semibold tracking-tight text-neutral-900">
+    <div className="rounded-lg bg-kumo-base p-4 shadow-xs ring ring-kumo-line">
+      <p className="text-base text-kumo-subtle">{label}</p>
+      <p className="numeric mt-1 text-2xl font-semibold text-kumo-strong">
         {value}
       </p>
-      <p className="mt-1 text-[10px] text-neutral-400">{meta}</p>
+      <p className="mt-1 text-xs text-kumo-placeholder">{meta}</p>
     </div>
   )
 }

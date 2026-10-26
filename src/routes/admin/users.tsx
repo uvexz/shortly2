@@ -74,16 +74,17 @@ function AdminUsersPage() {
       />
 
       <Panel className="overflow-hidden">
-        <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-3">
+        <div className="flex items-center justify-between border-b border-kumo-hairline px-4 py-3">
           <div>
-            <h2 className="text-sm font-semibold text-neutral-900">全部用户</h2>
-            <p className="mt-0.5 text-[10px] text-neutral-400">
+            <h2 className="text-base font-semibold text-kumo-strong">
+              全部用户
+            </h2>
+            <p className="mt-0.5 text-xs text-kumo-placeholder">
               封禁会立即删除该用户现有会话
             </p>
           </div>
           <Button
             variant="ghost"
-            className="h-9 gap-2 px-3 text-xs"
             onClick={() => void usersQuery.refetch()}
             icon={<ArrowsClockwise className="size-3.5" />}
           >
@@ -98,7 +99,6 @@ function AdminUsersPage() {
             action={
               <Button
                 variant="secondary"
-                className="h-9 px-3 text-xs"
                 onClick={() => void usersQuery.refetch()}
               >
                 重试
@@ -119,22 +119,12 @@ function AdminUsersPage() {
               <Table className="min-w-[820px]">
                 <Table.Header>
                   <Table.Row>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      用户
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      角色
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      短链接
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      状态
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      注册时间
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-right text-[10px]">
+                    <Table.Head className="px-4 py-3">用户</Table.Head>
+                    <Table.Head className="px-4 py-3">角色</Table.Head>
+                    <Table.Head className="px-4 py-3">短链接</Table.Head>
+                    <Table.Head className="px-4 py-3">状态</Table.Head>
+                    <Table.Head className="px-4 py-3">注册时间</Table.Head>
+                    <Table.Head className="px-4 py-3 text-right">
                       操作
                     </Table.Head>
                   </Table.Row>
@@ -143,7 +133,7 @@ function AdminUsersPage() {
                   {users.map((user) => {
                     const isSelf = user.id === currentUser?.id
                     return (
-                      <Table.Row key={user.id} className="text-xs">
+                      <Table.Row key={user.id}>
                         <Table.Cell className="px-4 py-3">
                           <div className="flex items-center gap-2">
                             <UserAvatar
@@ -152,15 +142,15 @@ function AdminUsersPage() {
                               size="sm"
                             />
                             <div className="min-w-0">
-                              <p className="max-w-48 truncate font-medium text-neutral-900">
+                              <p className="max-w-48 truncate font-medium text-kumo-default">
                                 {user.name}
                                 {isSelf ? (
-                                  <span className="ml-1 text-[9px] text-neutral-400">
+                                  <span className="ml-1 text-xs text-kumo-placeholder">
                                     （你）
                                   </span>
                                 ) : null}
                               </p>
-                              <p className="max-w-48 truncate text-[10px] text-neutral-400">
+                              <p className="max-w-48 truncate text-xs text-kumo-placeholder">
                                 {user.email}
                               </p>
                             </div>
@@ -172,7 +162,7 @@ function AdminUsersPage() {
                             tone={user.role === 'admin' ? 'info' : 'neutral'}
                           />
                         </Table.Cell>
-                        <Table.Cell className="numeric px-4 py-3 text-neutral-700">
+                        <Table.Cell className="numeric px-4 py-3 text-kumo-default">
                           {formatNumber(user.linkCount)}
                         </Table.Cell>
                         <Table.Cell className="px-4 py-3">
@@ -183,7 +173,7 @@ function AdminUsersPage() {
                             />
                             {user.banned && user.banReason ? (
                               <span
-                                className="max-w-40 truncate text-[9px] text-neutral-400"
+                                className="max-w-40 truncate text-xs text-kumo-placeholder"
                                 title={user.banReason}
                               >
                                 {user.banReason}
@@ -191,7 +181,7 @@ function AdminUsersPage() {
                             ) : null}
                           </div>
                         </Table.Cell>
-                        <Table.Cell className="px-4 py-3 text-neutral-500">
+                        <Table.Cell className="px-4 py-3 text-kumo-subtle">
                           {formatDate(user.createdAt)}
                         </Table.Cell>
                         <Table.Cell className="px-4 py-3 text-right">
@@ -202,7 +192,6 @@ function AdminUsersPage() {
                                 ? 'secondary'
                                 : 'secondary-destructive'
                             }
-                            className="h-8 px-2.5 text-[10px]"
                             disabled={isSelf}
                             onClick={() => openBanDialog(user)}
                           >
@@ -216,7 +205,7 @@ function AdminUsersPage() {
               </Table>
             </div>
 
-            <div className="divide-y divide-neutral-100 md:hidden">
+            <div className="divide-y divide-kumo-hairline md:hidden">
               {users.map((user) => {
                 const isSelf = user.id === currentUser?.id
                 return (
@@ -228,11 +217,11 @@ function AdminUsersPage() {
                         size="md"
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs font-semibold text-neutral-900">
+                        <p className="truncate text-sm font-semibold text-kumo-strong">
                           {user.name}
                           {isSelf ? '（你）' : ''}
                         </p>
-                        <p className="truncate text-[10px] text-neutral-400">
+                        <p className="truncate text-xs text-kumo-placeholder">
                           {user.email}
                         </p>
                       </div>
@@ -241,7 +230,7 @@ function AdminUsersPage() {
                         tone={user.banned ? 'danger' : 'success'}
                       />
                     </div>
-                    <div className="mt-3 flex items-center justify-between text-[10px] text-neutral-500">
+                    <div className="mt-3 flex items-center justify-between text-xs text-kumo-subtle">
                       <span>
                         {user.role === 'admin' ? '管理员' : '用户'} ·{' '}
                         {formatNumber(user.linkCount)} 条链接 · 注册于{' '}
@@ -252,7 +241,6 @@ function AdminUsersPage() {
                         variant={
                           user.banned ? 'secondary' : 'secondary-destructive'
                         }
-                        className="h-8 px-2.5 text-[10px]"
                         disabled={isSelf}
                         onClick={() => openBanDialog(user)}
                       >
@@ -309,9 +297,10 @@ function AdminUsersPage() {
             onChange={(event) => setBanReason(event.target.value)}
             placeholder="管理员封禁"
             maxLength={500}
+            className="w-full"
           />
         ) : pendingUser?.banned ? (
-          <div className="flex items-start gap-2 rounded-lg bg-neutral-50 p-3 text-[11px] leading-5 text-neutral-500">
+          <div className="flex items-start gap-2 rounded-lg bg-kumo-elevated p-3 text-sm leading-5 text-kumo-subtle">
             <ShieldWarning className="mt-0.5 size-4 shrink-0" />
             <span>
               当前封禁原因：{pendingUser.banReason || '—'}

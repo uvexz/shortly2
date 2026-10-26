@@ -16,15 +16,13 @@ export function PageHeader({
     <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
       <div className="min-w-0">
         {eyebrow ? (
-          <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-400">
+          <p className="mb-1.5 text-xs font-medium text-kumo-subtle">
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
-          {title}
-        </h1>
+        <h1 className="text-2xl font-semibold text-kumo-strong">{title}</h1>
         {description ? (
-          <p className="mt-1 text-sm text-neutral-500">{description}</p>
+          <p className="mt-1.5 text-base text-kumo-subtle">{description}</p>
         ) : null}
       </div>
       {actions ? (
@@ -46,7 +44,7 @@ export function Panel({
   return (
     <Component
       className={cn(
-        'rounded-xl border border-neutral-200/80 bg-white app-shadow',
+        'rounded-lg bg-kumo-base shadow-xs ring ring-kumo-line',
         className,
       )}
     >
@@ -69,14 +67,14 @@ export function PanelHeader({
   return (
     <div
       className={cn(
-        'flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 px-4 py-4',
+        'flex flex-wrap items-center justify-between gap-3 border-b border-kumo-hairline px-4 py-3.5',
         className,
       )}
     >
       <div className="min-w-0">
-        <h2 className="text-sm font-semibold text-neutral-900">{title}</h2>
+        <h2 className="text-base font-semibold text-kumo-strong">{title}</h2>
         {description ? (
-          <p className="mt-1 text-xs text-neutral-500">{description}</p>
+          <p className="mt-1 text-sm text-kumo-subtle">{description}</p>
         ) : null}
       </div>
       {action}

@@ -28,7 +28,7 @@ export function MobileNav({ admin = false }: { admin?: boolean }) {
   const items = admin ? adminItems : userItems
 
   return (
-    <nav className="safe-bottom fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-neutral-200 bg-white/95 px-1 py-1.5 backdrop-blur md:hidden">
+    <nav className="safe-bottom fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-kumo-line bg-kumo-base/95 px-1 py-1.5 backdrop-blur md:hidden">
       {items.map((item) => {
         const Icon = item.icon
         const active =
@@ -40,10 +40,10 @@ export function MobileNav({ admin = false }: { admin?: boolean }) {
             key={item.to}
             to={item.to}
             className={cn(
-              'flex min-w-16 flex-col items-center gap-1 rounded-lg px-3 py-1.5 text-[10px] transition-colors',
+              'flex min-w-16 flex-col items-center gap-1 rounded-lg px-3 py-1.5 text-xs',
               active
-                ? 'font-semibold text-neutral-900'
-                : 'text-neutral-500 hover:text-neutral-900',
+                ? 'font-medium text-kumo-brand'
+                : 'text-kumo-subtle hover:text-kumo-strong',
             )}
           >
             <Icon className="size-5" weight={active ? 'fill' : 'regular'} />

@@ -2,10 +2,10 @@ import { getInitials } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
 const sizes = {
-  xs: 'size-6 text-[9px]',
-  sm: 'size-7 text-[10px]',
-  md: 'size-8 text-xs',
-  lg: 'size-10 text-sm',
+  xs: 'size-6 text-xs',
+  sm: 'size-7 text-xs',
+  md: 'size-8 text-sm',
+  lg: 'size-10 text-base',
 }
 
 export function UserAvatar({
@@ -22,7 +22,7 @@ export function UserAvatar({
   return (
     <span
       className={cn(
-        'flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-900 font-semibold text-white',
+        'flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-kumo-brand font-medium text-white',
         sizes[size],
         className,
       )}

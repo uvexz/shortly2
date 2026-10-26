@@ -1,4 +1,4 @@
-import { DropdownMenu } from '@cloudflare/kumo'
+import { Badge, DropdownMenu } from '@cloudflare/kumo'
 import {
   DotsThree,
   Key,
@@ -42,36 +42,36 @@ export function AccountMenu({
             <button
               type="button"
               className={cn(
-                'app-focus flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-neutral-100',
+                'app-focus flex items-center gap-2 rounded-lg p-1.5 hover:bg-kumo-tint',
                 className,
               )}
               aria-label="打开用户菜单"
             >
               <UserAvatar name={user.name} image={user.image} size="sm" />
-              <span className="hidden max-w-28 truncate text-xs font-medium text-neutral-700 sm:block">
+              <span className="hidden max-w-28 truncate text-sm font-medium text-kumo-default sm:block">
                 {user.name}
               </span>
-              <span className="hidden text-neutral-400 sm:block">···</span>
+              <span className="hidden text-kumo-placeholder sm:block">···</span>
             </button>
           ) : (
             <button
               type="button"
               className={cn(
-                'app-focus flex w-full items-center gap-2 rounded-xl p-2 text-left transition-colors hover:bg-neutral-50',
+                'app-focus flex w-full items-center gap-2 rounded-lg p-2 text-left hover:bg-kumo-tint',
                 className,
               )}
               aria-label="打开用户菜单"
             >
               <UserAvatar name={user.name} image={user.image} size="md" />
               <span className="min-w-0 flex-1 group-data-[state=collapsed]/sidebar-wrapper:hidden">
-                <span className="block truncate text-xs font-semibold text-neutral-800">
+                <span className="block truncate text-base font-semibold text-kumo-strong">
                   {user.name}
                 </span>
-                <span className="block truncate text-[10px] text-neutral-400">
+                <span className="block truncate text-xs text-kumo-placeholder">
                   {user.email}
                 </span>
               </span>
-              <DotsThree className="size-4 shrink-0 text-neutral-400 group-data-[state=collapsed]/sidebar-wrapper:hidden" />
+              <DotsThree className="size-4 shrink-0 text-kumo-placeholder group-data-[state=collapsed]/sidebar-wrapper:hidden" />
             </button>
           )
         }
@@ -81,15 +81,18 @@ export function AccountMenu({
         className="w-60"
       >
         <div className="px-2 py-2">
-          <p className="truncate text-xs font-semibold text-neutral-900">
+          <p className="truncate text-base font-semibold text-kumo-strong">
             {user.name}
           </p>
-          <p className="mt-0.5 truncate text-[10px] text-neutral-500">
+          <p className="mt-0.5 truncate text-xs text-kumo-subtle">
             {user.email}
           </p>
-          <span className="mt-2 inline-flex rounded-md bg-neutral-100 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide text-neutral-500">
+          <Badge
+            variant={user.role === 'admin' ? 'orange' : 'secondary'}
+            className="mt-2"
+          >
             {user.role === 'admin' ? '管理员' : '用户'}
-          </span>
+          </Badge>
         </div>
         <DropdownMenu.Separator />
         <DropdownMenu.LinkItem href="/dashboard" icon={<SquaresFour />}>

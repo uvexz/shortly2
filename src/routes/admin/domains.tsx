@@ -68,7 +68,6 @@ function AdminDomainsPage() {
         actions={
           <Button
             variant="primary"
-            className="h-10 gap-2 px-4 text-xs"
             onClick={openCreate}
             icon={<Plus className="size-3.5" weight="bold" />}
           >
@@ -77,15 +76,15 @@ function AdminDomainsPage() {
         }
       />
 
-      <div className="mb-4 flex items-start gap-3 rounded-xl border border-neutral-200 bg-white p-4 app-shadow">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+      <div className="mb-4 flex items-start gap-3 rounded-lg bg-kumo-info-tint p-4">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-kumo-base text-kumo-link ring ring-kumo-line">
           <GlobeHemisphereWest className="size-4" />
         </span>
         <div>
-          <p className="text-xs font-medium text-neutral-800">
+          <p className="text-sm font-medium text-kumo-default">
             域名配置会即时影响创建表单和 API 发现结果
           </p>
-          <p className="mt-1 text-[11px] leading-5 text-neutral-500">
+          <p className="mt-1 text-sm leading-5 text-kumo-subtle">
             默认短链域名和默认邮箱域名各只能有一个；默认域名不能删除。DNS
             解析和邮件路由需在域名服务商侧配置。
           </p>
@@ -94,10 +93,9 @@ function AdminDomainsPage() {
 
       <Panel className="p-4">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-neutral-900">全部域名</h2>
+          <h2 className="text-base font-semibold text-kumo-strong">全部域名</h2>
           <Button
             variant="ghost"
-            className="h-9 gap-2 px-3 text-xs"
             onClick={() => void domainsQuery.refetch()}
             icon={<ArrowsClockwise className="size-3.5" />}
           >
@@ -112,7 +110,6 @@ function AdminDomainsPage() {
             action={
               <Button
                 variant="secondary"
-                className="h-9 px-3 text-xs"
                 onClick={() => void domainsQuery.refetch()}
               >
                 重试
@@ -124,7 +121,7 @@ function AdminDomainsPage() {
             {Array.from({ length: 2 }).map((_, index) => (
               <div
                 key={index}
-                className="h-40 animate-pulse rounded-xl bg-neutral-100"
+                className="h-40 animate-pulse rounded-lg bg-kumo-tint"
               />
             ))}
           </div>
@@ -134,11 +131,7 @@ function AdminDomainsPage() {
             title="还没有域名"
             description="添加一个域名后，用户才能创建短链接或临时邮箱。"
             action={
-              <Button
-                variant="primary"
-                className="h-9 px-3 text-xs"
-                onClick={openCreate}
-              >
+              <Button variant="primary" onClick={openCreate}>
                 添加域名
               </Button>
             }
@@ -148,18 +141,18 @@ function AdminDomainsPage() {
             {domains.map((domain) => (
               <div
                 key={domain.id}
-                className="rounded-xl border border-neutral-200 p-4"
+                className="rounded-lg p-4 ring ring-kumo-line"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-2">
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
                       <GlobeHemisphereWest className="size-4" />
                     </span>
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-neutral-900">
+                      <p className="truncate text-base font-semibold text-kumo-strong">
                         {domain.host}
                       </p>
-                      <p className="mt-0.5 text-[10px] text-neutral-400">
+                      <p className="mt-0.5 text-xs text-kumo-placeholder">
                         创建于 {formatDate(domain.createdAt)}
                       </p>
                     </div>
@@ -219,24 +212,24 @@ function AdminDomainsPage() {
                   ) : null}
                 </div>
 
-                <div className="mt-3 grid grid-cols-2 gap-2 text-[10px]">
-                  <div className="rounded-lg bg-neutral-50 p-2.5">
-                    <p className="flex items-center gap-1 text-neutral-400">
+                <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                  <div className="rounded-lg bg-kumo-elevated p-2.5">
+                    <p className="flex items-center gap-1 text-kumo-placeholder">
                       <LinkSimple className="size-3" />
                       短链接
                     </p>
-                    <p className="mt-1 font-medium text-neutral-700">
+                    <p className="mt-1 font-medium text-kumo-default">
                       {domain.supportsShortLinks
                         ? `支持 · 最短 ${domain.shortLinkMinSlugLength} 字符`
                         : '未启用'}
                     </p>
                   </div>
-                  <div className="rounded-lg bg-neutral-50 p-2.5">
-                    <p className="flex items-center gap-1 text-neutral-400">
+                  <div className="rounded-lg bg-kumo-elevated p-2.5">
+                    <p className="flex items-center gap-1 text-kumo-placeholder">
                       <EnvelopeSimple className="size-3" />
                       临时邮箱
                     </p>
-                    <p className="mt-1 font-medium text-neutral-700">
+                    <p className="mt-1 font-medium text-kumo-default">
                       {domain.supportsTempEmail
                         ? `支持 · 最短 ${domain.tempEmailMinLocalPartLength} 字符`
                         : '未启用'}

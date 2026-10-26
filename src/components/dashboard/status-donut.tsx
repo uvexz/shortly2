@@ -34,33 +34,33 @@ export function StatusDonut({
             background:
               total > 0
                 ? `conic-gradient(${gradient})`
-                : 'conic-gradient(#e5e5e5 0 100%)',
+                : 'conic-gradient(var(--color-kumo-fill) 0 100%)',
           }}
         >
-          <div className="flex size-[76px] flex-col items-center justify-center rounded-full bg-white">
-            <strong className="numeric text-base font-semibold text-neutral-900">
+          <div className="flex size-[76px] flex-col items-center justify-center rounded-full bg-kumo-base">
+            <strong className="numeric text-lg font-semibold text-kumo-strong">
               {formatNumber(total)}
             </strong>
-            <span className="text-[10px] text-neutral-400">{totalLabel}</span>
+            <span className="text-xs text-kumo-placeholder">{totalLabel}</span>
           </div>
         </div>
       </div>
-      <div className="mt-5 space-y-3 text-xs">
+      <div className="mt-5 space-y-3 text-sm">
         {segments.map((segment) => (
           <div
             key={segment.label}
             className="flex items-center justify-between gap-3"
           >
-            <span className="flex items-center gap-2 text-neutral-500">
+            <span className="flex items-center gap-2 text-kumo-subtle">
               <i
                 className="size-2 rounded-full"
                 style={{ backgroundColor: segment.color }}
               />
               {segment.label}
             </span>
-            <span className="numeric text-neutral-700">
+            <span className="numeric text-kumo-default">
               {formatNumber(segment.value)}
-              <span className="ml-1 text-[10px] text-neutral-400">
+              <span className="ml-1 text-xs text-kumo-placeholder">
                 {total > 0
                   ? `${Math.round((segment.value / total) * 100)}%`
                   : '0%'}

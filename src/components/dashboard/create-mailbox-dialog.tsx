@@ -92,29 +92,29 @@ export function CreateMailboxDialog({
         <div className="p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <Dialog.Title className="text-lg font-semibold tracking-tight text-neutral-900">
+              <Dialog.Title className="text-lg font-semibold text-kumo-strong">
                 {createdAddress ? '临时邮箱已生成' : '生成临时邮箱'}
               </Dialog.Title>
-              <Dialog.Description className="mt-1 text-xs leading-5 text-neutral-500">
+              <Dialog.Description className="mt-1 text-sm leading-5 text-kumo-subtle">
                 {createdAddress
                   ? '现在可以开始接收邮件了。'
                   : '创建一个临时地址，用于接收非敏感邮件。'}
               </Dialog.Description>
             </div>
-            <span className="flex size-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+            <span className="flex size-9 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
               <EnvelopeSimple className="size-4" weight="bold" />
             </span>
           </div>
 
           {createdAddress ? (
             <div className="mt-5 space-y-4">
-              <div className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-neutral-50 p-3">
-                <CheckCircle className="size-5 shrink-0 text-emerald-600" />
+              <div className="flex items-center gap-3 rounded-lg bg-kumo-success-tint p-3 ring ring-kumo-hairline">
+                <CheckCircle className="size-5 shrink-0 text-kumo-success" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-neutral-900">
+                  <p className="truncate text-sm font-medium text-kumo-default">
                     {createdAddress}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-neutral-500">
+                  <p className="mt-0.5 text-sm text-kumo-subtle">
                     地址会保持可用，直到你手动删除。
                   </p>
                 </div>
@@ -125,11 +125,10 @@ export function CreateMailboxDialog({
                   showLabel
                 />
               </div>
-              <div className="flex justify-end gap-2 border-t border-neutral-100 pt-4">
+              <div className="flex justify-end gap-2 border-t border-kumo-hairline pt-4">
                 <Button
                   type="button"
                   variant="secondary"
-                  className="h-9 px-3 text-xs"
                   onClick={() => {
                     setCreatedAddress(null)
                     setLocalPart('')
@@ -140,7 +139,6 @@ export function CreateMailboxDialog({
                 <Button
                   type="button"
                   variant="primary"
-                  className="h-9 px-3 text-xs"
                   onClick={() => handleClose(false)}
                 >
                   完成
@@ -150,12 +148,12 @@ export function CreateMailboxDialog({
           ) : (
             <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
               <div>
-                <label className="mb-2 block text-xs font-medium text-neutral-700">
+                <label className="mb-2 block text-sm font-medium text-kumo-default">
                   邮箱前缀（可选）
                 </label>
                 <div className="flex flex-col gap-2 sm:flex-row">
                   <input
-                    className="h-10 min-w-0 flex-1 rounded-lg border border-neutral-200 bg-white px-3 text-sm outline-none placeholder:text-neutral-400 focus:border-neutral-400"
+                    className="h-10 min-w-0 flex-1 rounded-lg bg-kumo-base px-3 text-base outline-none ring ring-kumo-line placeholder:text-kumo-placeholder focus:ring-2 focus:ring-kumo-focus/25"
                     placeholder="留空则随机生成"
                     value={localPart}
                     onChange={(event) =>
@@ -177,7 +175,7 @@ export function CreateMailboxDialog({
                     disabled={!domains.length || createMailbox.isPending}
                   />
                 </div>
-                <p className="mt-1.5 text-[10px] text-neutral-400">
+                <p className="mt-1.5 text-xs text-kumo-placeholder">
                   可用字符：字母、数字、点、连字符、下划线
                   {selectedDomain
                     ? ` · 该域名最少 ${selectedDomain.minLocalPartLength} 个字符`
@@ -185,21 +183,20 @@ export function CreateMailboxDialog({
                 </p>
               </div>
 
-              <div className="rounded-lg bg-neutral-50 p-3 text-[11px] leading-5 text-neutral-500">
+              <div className="rounded-lg bg-kumo-elevated p-3 text-sm leading-5 text-kumo-subtle ring ring-kumo-hairline">
                 提示：临时邮箱不适合接收重要账户、安全验证或个人敏感信息。本站不提供邮箱有效期设置，地址会一直保留到手动删除。
               </div>
 
               {error ? (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">
+                <p className="rounded-lg bg-kumo-danger-tint px-3 py-2 text-sm text-kumo-danger">
                   {error}
                 </p>
               ) : null}
 
-              <div className="flex justify-end gap-2 border-t border-neutral-100 pt-4">
+              <div className="flex justify-end gap-2 border-t border-kumo-hairline pt-4">
                 <Button
                   type="button"
                   variant="secondary"
-                  className="h-9 px-3 text-xs"
                   onClick={() => handleClose(false)}
                   disabled={createMailbox.isPending}
                 >
@@ -208,7 +205,6 @@ export function CreateMailboxDialog({
                 <Button
                   type="submit"
                   variant="primary"
-                  className="h-9 px-3 text-xs"
                   loading={createMailbox.isPending}
                   disabled={!domains.length || createMailbox.isPending}
                 >

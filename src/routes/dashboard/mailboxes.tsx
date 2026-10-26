@@ -74,7 +74,6 @@ function MailboxesPage() {
         actions={
           <Button
             variant="primary"
-            className="h-10 gap-2 px-4 text-xs"
             onClick={openCreateMailbox}
             icon={<Plus className="size-3.5" weight="bold" />}
           >
@@ -83,15 +82,15 @@ function MailboxesPage() {
         }
       />
 
-      <div className="mb-4 flex items-start gap-3 rounded-xl border border-neutral-200 bg-white p-4 app-shadow">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+      <div className="mb-4 flex items-start gap-3 rounded-lg bg-kumo-info-tint p-4">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-kumo-base text-kumo-link ring ring-kumo-line">
           <Tray className="size-4" />
         </span>
         <div>
-          <p className="text-xs font-medium text-neutral-800">
+          <p className="text-sm font-medium text-kumo-default">
             临时邮箱不设有效期
           </p>
-          <p className="mt-1 text-[11px] leading-5 text-neutral-500">
+          <p className="mt-1 text-sm leading-5 text-kumo-subtle">
             地址会一直保留，直到你手动删除。请勿用于重要账户、安全验证或个人敏感信息。
           </p>
         </div>
@@ -103,11 +102,7 @@ function MailboxesPage() {
             title="加载失败"
             description={getErrorMessage(query.error, '请稍后重试')}
             action={
-              <Button
-                variant="secondary"
-                className="h-9 px-3 text-xs"
-                onClick={() => void query.refetch()}
-              >
+              <Button variant="secondary" onClick={() => void query.refetch()}>
                 重试
               </Button>
             }
@@ -120,11 +115,7 @@ function MailboxesPage() {
             title="还没有临时邮箱"
             description="生成一个地址，用于接收验证码或测试邮件。"
             action={
-              <Button
-                variant="primary"
-                className="h-9 px-3 text-xs"
-                onClick={openCreateMailbox}
-              >
+              <Button variant="primary" onClick={openCreateMailbox}>
                 生成临时邮箱
               </Button>
             }
@@ -135,29 +126,21 @@ function MailboxesPage() {
               <Table className="min-w-[620px]">
                 <Table.Header>
                   <Table.Row>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      邮箱地址
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      邮件
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      未读
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-[10px]">
-                      创建时间
-                    </Table.Head>
-                    <Table.Head className="px-4 py-3 text-right text-[10px]">
+                    <Table.Head className="px-4 py-3">邮箱地址</Table.Head>
+                    <Table.Head className="px-4 py-3">邮件</Table.Head>
+                    <Table.Head className="px-4 py-3">未读</Table.Head>
+                    <Table.Head className="px-4 py-3">创建时间</Table.Head>
+                    <Table.Head className="px-4 py-3 text-right">
                       操作
                     </Table.Head>
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
                   {mailboxes.map((mailbox) => (
-                    <Table.Row key={mailbox.id} className="text-xs">
+                    <Table.Row key={mailbox.id}>
                       <Table.Cell className="px-4 py-3">
                         <div className="flex items-center gap-1.5">
-                          <span className="font-medium text-neutral-900">
+                          <span className="font-medium text-kumo-default">
                             {mailbox.emailAddress}
                           </span>
                           <CopyButton
@@ -166,19 +149,19 @@ function MailboxesPage() {
                           />
                         </div>
                       </Table.Cell>
-                      <Table.Cell className="numeric px-4 py-3 text-neutral-700">
+                      <Table.Cell className="numeric px-4 py-3 text-kumo-default">
                         {formatNumber(mailbox.messageCount)}
                       </Table.Cell>
                       <Table.Cell className="px-4 py-3">
                         {mailbox.unreadCount > 0 ? (
-                          <span className="numeric rounded-md bg-neutral-900 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                          <span className="numeric rounded-md bg-kumo-brand px-1.5 py-0.5 text-xs font-medium text-white">
                             {mailbox.unreadCount}
                           </span>
                         ) : (
-                          <span className="text-neutral-400">0</span>
+                          <span className="text-kumo-placeholder">0</span>
                         )}
                       </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap px-4 py-3 text-neutral-500">
+                      <Table.Cell className="whitespace-nowrap px-4 py-3 text-kumo-subtle">
                         {formatDateTime(mailbox.createdAt)}
                       </Table.Cell>
                       <Table.Cell className="px-4 py-3 text-right">
@@ -186,7 +169,7 @@ function MailboxesPage() {
                           <Link
                             to="/dashboard/inbox"
                             search={{ mailboxId: mailbox.id }}
-                            className="app-focus inline-flex h-8 items-center gap-1 rounded-lg px-2 text-[11px] text-neutral-600 transition-colors hover:bg-neutral-100"
+                            className="app-focus inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-medium text-kumo-link hover:bg-kumo-tint"
                           >
                             收件箱
                             <ArrowRight className="size-3" />
@@ -209,15 +192,15 @@ function MailboxesPage() {
               </Table>
             </div>
 
-            <div className="divide-y divide-neutral-100 md:hidden">
+            <div className="divide-y divide-kumo-hairline md:hidden">
               {mailboxes.map((mailbox) => (
                 <div key={mailbox.id} className="p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-xs font-semibold text-neutral-900">
+                      <p className="truncate text-sm font-semibold text-kumo-strong">
                         {mailbox.emailAddress}
                       </p>
-                      <p className="mt-1 text-[10px] text-neutral-500">
+                      <p className="mt-1 text-xs text-kumo-subtle">
                         {formatNumber(mailbox.messageCount)} 封邮件 ·{' '}
                         {mailbox.unreadCount} 封未读
                       </p>
@@ -228,14 +211,14 @@ function MailboxesPage() {
                     />
                   </div>
                   <div className="mt-3 flex items-center justify-between">
-                    <span className="text-[10px] text-neutral-400">
+                    <span className="text-xs text-kumo-placeholder">
                       {formatDateTime(mailbox.createdAt)}
                     </span>
                     <div className="flex items-center gap-1">
                       <Link
                         to="/dashboard/inbox"
                         search={{ mailboxId: mailbox.id }}
-                        className="inline-flex h-8 items-center rounded-lg border border-neutral-200 px-2.5 text-[10px]"
+                        className="inline-flex h-8 items-center rounded-lg px-2.5 text-sm font-medium text-kumo-link ring ring-kumo-line"
                       >
                         查看收件箱
                       </Link>

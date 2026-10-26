@@ -25,7 +25,7 @@ export function BarChart({
     return (
       <div
         className={cn(
-          'flex h-52 items-center justify-center rounded-lg border border-dashed border-neutral-200 text-xs text-neutral-400',
+          'flex h-52 items-center justify-center rounded-lg border border-dashed border-kumo-line text-sm text-kumo-placeholder',
           className,
         )}
       >
@@ -40,22 +40,22 @@ export function BarChart({
         const width = Math.max(4, Math.round((item.value / max) * 100))
         const content = (
           <>
-            <div className="flex items-center justify-between gap-3 text-[11px]">
-              <span className="min-w-0 truncate font-medium text-neutral-700">
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <span className="min-w-0 truncate font-medium text-kumo-default">
                 {item.label}
               </span>
-              <span className="numeric shrink-0 text-neutral-500">
+              <span className="numeric shrink-0 text-kumo-subtle">
                 {formatNumber(item.value)}
               </span>
             </div>
-            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-neutral-100">
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-kumo-fill">
               <div
-                className="h-full rounded-full bg-neutral-800 transition-[width] duration-500"
+                className="h-full rounded-full bg-kumo-brand"
                 style={{ width: `${width}%` }}
               />
             </div>
             {item.sublabel ? (
-              <p className="mt-1 truncate text-[9px] text-neutral-400">
+              <p className="mt-1 truncate text-xs text-kumo-placeholder">
                 {item.sublabel}
               </p>
             ) : null}
@@ -67,7 +67,7 @@ export function BarChart({
             <Link
               key={item.id}
               to={item.href as never}
-              className="block rounded-lg px-1 py-0.5 transition-colors hover:bg-neutral-50"
+              className="block rounded-lg px-1 py-0.5 hover:bg-kumo-tint"
             >
               {content}
             </Link>

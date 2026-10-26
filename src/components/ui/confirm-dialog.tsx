@@ -26,24 +26,23 @@ export function ConfirmDialog({
 }) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog className="w-[calc(100vw-2rem)] max-w-md p-0">
+      <Dialog size="base" className="w-[calc(100vw-2rem)] p-0">
         <div className="p-6">
-          <Dialog.Title className="text-base font-semibold text-neutral-900">
+          <Dialog.Title className="text-lg font-semibold text-kumo-strong">
             {title}
           </Dialog.Title>
           {description ? (
-            <Dialog.Description className="mt-2 text-sm leading-6 text-neutral-500">
+            <Dialog.Description className="mt-2 text-base leading-6 text-kumo-subtle">
               {description}
             </Dialog.Description>
           ) : null}
           {children ? <div className="mt-4">{children}</div> : null}
-          <div className="mt-6 flex justify-end gap-2 border-t border-neutral-100 pt-4">
+          <div className="mt-6 flex justify-end gap-2 border-t border-kumo-hairline pt-4">
             <Button
               type="button"
               variant="secondary"
               onClick={() => onOpenChange(false)}
               disabled={loading}
-              className="h-9 px-3 text-xs"
             >
               {cancelLabel}
             </Button>
@@ -53,7 +52,6 @@ export function ConfirmDialog({
               onClick={onConfirm}
               loading={loading}
               disabled={loading}
-              className="h-9 px-3 text-xs"
             >
               {confirmLabel}
             </Button>

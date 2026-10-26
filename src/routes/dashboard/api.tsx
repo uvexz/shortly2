@@ -151,7 +151,7 @@ function ApiPage() {
       </div>
 
       <Panel className="overflow-hidden">
-        <div className="border-b border-neutral-100 px-4 pt-3">
+        <div className="border-b border-kumo-hairline px-4 pt-3">
           <Tabs
             tabs={tabs}
             value={tab}
@@ -163,10 +163,10 @@ function ApiPage() {
 
         {tab === 'keys' ? (
           <div>
-            <div className="border-b border-neutral-100 p-4">
+            <div className="border-b border-kumo-hairline p-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
                 <div className="flex-1">
-                  <label className="mb-2 block text-xs font-medium text-neutral-700">
+                  <label className="mb-2 block text-sm font-medium text-kumo-default">
                     密钥名称（可选）
                   </label>
                   <Input
@@ -179,12 +179,12 @@ function ApiPage() {
                         void handleCreateKey()
                       }
                     }}
+                    className="w-full"
                   />
                 </div>
                 <Button
                   type="button"
                   variant="primary"
-                  className="h-10 gap-2 px-4 text-xs"
                   loading={createKey.isPending}
                   onClick={() => void handleCreateKey()}
                   icon={<Plus className="size-3.5" weight="bold" />}
@@ -193,14 +193,14 @@ function ApiPage() {
                 </Button>
               </div>
               {latestPlainKey ? (
-                <div className="mt-3 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
+                <div className="mt-3 rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+                    <CheckCircle className="mt-0.5 size-4 shrink-0 text-kumo-success" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-medium text-neutral-800">
+                      <p className="text-sm font-medium text-kumo-default">
                         新密钥只在本次显示，请立即复制保存
                       </p>
-                      <p className="mt-1 break-all font-mono text-[11px] text-neutral-600">
+                      <p className="mt-1 break-all font-mono text-sm text-kumo-subtle">
                         {latestPlainKey}
                       </p>
                     </div>
@@ -213,9 +213,9 @@ function ApiPage() {
                 </div>
               ) : null}
               {telegramBotUsername ? (
-                <div className="mt-3 rounded-lg bg-neutral-50 p-3 text-[11px] leading-5 text-neutral-500">
+                <div className="mt-3 rounded-lg bg-kumo-elevated p-3 text-sm leading-5 text-kumo-subtle ring ring-kumo-hairline">
                   在 Telegram 中打开 @{telegramBotUsername}，发送{' '}
-                  <code className="rounded bg-white px-1 py-0.5 text-neutral-800">
+                  <code className="rounded bg-kumo-control px-1 py-0.5 font-mono text-[0.9em] text-kumo-default ring ring-kumo-hairline">
                     /setkey {activeKey}
                   </code>{' '}
                   即可绑定通知。
@@ -236,38 +236,30 @@ function ApiPage() {
                 <Table className="min-w-[620px]">
                   <Table.Header>
                     <Table.Row>
-                      <Table.Head className="px-4 py-3 text-[10px]">
-                        名称
-                      </Table.Head>
-                      <Table.Head className="px-4 py-3 text-[10px]">
-                        前缀
-                      </Table.Head>
-                      <Table.Head className="px-4 py-3 text-[10px]">
-                        最近使用
-                      </Table.Head>
-                      <Table.Head className="px-4 py-3 text-[10px]">
-                        创建时间
-                      </Table.Head>
-                      <Table.Head className="px-4 py-3 text-right text-[10px]">
+                      <Table.Head className="px-4 py-3">名称</Table.Head>
+                      <Table.Head className="px-4 py-3">前缀</Table.Head>
+                      <Table.Head className="px-4 py-3">最近使用</Table.Head>
+                      <Table.Head className="px-4 py-3">创建时间</Table.Head>
+                      <Table.Head className="px-4 py-3 text-right">
                         操作
                       </Table.Head>
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
                     {keys.map((key) => (
-                      <Table.Row key={key.id} className="text-xs">
-                        <Table.Cell className="px-4 py-3 font-medium text-neutral-900">
+                      <Table.Row key={key.id}>
+                        <Table.Cell className="px-4 py-3 font-medium text-kumo-default">
                           {key.name}
                         </Table.Cell>
-                        <Table.Cell className="px-4 py-3 font-mono text-[11px] text-neutral-500">
+                        <Table.Cell className="px-4 py-3 font-mono text-sm text-kumo-subtle">
                           {key.keyPrefix}…
                         </Table.Cell>
-                        <Table.Cell className="px-4 py-3 text-neutral-500">
+                        <Table.Cell className="px-4 py-3 text-kumo-subtle">
                           {key.lastUsedAt
                             ? formatDateTime(key.lastUsedAt)
                             : '从未使用'}
                         </Table.Cell>
-                        <Table.Cell className="px-4 py-3 text-neutral-500">
+                        <Table.Cell className="px-4 py-3 text-kumo-subtle">
                           {formatDateTime(key.createdAt)}
                         </Table.Cell>
                         <Table.Cell className="px-4 py-3 text-right">
@@ -293,10 +285,10 @@ function ApiPage() {
         {tab === 'docs' ? (
           <div className="space-y-5 p-4 sm:p-5">
             <div>
-              <h2 className="text-sm font-semibold text-neutral-900">
+              <h2 className="text-base font-semibold text-kumo-strong">
                 API 端点
               </h2>
-              <p className="mt-1 text-xs text-neutral-500">
+              <p className="mt-1 text-sm text-kumo-subtle">
                 所有 /v1 接口使用 Bearer API Key 鉴权；浏览器会话接口使用
                 Cookie。
               </p>
@@ -336,7 +328,7 @@ function ApiPage() {
               code={`curl '${apiBase}/v1/emails/MAILBOX_ID/messages?page=1&limit=20' \\
   -H 'Authorization: Bearer YOUR_API_KEY'`}
             />
-            <div className="rounded-lg bg-neutral-50 p-3 text-[11px] leading-5 text-neutral-500">
+            <div className="rounded-lg bg-kumo-elevated p-3 text-sm leading-5 text-kumo-subtle">
               可用短链域名：
               {shortDomains.map((item) => item.host).join('、') || '暂无'}
               <br />
@@ -349,10 +341,10 @@ function ApiPage() {
         {tab === 'bitwarden' ? (
           <div className="space-y-5 p-4 sm:p-5">
             <div>
-              <h2 className="text-sm font-semibold text-neutral-900">
+              <h2 className="text-base font-semibold text-kumo-strong">
                 Bitwarden / Addy.io 别名生成
               </h2>
-              <p className="mt-1 text-xs leading-5 text-neutral-500">
+              <p className="mt-1 text-sm leading-6 text-kumo-subtle">
                 Shortly 兼容 Addy.io 的别名接口。在 Bitwarden 生成器中添加自建
                 Addy.io 服务，即可使用临时邮箱生成别名。
               </p>
@@ -366,7 +358,7 @@ function ApiPage() {
                 value="Authorization: Bearer YOUR_API_KEY"
               />
             </div>
-            <ol className="list-decimal space-y-2 pl-5 text-xs leading-6 text-neutral-600">
+            <ol className="list-decimal space-y-2 pl-5 text-sm leading-6 text-kumo-subtle">
               <li>打开 Bitwarden 生成器，选择 Addy.io。</li>
               <li>将 Server URL 填入上面的别名接口地址。</li>
               <li>将 API Key 填入 Base64 编码前的 API Key 位置。</li>
@@ -389,10 +381,10 @@ function ApiPage() {
         {tab === 'sharex' ? (
           <div className="space-y-5 p-4 sm:p-5">
             <div>
-              <h2 className="text-sm font-semibold text-neutral-900">
+              <h2 className="text-base font-semibold text-kumo-strong">
                 ShareX 集成
               </h2>
-              <p className="mt-1 text-xs leading-5 text-neutral-500">
+              <p className="mt-1 text-sm leading-6 text-kumo-subtle">
                 生成 ShareX 自定义上传器配置，下载后导入 ShareX
                 即可快速分享短链接。
               </p>
@@ -402,12 +394,12 @@ function ApiPage() {
               value={sharexKey}
               onChange={(event) => setSharexKey(event.target.value)}
               placeholder="sk_shortly_..."
+              className="w-full"
             />
             <CodeBlock title="shortly-sharex.sxcu" code={sharexConfig} />
             <div className="flex flex-wrap gap-2">
               <Button
                 variant="primary"
-                className="h-10 gap-2 px-4 text-xs"
                 onClick={downloadSharexConfig}
                 icon={<Download className="size-3.5" />}
               >
@@ -415,7 +407,6 @@ function ApiPage() {
               </Button>
               <Button
                 variant="secondary"
-                className="h-10 gap-2 px-4 text-xs"
                 onClick={() => void copyText(sharexConfig, 'ShareX 配置已复制')}
                 icon={<Copy className="size-3.5" />}
               >
@@ -456,12 +447,12 @@ function Metric({
   icon: React.ComponentType<{ className?: string }>
 }) {
   return (
-    <div className="rounded-xl border border-neutral-200/80 bg-white p-4 app-shadow">
-      <span className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700">
+    <div className="rounded-lg bg-kumo-base p-4 shadow-xs ring ring-kumo-line">
+      <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
         <Icon className="size-4" />
       </span>
-      <p className="mt-3 text-xs text-neutral-500">{label}</p>
-      <p className="mt-1 truncate text-xl font-semibold tracking-tight text-neutral-900">
+      <p className="mt-3 text-sm text-kumo-subtle">{label}</p>
+      <p className="mt-1 truncate text-xl font-semibold text-kumo-strong">
         {value}
       </p>
     </div>
@@ -470,10 +461,10 @@ function Metric({
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
+    <div className="flex items-center justify-between gap-3 rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
       <div className="min-w-0">
-        <p className="text-[10px] text-neutral-400">{label}</p>
-        <p className="mt-1 truncate font-mono text-[11px] text-neutral-700">
+        <p className="text-xs text-kumo-placeholder">{label}</p>
+        <p className="mt-1 truncate font-mono text-sm text-kumo-default">
           {value}
         </p>
       </div>

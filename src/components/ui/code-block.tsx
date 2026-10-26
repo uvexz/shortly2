@@ -2,9 +2,9 @@ import { CopyButton } from '@/components/ui/copy-button'
 
 export function CodeBlock({ title, code }: { title?: string; code: string }) {
   return (
-    <div className="relative overflow-hidden rounded-lg bg-neutral-950">
+    <div className="relative overflow-hidden rounded-lg bg-kumo-contrast">
       {title ? (
-        <div className="border-b border-white/10 px-4 py-2.5 text-[10px] font-medium text-neutral-400">
+        <div className="border-b border-kumo-inverse/10 px-4 py-2.5 text-xs font-medium text-kumo-inverse/70">
           {title}
         </div>
       ) : null}
@@ -12,10 +12,10 @@ export function CodeBlock({ title, code }: { title?: string; code: string }) {
         <CopyButton
           value={code}
           successMessage="代码已复制"
-          className="text-neutral-300 hover:bg-white/10 hover:text-white"
+          className="text-kumo-inverse/80 hover:bg-kumo-inverse/10 hover:text-kumo-inverse"
         />
       </div>
-      <pre className="overflow-x-auto whitespace-pre-wrap break-all p-4 pr-12 font-mono text-[11px] leading-5 text-neutral-200 scrollbar-thin">
+      <pre className="overflow-x-auto whitespace-pre-wrap break-all p-4 pr-12 font-mono text-xs leading-5 text-kumo-inverse/85 scrollbar-thin">
         {code}
       </pre>
     </div>

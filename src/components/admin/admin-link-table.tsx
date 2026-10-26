@@ -28,35 +28,27 @@ export function AdminLinkTable({
         <Table className="min-w-[900px]">
           <Table.Header>
             <Table.Row>
-              <Table.Head className="px-4 py-3 text-[10px]">短链接</Table.Head>
-              <Table.Head className="px-4 py-3 text-[10px]">
-                目标链接
-              </Table.Head>
-              <Table.Head className="px-4 py-3 text-[10px]">
-                所属用户
-              </Table.Head>
-              <Table.Head className="px-4 py-3 text-[10px]">访问量</Table.Head>
-              <Table.Head className="px-4 py-3 text-[10px]">
-                创建时间
-              </Table.Head>
-              <Table.Head className="px-4 py-3 text-[10px]">状态</Table.Head>
-              <Table.Head className="px-4 py-3 text-right text-[10px]">
-                操作
-              </Table.Head>
+              <Table.Head className="px-4 py-3">短链接</Table.Head>
+              <Table.Head className="px-4 py-3">目标链接</Table.Head>
+              <Table.Head className="px-4 py-3">所属用户</Table.Head>
+              <Table.Head className="px-4 py-3">访问量</Table.Head>
+              <Table.Head className="px-4 py-3">创建时间</Table.Head>
+              <Table.Head className="px-4 py-3">状态</Table.Head>
+              <Table.Head className="px-4 py-3 text-right">操作</Table.Head>
             </Table.Row>
           </Table.Header>
           <Table.Body>
             {links.map((link) => {
               const health = getLinkHealth(link)
               return (
-                <Table.Row key={link.id} className="text-xs">
+                <Table.Row key={link.id}>
                   <Table.Cell className="px-4 py-3">
                     <div className="flex items-center gap-1.5">
                       <a
                         href={link.shortUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium text-neutral-900 hover:underline"
+                        className="font-medium text-kumo-link hover:underline"
                       >
                         {link.shortUrl.replace(/^https?:\/\//, '')}
                       </a>
@@ -66,21 +58,21 @@ export function AdminLinkTable({
                       />
                     </div>
                   </Table.Cell>
-                  <Table.Cell className="max-w-56 truncate px-4 py-3 text-neutral-500">
+                  <Table.Cell className="max-w-56 truncate px-4 py-3 text-kumo-subtle">
                     {link.originalUrl}
                   </Table.Cell>
                   <Table.Cell className="px-4 py-3">
-                    <p className="max-w-40 truncate font-medium text-neutral-700">
+                    <p className="max-w-40 truncate font-medium text-kumo-default">
                       {link.userName || '匿名'}
                     </p>
-                    <p className="max-w-40 truncate text-[10px] text-neutral-400">
+                    <p className="max-w-40 truncate text-xs text-kumo-placeholder">
                       {link.userEmail || '—'}
                     </p>
                   </Table.Cell>
-                  <Table.Cell className="numeric px-4 py-3 text-neutral-700">
+                  <Table.Cell className="numeric px-4 py-3 text-kumo-default">
                     {formatNumber(link.clicks)}
                   </Table.Cell>
-                  <Table.Cell className="whitespace-nowrap px-4 py-3 text-neutral-500">
+                  <Table.Cell className="whitespace-nowrap px-4 py-3 text-kumo-subtle">
                     {formatRelativeTime(link.createdAt)}
                   </Table.Cell>
                   <Table.Cell className="px-4 py-3">
@@ -136,20 +128,20 @@ export function AdminLinkTable({
         </Table>
       </div>
 
-      <div className="divide-y divide-neutral-100 lg:hidden">
+      <div className="divide-y divide-kumo-hairline lg:hidden">
         {links.map((link) => {
           const health = getLinkHealth(link)
           return (
             <div key={link.id} className="p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate text-xs font-semibold text-neutral-900">
+                  <p className="truncate text-sm font-semibold text-kumo-link">
                     {link.shortUrl.replace(/^https?:\/\//, '')}
                   </p>
-                  <p className="mt-1 truncate text-[10px] text-neutral-500">
+                  <p className="mt-1 truncate text-xs text-kumo-subtle">
                     {link.originalUrl}
                   </p>
-                  <p className="mt-2 flex items-center gap-1 text-[10px] text-neutral-400">
+                  <p className="mt-2 flex items-center gap-1 text-xs text-kumo-placeholder">
                     <User className="size-3" />
                     {link.userName || '匿名'} · {link.userEmail || '—'}
                   </p>
@@ -157,21 +149,16 @@ export function AdminLinkTable({
                 <StatusBadge label={health.label} tone={health.tone} />
               </div>
               <div className="mt-3 flex items-center justify-between">
-                <span className="text-[10px] text-neutral-500">
+                <span className="text-xs text-kumo-subtle">
                   {formatNumber(link.clicks)} 次访问 ·{' '}
                   {formatRelativeTime(link.createdAt)}
                 </span>
                 <div className="flex items-center gap-1">
-                  <Button
-                    variant="secondary"
-                    className="h-8 px-2.5 text-[10px]"
-                    onClick={() => onViewLogs(link)}
-                  >
+                  <Button variant="secondary" onClick={() => onViewLogs(link)}>
                     日志
                   </Button>
                   <Button
                     variant="secondary-destructive"
-                    className="h-8 px-2.5 text-[10px]"
                     onClick={() => onDelete(link)}
                   >
                     删除

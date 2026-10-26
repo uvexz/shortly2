@@ -25,7 +25,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { name: 'theme-color', content: '#f7f7f6' },
+      { name: 'theme-color', content: '#fbfbfb' },
       {
         title: loaderData?.siteName
           ? `${loaderData.siteName} — 短链接与临时邮箱`
@@ -71,20 +71,20 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
 function NotFound() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#f7f7f6] px-6">
-      <div className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-8 text-center shadow-sm">
-        <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-neutral-100 text-lg font-semibold text-neutral-700">
+    <main className="flex min-h-screen items-center justify-center bg-kumo-canvas px-6">
+      <div className="w-full max-w-md rounded-xl bg-kumo-base p-8 text-center shadow-xs ring ring-kumo-line">
+        <div className="mx-auto flex size-12 items-center justify-center rounded-lg bg-kumo-tint text-lg font-semibold text-kumo-subtle">
           404
         </div>
-        <h1 className="mt-5 text-xl font-semibold tracking-tight">
+        <h1 className="mt-5 text-xl font-semibold text-kumo-strong">
           页面不存在
         </h1>
-        <p className="mt-2 text-sm leading-6 text-neutral-500">
+        <p className="mt-2 text-base leading-6 text-kumo-subtle">
           这个地址可能已被移除，或者短链接不存在。
         </p>
         <Link
           to="/"
-          className="app-focus mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
+          className="app-focus mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-kumo-brand px-4 text-base font-medium text-white hover:bg-kumo-brand-hover"
         >
           返回首页
         </Link>
@@ -97,21 +97,21 @@ function RootError({ error, reset }: { error: unknown; reset: () => void }) {
   const message =
     error instanceof Error ? error.message : '发生了未知错误，请稍后重试。'
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#f7f7f6] px-6">
-      <div className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-8 text-center shadow-sm">
-        <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-red-50 text-lg font-semibold text-red-600">
+    <main className="flex min-h-screen items-center justify-center bg-kumo-canvas px-6">
+      <div className="w-full max-w-md rounded-xl bg-kumo-base p-8 text-center shadow-xs ring ring-kumo-line">
+        <div className="mx-auto flex size-12 items-center justify-center rounded-lg bg-kumo-danger-tint text-lg font-semibold text-kumo-danger">
           !
         </div>
-        <h1 className="mt-5 text-xl font-semibold tracking-tight">
+        <h1 className="mt-5 text-xl font-semibold text-kumo-strong">
           页面加载失败
         </h1>
-        <p className="mt-2 break-words text-sm leading-6 text-neutral-500">
+        <p className="mt-2 break-words text-base leading-6 text-kumo-subtle">
           {message}
         </p>
         <button
           type="button"
           onClick={reset}
-          className="app-focus mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
+          className="app-focus mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-kumo-brand px-4 text-base font-medium text-white hover:bg-kumo-brand-hover"
         >
           重试
         </button>
