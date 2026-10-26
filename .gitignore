@@ -1,0 +1,20 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+.env*
+!.env.example
+.nitro
+.tanstack
+.wrangler
+.output
+.vinxi
+__unconfig*
+todos.json
+
+# Local libSQL database
+*.db
+*.db-journal
+*.db-wal
+*.db-shm

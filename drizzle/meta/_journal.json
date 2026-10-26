@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1792986451637,
+      "tag": "0000_curvy_matthew_murdock",
+      "breakpoints": true
+    }
+  ]
+}

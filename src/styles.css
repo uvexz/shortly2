@@ -1,0 +1,126 @@
+@source "../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}";
+@import '@cloudflare/kumo/styles/tailwind';
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+@theme {
+  --color-kumo-canvas: #f7f7f6;
+  --color-kumo-elevated: #ffffff;
+  --color-kumo-recessed: #f2f2f1;
+  --color-kumo-base: #ffffff;
+  --color-kumo-tint: #f2f2f1;
+  --color-kumo-contrast: #171717;
+  --color-kumo-overlay: #ffffff;
+  --color-kumo-control: #ffffff;
+  --color-kumo-interact: #d4d4d4;
+  --color-kumo-fill: #e9e9e7;
+  --color-kumo-fill-hover: #f1f1ef;
+  --color-kumo-brand: #171717;
+  --color-kumo-brand-hover: #333333;
+  --color-kumo-line: rgba(15, 23, 42, 0.08);
+  --color-kumo-hairline: #ececea;
+  --color-kumo-focus: #171717;
+  --color-kumo-info: #525252;
+  --color-kumo-info-tint: #f2f2f1;
+  --text-color-kumo-link: #171717;
+  --text-color-kumo-brand: #171717;
+  --shadow-soft:
+    0 1px 2px rgba(15, 23, 42, 0.03), 0 8px 24px rgba(15, 23, 42, 0.025);
+}
+
+:root {
+  color-scheme: light;
+  --font-sans:
+    'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-mono:
+    'SFMono-Regular', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-neutral-200);
+  }
+
+  html {
+    min-height: 100%;
+    background: #f7f7f6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100%;
+    margin: 0;
+    background: #f7f7f6;
+    color: #171717;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background: #171717;
+    color: #ffffff;
+  }
+}
+
+@layer utilities {
+  .font-mono,
+  .numeric {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .app-shadow {
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.03),
+      0 8px 24px rgba(15, 23, 42, 0.025);
+  }
+
+  .app-focus {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-neutral-900/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f7f7f6];
+  }
+
+  .chart-grid {
+    background-image: linear-gradient(to bottom, #ececea 1px, transparent 1px);
+    background-size: 100% 25%;
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #d4d4d4 transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: #d4d4d4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
