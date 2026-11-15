@@ -18,12 +18,22 @@ export type TelegramChat = {
 	username?: string;
 };
 
+export type TelegramWidget = {
+	id?: string;
+	width?: number;
+	height?: number;
+	html?: string;
+	public_data?: string;
+	chat_data?: string;
+};
+
 export type TelegramMessage = {
 	message_id: number;
 	date?: number;
 	chat: TelegramChat;
 	from?: TelegramUser;
 	text?: string;
+	widget?: TelegramWidget;
 };
 
 export type TelegramCallbackQuery = {

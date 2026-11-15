@@ -474,6 +474,20 @@ describe('legacy notification callbacks', () => {
 		expectKeyboardContains(harness.lastKeyboard(), 'msg:del:message-legacy');
 		expectKeyboardContains(harness.lastKeyboard(), `msg:back:${MAILBOX_ID}:1`);
 	});
+
+	it('sends a new message instead of editing a widget notification', async () => {
+		const harness = createHarness();
+		harness.seedBinding();
+		harness.api.on('GET /emails/messages/*', () => ({
+			body: { data: messageDetail({ id: 'message-legacy', mailboxId: MAILBOX_ID, isRead: true }) },
+		}));
+
+		await harness.click('email:detail:message-legacy', { widget: true });
+
+		expect(harness.telegram.lastCall('editMessageText')).toBeNull();
+		expect(harness.telegram.lastCall('sendMessage')).not.toBeNull();
+		expectKeyboardContains(harness.lastKeyboard(), 'msg:detail:message-legacy');
+	});
 });
 
 describe('binding gate + expired API key', () => {

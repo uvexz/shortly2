@@ -540,6 +540,7 @@ async function notifyMailboxOwnerOnTelegram(
       text: payload.text,
       html: payload.html,
       attachmentsCount: attachments.length,
+      date: payload.date,
     })
   } catch (error) {
     reportTempEmailError(

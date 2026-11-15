@@ -8,12 +8,12 @@
 
 ## 和主程序的职责边界
 
-| 能力                                                         | 由谁负责                                             |
-| ------------------------------------------------------------ | ---------------------------------------------------- |
-| 新邮件主动推送（含 `email:read / delete / detail` 内联按钮） | Shortly 主程序 `src/lib/telegram.ts`                 |
-| 后台「API Key → Telegram chat」绑定关系                      | Shortly 主程序 `POST /v1/integrations/telegram/bind` |
-| 本 Worker 里的按钮交互、向导、列表、详情、一次性网页         | 本 Worker                                            |
-| Bot 侧保存的 API Key（KV）                                   | 本 Worker（`b:<chatId>`）                            |
+| 能力                                                                    | 由谁负责                                             |
+| ----------------------------------------------------------------------- | ---------------------------------------------------- |
+| 新邮件主动推送（私聊 Widget + `email:read / delete / detail` 内联按钮） | Shortly 主程序 `src/lib/telegram.ts`                 |
+| 后台「API Key → Telegram chat」绑定关系                                 | Shortly 主程序 `POST /v1/integrations/telegram/bind` |
+| 本 Worker 里的按钮交互、向导、列表、详情、一次性网页                    | 本 Worker                                            |
+| Bot 侧保存的 API Key（KV）                                              | 本 Worker（`b:<chatId>`）                            |
 
 > 主程序侧的绑定用于「往这个 chat 推新邮件」；Worker 侧的 KV 绑定用于「这个 chat 调 `/v1`」。两者互相独立：在 Bot 里解除本地绑定不会停止主程序的通知推送。
 
@@ -97,6 +97,18 @@
 - `/delete <邮箱地址>`：翻页查找（limit 100，最多 5 页）→ 找到 mailbox UUID → 确认删除。
 
 ### 新邮件通知（主程序推送）
+
+私聊优先使用 Bot API 10.4 的 **HTML widget**（`sendWidget`）展示邮件，群聊、旧服务端或 `sendWidget` 失败时自动回退为原来的文本通知；两种形式的 `email:read / delete / detail` 内联按钮完全一致。
+
+Widget 是**静态**的：不使用 `allow_queries`，因此不会产生 `widget_query` / `shared_widget_query`，webhook 的 `allowed_updates` 仍然只需要 `message` 和 `callback_query`。
+
+- 头部：来源、主题、收件邮箱、时间、附件数；正文优先 `text`，HTML-only 邮件会转纯文本并保留 `<a href>` 的 URL。
+- **正文可自由选择/复制**：正文设置 `user-select:text`；疑似验证码单独成块，点按通过 `TelegramWidget.copyText` 复制。
+- **链接可点击**：正文中的 `https://` 链接在 widget 内点按后由 `openLink` 打开（客户端会显示完整 URL 并确认；超过 256 字符的链接保持纯文本）。
+- **疑似验证码**：独立的 4–8 位数字，或含数字的 4–8 位数字字母组合；最多展示 3 个，按关键词（验证码 / code / OTP 等）与位置排序，年份、金额、`#hash` 等会降权。caption 里也会给出一份，方便通知栏/旧客户端查看。
+- **内容长度**：widget 最多 600px 高、压缩后 4KB。正文超长时会截断并提示，完整内容继续通过 `🌐 查看邮件详情` 的一次性网页查看（token 10 分钟、读取即失效）。
+- Widget 消息自动带 protected content，**不能转发**；生产环境只有私聊支持 widget，群聊始终走文本通知。
+- Worker 识别 callback 消息上的 `widget` 字段：在 widget 通知里点「查看邮件详情」时会**发送新消息**，不会对无文本的 widget 消息调用 `editMessageText`；`email:read` / `email:delete` 仍编辑原消息的内联键盘。
 
 主程序推送的消息自带内联按钮，Worker 处理三种回调：
 
@@ -274,21 +286,22 @@ bunx wrangler tail
 
 ## 故障排查
 
-| 现象                             | 排查方向                                                                                                                             |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Bot 完全没反应                   | `getWebhookInfo` 看 `last_error_message`；`wrangler tail` 看请求是否到达；检查 `setWebhook` URL 是否为 `.../webhook`                 |
-| 所有 update 都 401               | Webhook 的 `secret_token` 与 `TELEGRAM_WEBHOOK_SECRET` 不一致（或设置了 secret 却没有重新 setWebhook）                               |
-| 点按钮提示「请先绑定 API Key」   | KV 绑定丢失（`b:<chatId>`）：换过 KV namespace、清了 KV，或另一个 worker 环境；重新绑定即可                                          |
-| 提示「API Key 已失效或已被删除」 | 主程序里 Key 被删除/禁用；Worker 已自动清除本地绑定，重新 `🔑 绑定 API Key`                                                          |
-| `setWebhook` 返回 400            | URL 必须是公网 HTTPS；`secret_token` 只允许 `A-Za-z0-9_-`，1–256 字符                                                                |
-| 域名下拉不是后台配置的域名       | `/v1/domains` 失败或缓存未过期（默认 10 分钟）；看 `wrangler tail` 的 `/v1` 报错，或清 KV `dom:v1` / 调小 `DOMAIN_CACHE_TTL_SECONDS` |
-| 短链/邮箱列表一直是空的          | 确认 `API_BASE_URL` 指向当前主程序、Key 有权限；用 `curl -H "Authorization: Bearer <key>" <API_BASE_URL>/links` 对照                 |
-| 按钮点击后消息没变化             | 内容与旧消息完全一致时 Telegram 返回 `message is not modified`，属正常；若 `message to edit not found` 会回退为发送新消息            |
-| 频繁提示「操作太频繁」           | 每 chat 10 秒最多 20 次回调，稍等再点                                                                                                |
-| 复制按钮没有反应                 | `copy_text` 需要 Telegram 客户端支持 Bot API 7.11+；旧客户端请用消息里的 `<code>` 文本手动复制                                       |
-| 邮件详情网页 410                 | token 一次性且 10 分钟过期，回 Telegram 重新点 `🌐 完整邮件`                                                                         |
-| `wrangler deploy` 报 KV 未绑定   | `wrangler.jsonc` 的 `kv_namespaces[0].id` 还是占位符，换成真实 namespace id                                                          |
-| 本地 `wrangler dev` 外呼失败     | `.dev.vars` 里配置 `TELEGRAM_BOT_TOKEN` / `API_BASE_URL`；本地默认会真的请求 Telegram 与主程序                                       |
+| 现象                               | 排查方向                                                                                                                             |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Bot 完全没反应                     | `getWebhookInfo` 看 `last_error_message`；`wrangler tail` 看请求是否到达；检查 `setWebhook` URL 是否为 `.../webhook`                 |
+| 所有 update 都 401                 | Webhook 的 `secret_token` 与 `TELEGRAM_WEBHOOK_SECRET` 不一致（或设置了 secret 却没有重新 setWebhook）                               |
+| 点按钮提示「请先绑定 API Key」     | KV 绑定丢失（`b:<chatId>`）：换过 KV namespace、清了 KV，或另一个 worker 环境；重新绑定即可                                          |
+| 提示「API Key 已失效或已被删除」   | 主程序里 Key 被删除/禁用；Worker 已自动清除本地绑定，重新 `🔑 绑定 API Key`                                                          |
+| `setWebhook` 返回 400              | URL 必须是公网 HTTPS；`secret_token` 只允许 `A-Za-z0-9_-`，1–256 字符                                                                |
+| 域名下拉不是后台配置的域名         | `/v1/domains` 失败或缓存未过期（默认 10 分钟）；看 `wrangler tail` 的 `/v1` 报错，或清 KV `dom:v1` / 调小 `DOMAIN_CACHE_TTL_SECONDS` |
+| 短链/邮箱列表一直是空的            | 确认 `API_BASE_URL` 指向当前主程序、Key 有权限；用 `curl -H "Authorization: Bearer <key>" <API_BASE_URL>/links` 对照                 |
+| 按钮点击后消息没变化               | 内容与旧消息完全一致时 Telegram 返回 `message is not modified`，属正常；若 `message to edit not found` 会回退为发送新消息            |
+| 频繁提示「操作太频繁」             | 每 chat 10 秒最多 20 次回调，稍等再点                                                                                                |
+| 复制按钮没有反应                   | `copy_text` 需要 Telegram 客户端支持 Bot API 7.11+；旧客户端请用消息里的 `<code>` 文本手动复制                                       |
+| 私聊通知显示「不支持的消息」+ 摘要 | 客户端尚未支持 widget（Bot API 10.4）；更新 Telegram，或点摘要下方的「查看邮件详情」；群聊始终使用文本通知                           |
+| 邮件详情网页 410                   | token 一次性且 10 分钟过期，回 Telegram 重新点 `🌐 完整邮件`                                                                         |
+| `wrangler deploy` 报 KV 未绑定     | `wrangler.jsonc` 的 `kv_namespaces[0].id` 还是占位符，换成真实 namespace id                                                          |
+| 本地 `wrangler dev` 外呼失败       | `.dev.vars` 里配置 `TELEGRAM_BOT_TOKEN` / `API_BASE_URL`；本地默认会真的请求 Telegram 与主程序                                       |
 
 ## 本地开发与测试
 

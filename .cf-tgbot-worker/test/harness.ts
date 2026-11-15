@@ -695,6 +695,8 @@ export type Screen = {
 export type ClickOptions = {
 	/** Message that carries the inline keyboard (defaults to the last bot message). */
 	sourceMessageId?: number;
+	/** Simulate a Bot API 10.4 widget message (no text, has `widget`). */
+	widget?: boolean;
 	/** Pass `null` to omit the webhook secret header. */
 	secret?: string | null;
 };
@@ -784,6 +786,7 @@ export class Harness {
 					chat: this.chat,
 					from: BOT_USER,
 					text: '',
+					...(options.widget ? { widget: {} } : {}),
 				},
 				data,
 			},

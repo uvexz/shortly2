@@ -86,7 +86,7 @@ bun run db:push
 | `AUTH_OTP_DEV_LOG`                           | 仅开发环境；为 `true` 时启用邮箱 OTP 并把验证码打印到 dev server 日志 |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`  | 启用 GitHub 登录                                                      |
 | `INBOUND_EMAIL_SECRET`                       | `/v1/emails/inbound` 共享密钥，需与 Cloudflare Email Worker 一致      |
-| `TELEGRAM_BOT_TOKEN`                         | 新邮件 Telegram 通知                                                  |
+| `TELEGRAM_BOT_TOKEN`                         | 新邮件 Telegram 通知（私聊 widget，失败/群聊回退文本）                |
 | `TRUST_X_FORWARDED_FOR` / `TRUST_PROXY_HOPS` | 反向代理 IP 解析                                                      |
 | `DATABASE_QUERY_LOG`                         | 打印 SQL（调试用）                                                    |
 | `DATABASE_AUTO_INIT`                         | 生产环境临时自举 schema                                               |

@@ -160,7 +160,27 @@
   存 `cfg:<chatId>`），`[🔑 绑定/更换 Key] [◀ 返回]`。
 - **帮助** `help:show`（`/help`）：功能说明 + 每个功能的入口按钮（纯内联，无需打字）。
 
-### 2.6 通知回调兼容（来自主程序 sendMessage 的内联按钮）
+### 2.6 新邮件通知（Widget 优先，文本回退）
+
+主程序（`src/lib/telegram.ts`）在**私聊**优先用 Bot API 10.4 `sendWidget` 推送邮件卡片；
+群聊、旧服务端或任何 `sendWidget` 失败时回退为原 `sendMessage` 文本通知。两种形式的内联按钮一致：
+
+| 回调                       | 行为                                                                                                              |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `email:read:<messageId>`   | 标记已读，原通知键盘换成 `🗑 删除 / 🌐 完整邮件`，并 toast                                                         |
+| `email:delete:<messageId>` | 第一次点击把原消息键盘换成 `⚠️ 确认删除 / ❌ 取消`（callback 仍为 `email:delete:<id>`）；确认后删除邮件并移除键盘 |
+| `email:detail:<messageId>` | 渲染邮件详情页（等同 `msg:view`），含一次性网页按钮                                                               |
+
+Widget 约定：
+
+- **静态、无 `allow_queries`**：不产生 `widget_query` / `shared_widget_query`，`setWebhook` 的 `allowed_updates` 不需要变化。
+- 展示来源、主题、收件邮箱、时间、附件数、正文；正文 `user-select:text` 可自由选择复制。
+- 正文里的 `https://` 链接通过 `<a href>` / `openLink` 打开；超过 256 字符或非 https 链接保持纯文本。
+- 疑似验证码为独立的 4–8 位数字或含数字的 4–8 位数字字母组合，最多 3 个，点按用 `TelegramWidget.copyText` 复制；caption 同步展示。
+- Widget 受 600px 高度与 4KB（zlib 9）限制：正文超长时截断并提示，完整内容继续走 `msg:detail` 的一次性网页。
+- Widget 消息自动 protected content，不能转发；生产环境仅私聊支持。
+- Worker 兼容：`callback_query.message.widget` 存在时，`ctx.render` 不对该消息调用 `editMessageText`，改为发送新消息；
+  `email:read` / `email:delete` 仍可编辑原消息的内联键盘。
 
 解析 `email:read:<id>` / `email:delete:<id>` / `email:detail:<id>`：
 

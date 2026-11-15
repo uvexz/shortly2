@@ -167,6 +167,8 @@ function createContext(params: {
 	callbackQueryId?: string;
 	sourceMessageId?: number;
 	userMessageId?: number;
+	/** A Bot API 10.4 widget message has no text, so flows must send a new message instead of editing it. */
+	sourceMessageIsWidget?: boolean;
 }): BotContext {
 	let domainsPromise: Promise<ResolvedDomains> | null = null;
 	let answered = false;
@@ -192,7 +194,8 @@ function createContext(params: {
 
 		async render(screen, options = {}) {
 			const chatId = params.chat.id;
-			const targetMessageId = options.newMessage ? undefined : (ctx.session?.anchorMessageId ?? params.sourceMessageId);
+			const fallbackMessageId = params.sourceMessageIsWidget ? undefined : params.sourceMessageId;
+			const targetMessageId = options.newMessage ? undefined : (ctx.session?.anchorMessageId ?? fallbackMessageId);
 
 			if (targetMessageId) {
 				const result = await params.telegram.editMessageText({
@@ -338,6 +341,7 @@ async function handleCallback(env: Bindings, services: Services, query: Telegram
 		session: await store.getSession(chat.id),
 		callbackQueryId: query.id,
 		sourceMessageId: query.message.message_id,
+		sourceMessageIsWidget: Boolean(query.message.widget),
 	});
 
 	if (!action) {
