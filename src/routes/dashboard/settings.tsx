@@ -203,7 +203,7 @@ function SettingsPage() {
               </li>
               <li className="flex gap-2">
                 <CheckCircle className="mt-0.5 size-3.5 shrink-0 text-kumo-success" />
-                临时邮箱不设有效期，需手动删除。
+                临时邮箱 1 小时内未收件会自动失效，收件后长期保留。
               </li>
             </ul>
           </Panel>

@@ -328,6 +328,13 @@ function ApiPage() {
               code={`curl '${apiBase}/v1/emails/MAILBOX_ID/messages?page=1&limit=20' \\
   -H 'Authorization: Bearer YOUR_API_KEY'`}
             />
+            <p className="text-sm leading-5 text-kumo-subtle">
+              通过 API 创建的地址同样有 1
+              小时待收窗口：期间收到邮件后长期保留，超时未收件会自动失效。创建与列表响应中的{' '}
+              <code className="font-mono text-xs">expiresAt</code>{' '}
+              是窗口截止时间，已收过邮件或规则上线前的地址为{' '}
+              <code className="font-mono text-xs">null</code>（长期有效）。
+            </p>
             <div className="rounded-lg bg-kumo-elevated p-3 text-sm leading-5 text-kumo-subtle">
               可用短链域名：
               {shortDomains.map((item) => item.host).join('、') || '暂无'}

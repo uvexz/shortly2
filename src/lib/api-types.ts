@@ -52,6 +52,8 @@ export type TempMailboxDto = {
   emailAddress: string
   domain: string
   createdAt: string
+  /** 1 小时待收窗口的截止时间；null = 长期有效（已收过邮件或功能上线前创建）。 */
+  expiresAt: string | null
   unreadCount: number
   messageCount: number
 }
@@ -206,6 +208,8 @@ export type AdminMailboxDto = {
   domain: string
   isActive: boolean
   createdAt: string
+  expiresAt: string | null
+  expired: boolean
   userId: string
   userName: string | null
   userEmail: string | null

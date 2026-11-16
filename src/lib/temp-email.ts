@@ -16,6 +16,12 @@ import { reportDiagnostic } from '@/lib/observability'
 import { consumeRateLimit } from '@/lib/rate-limit'
 import { sendInboundEmailTelegramNotification } from '@/lib/telegram'
 import { isBlockedTempEmailPrefix } from '@/lib/temp-email-prefix'
+import {
+  getTempMailboxExpiresAt,
+  isTempMailboxExpired,
+  mailboxMessageCountSql,
+  notExpiredTempMailboxSql,
+} from '@/lib/temp-mailbox-expiry'
 
 function reportTempEmailWarning(
   event: string,
@@ -110,7 +116,11 @@ type InboundMailboxRecord = {
   id: string
   userId: string
   emailAddress: string
+  createdAt: Date
+  messageCount: number
 }
+
+type ArchiveFailureReason = 'mailbox_not_found' | 'mailbox_expired'
 
 type InboundEmailContext = {
   toEmail: string
@@ -257,12 +267,16 @@ async function insertEmailAttachments(
   )
 }
 
-async function findInboundMailbox(toEmail: string) {
+async function findInboundMailbox(
+  toEmail: string,
+): Promise<InboundMailboxRecord | undefined> {
   return db
     .select({
       id: tempMailbox.id,
       userId: tempMailbox.userId,
       emailAddress: tempMailbox.emailAddress,
+      createdAt: tempMailbox.createdAt,
+      messageCount: mailboxMessageCountSql(),
     })
     .from(tempMailbox)
     .where(eq(tempMailbox.emailAddress, toEmail))
@@ -304,6 +318,7 @@ async function findDuplicateMailboxMessage(
 async function archiveInboundEmail(
   payload: InboundEmailPayload,
   context: InboundEmailContext,
+  failureReason: ArchiveFailureReason = 'mailbox_not_found',
 ) {
   try {
     // Message + attachments are written in one transaction; the unique index on
@@ -338,7 +353,7 @@ async function archiveInboundEmail(
         ccJson: payload.cc || '[]',
         replyToJson: payload.replyTo || '[]',
         headersJson: payload.headers || '[]',
-        failureReason: 'mailbox_not_found',
+        failureReason,
         createdAt: new Date(),
       })
       await insertArchiveAttachments(tx, archiveId, context.attachments)
@@ -583,13 +598,31 @@ export async function createTempMailboxForUser(
 
   const finalEmailAddress = `${parsed.localPart}@${allowedDomain.host}`
   const existing = await db
-    .select({ id: tempMailbox.id })
+    .select({
+      id: tempMailbox.id,
+      createdAt: tempMailbox.createdAt,
+      messageCount: mailboxMessageCountSql(),
+    })
     .from(tempMailbox)
     .where(eq(tempMailbox.emailAddress, finalEmailAddress))
     .get()
 
   if (existing) {
-    return { error: 'This email address already exists', status: 409 as const }
+    const expired = isTempMailboxExpired({
+      createdAt: existing.createdAt,
+      hasMessages: Number(existing.messageCount) > 0,
+    })
+
+    if (!expired) {
+      return {
+        error: 'This email address already exists',
+        status: 409 as const,
+      }
+    }
+
+    // 已自动失效的空邮箱不该占着地址：回收旧记录后按新建处理（并发下若被抢
+    // 先，下面的唯一约束仍会兜底成 409）。
+    await db.delete(tempMailbox).where(eq(tempMailbox.id, existing.id))
   }
 
   const normalizedHourlyLimit = Number.isFinite(options?.hourlyCreateLimit)
@@ -641,6 +674,7 @@ export async function createTempMailboxForUser(
       localPart: parsed.localPart,
       domain: allowedDomain.host,
       createdAt,
+      expiresAt: getTempMailboxExpiresAt({ createdAt, hasMessages: false }),
     },
   }
 }
@@ -651,11 +685,19 @@ export async function listTempMailboxesForUser(
   limit: number,
 ) {
   const offset = (page - 1) * limit
+  const now = new Date()
+  // 失效的地址直接从列表消失（未收到过邮件，没有内容可留），因此 total 也要
+  // 用同一条件，否则分页页数会对不上。
+  const whereClause = and(
+    eq(tempMailbox.userId, userId),
+    notExpiredTempMailboxSql(now),
+  )
+
   const [totalRes, rows] = await Promise.all([
     db
       .select({ count: sql<number>`count(*)` })
       .from(tempMailbox)
-      .where(eq(tempMailbox.userId, userId))
+      .where(whereClause)
       .get(),
     db
       .select({
@@ -671,7 +713,7 @@ export async function listTempMailboxesForUser(
         tempEmailMessage,
         eq(tempEmailMessage.mailboxId, tempMailbox.id),
       )
-      .where(eq(tempMailbox.userId, userId))
+      .where(whereClause)
       .groupBy(tempMailbox.id)
       .orderBy(desc(tempMailbox.createdAt))
       .limit(limit)
@@ -680,7 +722,7 @@ export async function listTempMailboxesForUser(
 
   const total = totalRes?.count ?? 0
   return {
-    data: rows,
+    data: rows.map((row) => withMailboxExpiry(row)),
     total,
     page,
     limit,
@@ -688,8 +730,22 @@ export async function listTempMailboxesForUser(
   }
 }
 
+/** 给邮箱行补上 `expiresAt`：null 表示长期有效（历史邮箱或已收过邮件）。 */
+function withMailboxExpiry<T extends { createdAt: Date; messageCount: number }>(
+  row: T,
+): T & { expiresAt: Date | null } {
+  return {
+    ...row,
+    expiresAt: getTempMailboxExpiresAt({
+      createdAt: row.createdAt,
+      hasMessages: Number(row.messageCount) > 0,
+    }),
+  }
+}
+
 export async function listTempMailboxOptionsForUser(userId: string) {
-  return db
+  const now = new Date()
+  const rows = await db
     .select({
       id: tempMailbox.id,
       emailAddress: tempMailbox.emailAddress,
@@ -700,9 +756,11 @@ export async function listTempMailboxOptionsForUser(userId: string) {
     })
     .from(tempMailbox)
     .leftJoin(tempEmailMessage, eq(tempEmailMessage.mailboxId, tempMailbox.id))
-    .where(eq(tempMailbox.userId, userId))
+    .where(and(eq(tempMailbox.userId, userId), notExpiredTempMailboxSql(now)))
     .groupBy(tempMailbox.id)
     .orderBy(desc(tempMailbox.createdAt))
+
+  return rows.map((row) => withMailboxExpiry(row))
 }
 
 export async function listTempMessagesForUser(
@@ -795,12 +853,27 @@ export async function listTempMessagesForMailbox(
   limit: number,
 ) {
   const mailbox = await db
-    .select({ id: tempMailbox.id, emailAddress: tempMailbox.emailAddress })
+    .select({
+      id: tempMailbox.id,
+      emailAddress: tempMailbox.emailAddress,
+      createdAt: tempMailbox.createdAt,
+      messageCount: mailboxMessageCountSql(),
+    })
     .from(tempMailbox)
     .where(and(eq(tempMailbox.id, mailboxId), eq(tempMailbox.userId, userId)))
     .get()
 
   if (!mailbox) {
+    return null
+  }
+
+  // 自动失效的地址按「不存在」处理：它一封未收，本来也没有内容可展示。
+  if (
+    isTempMailboxExpired({
+      createdAt: mailbox.createdAt,
+      hasMessages: Number(mailbox.messageCount) > 0,
+    })
+  ) {
     return null
   }
 
@@ -833,7 +906,7 @@ export async function listTempMessagesForMailbox(
 
   const total = totalRes?.count ?? 0
   return {
-    mailbox,
+    mailbox: { id: mailbox.id, emailAddress: mailbox.emailAddress },
     data: rows.map((row) => ({
       ...row,
       hasAttachments: Boolean(row.hasAttachments),
@@ -1094,7 +1167,32 @@ export async function storeInboundEmail(payload: InboundEmailPayload) {
     return archiveInboundEmail(payload, context)
   }
 
+  if (
+    isTempMailboxExpired({
+      createdAt: mailbox.createdAt,
+      hasMessages: Number(mailbox.messageCount) > 0,
+    })
+  ) {
+    // 待收窗口内一封未收：地址已自动失效。邮件照样归档（管理员可查，并用
+    // failureReason 区分原因），同时惰性回收这条空邮箱记录，让地址重新可用。
+    const archived = await archiveInboundEmail(
+      payload,
+      context,
+      'mailbox_expired',
+    )
+    runInBackground(() => removeExpiredTempMailbox(mailbox.id))
+    return archived
+  }
+
   return deliverInboundEmailToMailbox(mailbox, payload, context)
+}
+
+async function removeExpiredTempMailbox(mailboxId: string) {
+  try {
+    await db.delete(tempMailbox).where(eq(tempMailbox.id, mailboxId))
+  } catch (error) {
+    reportTempEmailError('expired_mailbox_cleanup_failed', { mailboxId }, error)
+  }
 }
 
 export async function listAllTempMailboxes(
@@ -1146,8 +1244,17 @@ export async function listAllTempMailboxes(
   ])
 
   const total = totalRes?.count ?? 0
+  const now = new Date()
   return {
-    data: rows,
+    // 管理端不做过滤：失效记录要能被看到、被排查，所以补上 expiresAt / expired。
+    data: rows.map((row) => {
+      const expired = isTempMailboxExpired({
+        createdAt: row.createdAt,
+        hasMessages: Number(row.messageCount) > 0,
+        now,
+      })
+      return { ...withMailboxExpiry(row), expired }
+    }),
     total,
     page,
     limit,

@@ -2,10 +2,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { Button, Dialog, Select } from '@cloudflare/kumo'
 import { CheckCircle, EnvelopeSimple } from '@phosphor-icons/react'
 import { getErrorMessage } from '@/lib/api-client'
+import { formatDateTime } from '@/lib/format'
 import { CopyButton } from '@/components/ui/copy-button'
 import { useCreateMailbox } from '@/hooks/mail'
 import { usePublicDomains } from '@/hooks/settings'
 import { toastError, toastSuccess } from '@/lib/toast'
+
+const MAILBOX_PENDING_HINT =
+  '提示：生成后 1 小时内未收到邮件，地址会自动失效；期间收到任意一封邮件即长期保留。临时邮箱不适合接收重要账户、安全验证或个人敏感信息。'
 
 function randomLocalPart() {
   const alphabet = 'abcdefghjkmnpqrstuvwxyz23456789'
@@ -28,6 +32,7 @@ export function CreateMailboxDialog({
   const [domain, setDomain] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [createdAddress, setCreatedAddress] = useState<string | null>(null)
+  const [createdExpiresAt, setCreatedExpiresAt] = useState<string | null>(null)
 
   const domains = domainsQuery.data?.emailDomains ?? []
   const domainItems = useMemo(
@@ -48,6 +53,7 @@ export function CreateMailboxDialog({
       setLocalPart('')
       setError(null)
       setCreatedAddress(null)
+      setCreatedExpiresAt(null)
     }
   }, [open])
 
@@ -70,6 +76,7 @@ export function CreateMailboxDialog({
     try {
       const result = await createMailbox.mutateAsync(`${prefix}@${domain}`)
       setCreatedAddress(result.data.emailAddress)
+      setCreatedExpiresAt(result.data.expiresAt ?? null)
       toastSuccess({
         title: '临时邮箱已创建',
         description: result.data.emailAddress,
@@ -115,7 +122,9 @@ export function CreateMailboxDialog({
                     {createdAddress}
                   </p>
                   <p className="mt-0.5 text-sm text-kumo-subtle">
-                    地址会保持可用，直到你手动删除。
+                    {createdExpiresAt
+                      ? `${formatDateTime(createdExpiresAt)} 前收到邮件即长期保留，否则地址自动失效。`
+                      : '地址会保持可用，直到你手动删除。'}
                   </p>
                 </div>
                 <CopyButton
@@ -131,6 +140,7 @@ export function CreateMailboxDialog({
                   variant="secondary"
                   onClick={() => {
                     setCreatedAddress(null)
+                    setCreatedExpiresAt(null)
                     setLocalPart('')
                   }}
                 >
@@ -184,7 +194,7 @@ export function CreateMailboxDialog({
               </div>
 
               <div className="rounded-lg bg-kumo-elevated p-3 text-sm leading-5 text-kumo-subtle ring ring-kumo-hairline">
-                提示：临时邮箱不适合接收重要账户、安全验证或个人敏感信息。本站不提供邮箱有效期设置，地址会一直保留到手动删除。
+                {MAILBOX_PENDING_HINT}
               </div>
 
               {error ? (

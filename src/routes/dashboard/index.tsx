@@ -31,6 +31,7 @@ import {
 import { LinkTable } from '@/components/dashboard/link-table'
 import { LinkLogsDialog } from '@/components/dashboard/link-logs-dialog'
 import { CopyButton } from '@/components/ui/copy-button'
+import { MailboxExpiryBadge } from '@/components/ui/mailbox-expiry-badge'
 import { PageHeader, Panel, PanelHeader } from '@/components/ui/page-header'
 import { EmptyState } from '@/components/ui/empty-state'
 
@@ -187,9 +188,9 @@ function DashboardOverview() {
         />
         <StatCard
           icon={EnvelopeSimple}
-          label="临时邮箱总数"
+          label="可用临时邮箱"
           value={mailboxes.data ? formatNumber(mailboxes.data.total) : '—'}
-          meta="全部地址"
+          meta="不含已失效地址"
         />
         <StatCard
           icon={Tray}
@@ -324,6 +325,11 @@ function DashboardOverview() {
                     variant="secondary"
                   />
                 </div>
+                {latestMailbox.expiresAt ? (
+                  <div className="mt-2">
+                    <MailboxExpiryBadge expiresAt={latestMailbox.expiresAt} />
+                  </div>
+                ) : null}
                 <div className="mt-2 flex items-center justify-between text-xs text-kumo-subtle">
                   <span>{latestMailbox.messageCount} 封邮件</span>
                   <span>{latestMailbox.unreadCount} 封未读</span>
@@ -363,7 +369,8 @@ function DashboardOverview() {
               生成新邮箱
             </Button>
             <p className="mt-3 text-xs leading-4 text-kumo-placeholder">
-              临时邮箱用于接收邮件，请勿用于重要账户或敏感信息。
+              临时邮箱用于接收邮件，1
+              小时内未收件会自动失效；请勿用于重要账户或敏感信息。
             </p>
           </Panel>
 

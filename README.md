@@ -86,6 +86,7 @@ bun run db:push
 | `AUTH_OTP_DEV_LOG`                           | 仅开发环境；为 `true` 时启用邮箱 OTP 并把验证码打印到 dev server 日志 |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`  | 启用 GitHub 登录                                                      |
 | `INBOUND_EMAIL_SECRET`                       | `/v1/emails/inbound` 共享密钥，需与 Cloudflare Email Worker 一致      |
+| `TEMP_MAILBOX_EXPIRY_SINCE`                  | 临时邮箱失效规则的生效时间（ISO 8601）；早于它创建的邮箱不受影响      |
 | `TELEGRAM_BOT_TOKEN`                         | 新邮件 Telegram 通知（私聊 widget，失败/群聊回退文本）                |
 | `TRUST_X_FORWARDED_FOR` / `TRUST_PROXY_HOPS` | 反向代理 IP 解析                                                      |
 | `DATABASE_QUERY_LOG`                         | 打印 SQL（调试用）                                                    |
@@ -159,11 +160,17 @@ bun run db:seed        # 本地种子数据
 
 - 全局跨链接访问趋势 / 来源占比 → 改为「最近最多 500 条链接」样本 + 按链接分析
 - 链接备注 → 未实现
-- 临时邮箱有效期 / 倒计时 → 未实现（地址保留到手动删除）
 - 跨全部链接的服务端搜索 → 链接页对最近 500 条做客户端筛选；收件箱使用现有 `search` 参数
 - 个人资料编辑 → 未实现（v1 无对应接口）
 
 UI 会在相应位置明确标注样本范围，避免把部分数据展示成全量。
+
+### 临时邮箱 1 小时待收窗口
+
+- 新建地址有 1 小时待收窗口：窗口内收到任意一封邮件即长期保留（直到手动删除）；窗口结束仍一封未收则自动失效。
+- 失效表现：入站邮件进入归档（`failureReason = mailbox_expired`）、邮箱从用户列表消失、地址释放可重新生成。
+- 实现方式：表结构不变，规则由 `created_at` + 「是否收过邮件」推导（见 `src/lib/temp-mailbox-expiry.ts`），读时过滤、发现时惰性清理。
+- 不追溯：只有创建时间晚于 `TEMP_MAILBOX_EXPIRY_SINCE`（默认值为功能上线时刻）的邮箱受约束。
 
 ## 部署
 

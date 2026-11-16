@@ -25,6 +25,7 @@ import { PageHeader, Panel } from '@/components/ui/page-header'
 import { PaginationBar } from '@/components/ui/pagination-bar'
 import { EmptyState } from '@/components/ui/empty-state'
 import { TableLoading } from '@/components/ui/loading'
+import { MailboxExpiryBadge } from '@/components/ui/mailbox-expiry-badge'
 import { StatusBadge } from '@/components/ui/status-badge'
 
 const PAGE_SIZE = 20
@@ -255,10 +256,27 @@ function MailboxesTable({ data }: { data: AdminMailboxDto[] }) {
                 </span>
               </Table.Cell>
               <Table.Cell className="px-4 py-3">
-                <StatusBadge
-                  label={mailbox.isActive ? '启用' : '停用'}
-                  tone={mailbox.isActive ? 'success' : 'neutral'}
-                />
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <StatusBadge
+                    label={
+                      mailbox.expired
+                        ? '已失效'
+                        : mailbox.isActive
+                          ? '启用'
+                          : '停用'
+                    }
+                    tone={
+                      mailbox.expired
+                        ? 'danger'
+                        : mailbox.isActive
+                          ? 'success'
+                          : 'neutral'
+                    }
+                  />
+                  {mailbox.expired ? null : (
+                    <MailboxExpiryBadge expiresAt={mailbox.expiresAt} />
+                  )}
+                </div>
               </Table.Cell>
               <Table.Cell className="whitespace-nowrap px-4 py-3 text-kumo-subtle">
                 {formatDateTime(mailbox.createdAt)}

@@ -19,9 +19,13 @@ import { CopyButton } from '@/components/ui/copy-button'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyState } from '@/components/ui/empty-state'
 import { TableLoading } from '@/components/ui/loading'
+import { MailboxExpiryBadge } from '@/components/ui/mailbox-expiry-badge'
 import { toastError, toastSuccess } from '@/lib/toast'
 
 const PAGE_SIZE = 10
+
+const PENDING_WINDOW_HINT =
+  '新地址有 1 小时待收窗口：期间收到任意一封邮件后长期保留；超时未收件则自动失效、地址释放，可重新生成。此前的邮箱不受影响。'
 
 export const Route = createFileRoute('/dashboard/mailboxes')({
   validateSearch: (search: Record<string, unknown>): { page?: number } => ({
@@ -88,10 +92,10 @@ function MailboxesPage() {
         </span>
         <div>
           <p className="text-sm font-medium text-kumo-default">
-            临时邮箱不设有效期
+            1 小时内未收件会自动失效
           </p>
           <p className="mt-1 text-sm leading-5 text-kumo-subtle">
-            地址会一直保留，直到你手动删除。请勿用于重要账户、安全验证或个人敏感信息。
+            {PENDING_WINDOW_HINT}
           </p>
         </div>
       </div>
@@ -113,7 +117,7 @@ function MailboxesPage() {
           <EmptyState
             icon={<EnvelopeSimple className="size-5" />}
             title="还没有临时邮箱"
-            description="生成一个地址，用于接收验证码或测试邮件。"
+            description="生成一个地址，用于接收验证码或测试邮件；1 小时内未收件会自动失效。"
             action={
               <Button variant="primary" onClick={openCreateMailbox}>
                 生成临时邮箱
@@ -148,6 +152,11 @@ function MailboxesPage() {
                             successMessage="邮箱地址已复制"
                           />
                         </div>
+                        {mailbox.expiresAt ? (
+                          <div className="mt-1.5">
+                            <MailboxExpiryBadge expiresAt={mailbox.expiresAt} />
+                          </div>
+                        ) : null}
                       </Table.Cell>
                       <Table.Cell className="numeric px-4 py-3 text-kumo-default">
                         {formatNumber(mailbox.messageCount)}
@@ -204,6 +213,11 @@ function MailboxesPage() {
                         {formatNumber(mailbox.messageCount)} 封邮件 ·{' '}
                         {mailbox.unreadCount} 封未读
                       </p>
+                      {mailbox.expiresAt ? (
+                        <div className="mt-1.5">
+                          <MailboxExpiryBadge expiresAt={mailbox.expiresAt} />
+                        </div>
+                      ) : null}
                     </div>
                     <CopyButton
                       value={mailbox.emailAddress}
