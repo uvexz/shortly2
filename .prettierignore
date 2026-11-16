@@ -8,3 +8,4 @@ drizzle/meta
 src/routeTree.gen.ts
 .cf-tgbot-worker
 .cf-email-forwarding-worker
+.workbuddy
