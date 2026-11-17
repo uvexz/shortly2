@@ -57,7 +57,7 @@ function SidebarBrand({
       )}
     >
       <Logo siteName={siteName} compact={!expanded} showTools={!admin} />
-      {admin && expanded ? <Badge variant="orange">管理员</Badge> : null}
+      {admin && expanded ? <Badge variant="blue">管理员</Badge> : null}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
-import { CheckCircle, LinkSimple, ShieldCheck } from '@phosphor-icons/react'
+import { CheckCircle, ShieldCheck } from '@phosphor-icons/react'
 import { Logo } from '@/components/ui/logo'
 
 export function AuthPageShell({
@@ -26,67 +26,44 @@ export function AuthPageShell({
       ]
 
   return (
-    <main className="min-h-screen bg-kumo-canvas">
-      <div className="mx-auto grid min-h-screen max-w-6xl grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(380px,440px)]">
-        <section className="relative hidden overflow-hidden bg-kumo-contrast p-10 text-kumo-inverse lg:flex lg:flex-col lg:justify-between">
-          <div
-            className="pointer-events-none absolute inset-0 opacity-[0.07]"
-            style={{
-              backgroundImage:
-                'linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)',
-              backgroundSize: '48px 48px',
-            }}
-          />
-          <div className="relative">
-            <Link
-              to="/"
-              className="app-focus inline-flex items-center gap-2 rounded-lg"
-            >
-              <span className="flex size-8 items-center justify-center rounded-lg bg-[var(--text-color-kumo-brand)] text-white">
-                <LinkSimple className="size-[18px]" weight="bold" />
-              </span>
-              <span className="text-xl font-semibold text-kumo-inverse">
-                {siteName}
-              </span>
-              <span className="rounded-md bg-kumo-inverse/10 px-1.5 py-0.5 text-xs text-kumo-inverse/70">
-                工具
-              </span>
-            </Link>
-          </div>
+    <main className="min-h-dvh bg-kumo-canvas">
+      <div className="mx-auto grid min-h-dvh max-w-6xl grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(380px,440px)]">
+        <section className="hidden border-r border-kumo-hairline bg-kumo-base p-10 lg:flex lg:flex-col lg:justify-between">
+          <Logo siteName={siteName} />
 
-          <div className="relative max-w-md">
-            <p className="text-xs font-medium text-kumo-inverse/60">
+          <div className="max-w-md">
+            <p className="text-xs font-medium text-kumo-subtle">
               {isLogin ? '账户访问' : '新账户设置'}
             </p>
-            <h2 className="mt-4 text-3xl font-semibold leading-tight text-kumo-inverse">
+            <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.02em] text-kumo-strong">
               {isLogin ? '欢迎回来。' : '开始管理你的网络工具。'}
             </h2>
-            <p className="mt-4 text-base leading-7 text-kumo-inverse/70">
+            <p className="mt-4 text-base leading-7 text-kumo-subtle">
               {isLogin
                 ? '继续进入你的工作台，查看短链接、临时邮箱与 API 使用情况。'
                 : '创建账户后，你可以生成短链接、接收临时邮件，并使用 API 自动化日常操作。'}
             </p>
-            <ul className="mt-8 space-y-3">
+            <ul className="mt-8 space-y-3 border-t border-kumo-hairline pt-6">
               {benefits.map((benefit) => (
                 <li
                   key={benefit}
-                  className="flex items-start gap-2.5 text-sm leading-5 text-kumo-inverse/70"
+                  className="flex items-start gap-2.5 text-sm leading-5 text-kumo-subtle"
                 >
-                  <CheckCircle className="mt-0.5 size-4 shrink-0 text-kumo-inverse/50" />
+                  <CheckCircle className="mt-0.5 size-4 shrink-0 text-kumo-placeholder" />
                   {benefit}
                 </li>
               ))}
             </ul>
           </div>
 
-          <p className="relative flex items-center gap-2 text-xs text-kumo-inverse/50">
+          <p className="flex items-center gap-2 text-xs text-kumo-placeholder">
             <ShieldCheck className="size-3.5" />
             会话由 Better Auth 保护；临时邮箱请勿用于敏感信息。
           </p>
         </section>
 
-        <section className="flex min-h-screen flex-col px-5 py-8 sm:px-8 lg:px-10">
-          <div className="mb-10 flex items-center justify-between lg:hidden">
+        <section className="flex min-h-dvh flex-col px-5 py-6 sm:px-8 sm:py-8 lg:px-10">
+          <div className="mb-8 flex items-center justify-between lg:hidden">
             <Logo siteName={siteName} />
             <Link to="/" className="text-sm text-kumo-subtle">
               返回首页
@@ -99,8 +76,8 @@ export function AuthPageShell({
                 <p className="text-sm font-medium text-kumo-subtle">
                   {isLogin ? '账户访问' : '创建账户'}
                 </p>
-                <h1 className="text-2xl font-semibold text-kumo-strong">
-                  {isLogin ? '登录 Shortly' : '注册 Shortly'}
+                <h1 className="text-2xl font-semibold tracking-[-0.01em] text-kumo-strong">
+                  {isLogin ? `登录 ${siteName}` : `注册 ${siteName}`}
                 </h1>
                 <p className="text-base leading-6 text-kumo-subtle">
                   {isLogin
@@ -109,9 +86,9 @@ export function AuthPageShell({
                 </p>
               </div>
 
-              {children}
+              <div className="app-surface p-4 sm:p-5">{children}</div>
 
-              <div className="mt-8 flex items-center justify-center gap-3 text-sm text-kumo-subtle">
+              <div className="mt-6 flex items-center justify-center gap-3 text-sm text-kumo-subtle">
                 <Link to="/" className="hover:text-kumo-strong">
                   返回首页
                 </Link>

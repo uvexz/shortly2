@@ -3,8 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 
 const variants = {
-  primary:
-    'focus-ring bg-kumo-contrast text-kumo-inverse hover:bg-kumo-contrast/90',
+  primary: 'focus-ring bg-kumo-brand text-white hover:bg-kumo-brand-hover',
   secondary:
     'focus-ring bg-kumo-base text-kumo-strong ring-1 ring-kumo-line hover:bg-kumo-tint',
   ghost:

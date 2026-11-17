@@ -11,6 +11,7 @@ import { CopyButton } from '@/components/ui/copy-button'
 import { PaginationBar } from '@/components/ui/pagination-bar'
 import { TableLoading } from '@/components/ui/loading'
 import { EmptyState } from '@/components/ui/empty-state'
+import { MetricStrip } from '@/components/ui/metric-strip'
 
 export function LinkLogsDialog({
   link,
@@ -58,36 +59,36 @@ export function LinkLogsDialog({
           </div>
 
           {link ? (
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <div className="rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
+            <MetricStrip className="mt-4" cols={4}>
+              <div className="px-4 py-3">
                 <p className="text-xs text-kumo-placeholder">总点击</p>
                 <p className="numeric mt-1 text-base font-semibold text-kumo-strong">
                   {formatNumber(link.clicks)}
                 </p>
               </div>
-              <div className="rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
+              <div className="px-4 py-3">
                 <p className="text-xs text-kumo-placeholder">点击上限</p>
                 <p className="numeric mt-1 text-base font-semibold text-kumo-strong">
                   {link.maxClicks ? formatNumber(link.maxClicks) : '不限'}
                 </p>
               </div>
-              <div className="rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
+              <div className="min-w-0 px-4 py-3">
                 <p className="text-xs text-kumo-placeholder">有效期至</p>
                 <p className="mt-1 truncate text-sm font-medium text-kumo-default">
                   {link.expiresAt ? formatDateTime(link.expiresAt) : '永久有效'}
                 </p>
               </div>
-              <div className="rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
+              <div className="min-w-0 px-4 py-3">
                 <p className="text-xs text-kumo-placeholder">创建时间</p>
                 <p className="mt-1 truncate text-sm font-medium text-kumo-default">
                   {formatDateTime(link.createdAt)}
                 </p>
               </div>
-            </div>
+            </MetricStrip>
           ) : null}
         </div>
 
-        <div className="max-h-[55vh] overflow-y-auto scrollbar-thin">
+        <div className="max-h-[55dvh] overflow-y-auto scrollbar-thin">
           {query.isPending ? (
             <TableLoading rows={4} />
           ) : query.isError ? (
@@ -108,36 +109,41 @@ export function LinkLogsDialog({
             </div>
           ) : (
             <>
-              <div className="hidden sm:block">
-                <Table>
+              <div
+                className="app-table-region hidden sm:block"
+                tabIndex={0}
+                role="region"
+                aria-label="链接访问日志，可横向滚动"
+              >
+                <Table className="min-w-[640px] app-table">
                   <Table.Header>
                     <Table.Row>
-                      <Table.Head className="px-4 py-2">事件</Table.Head>
-                      <Table.Head className="px-4 py-2">时间</Table.Head>
-                      <Table.Head className="px-4 py-2">来源</Table.Head>
-                      <Table.Head className="px-4 py-2">状态码</Table.Head>
-                      <Table.Head className="px-4 py-2">IP / UA</Table.Head>
+                      <Table.Head>事件</Table.Head>
+                      <Table.Head>时间</Table.Head>
+                      <Table.Head>来源</Table.Head>
+                      <Table.Head>状态码</Table.Head>
+                      <Table.Head>IP / UA</Table.Head>
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
                     {query.data.data.map((log) => (
                       <Table.Row key={log.id}>
-                        <Table.Cell className="px-4 py-2.5">
+                        <Table.Cell>
                           <StatusBadge
                             label={getLogEventLabel(log.eventType)}
                             tone={getLogEventTone(log.eventType)}
                           />
                         </Table.Cell>
-                        <Table.Cell className="whitespace-nowrap px-4 py-2.5 text-kumo-subtle">
+                        <Table.Cell className="whitespace-nowrap text-kumo-subtle">
                           {formatDateTime(log.createdAt)}
                         </Table.Cell>
-                        <Table.Cell className="max-w-32 truncate px-4 py-2.5 text-kumo-subtle">
+                        <Table.Cell className="max-w-32 truncate text-kumo-subtle">
                           {getSourceLabel(log.referrer)}
                         </Table.Cell>
-                        <Table.Cell className="numeric px-4 py-2.5 text-kumo-subtle">
+                        <Table.Cell className="numeric text-kumo-subtle">
                           {log.statusCode ?? '—'}
                         </Table.Cell>
-                        <Table.Cell className="max-w-40 truncate px-4 py-2.5 text-kumo-placeholder">
+                        <Table.Cell className="max-w-40 truncate text-kumo-placeholder">
                           {log.ipAddress ?? '—'}
                           {log.userAgent ? ' · ' : ''}
                           {log.userAgent ?? ''}

@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Button, Input } from '@cloudflare/kumo'
-import { CheckCircle, GearSix, TelegramLogo } from '@phosphor-icons/react'
+import { CheckCircle, TelegramLogo } from '@phosphor-icons/react'
 import { useAdminSettings, useUpdateAdminSettings } from '@/hooks/admin'
 import { getErrorMessage } from '@/lib/api-client'
-import { PageHeader, Panel, PanelHeader } from '@/components/ui/page-header'
+import {
+  PageHeader,
+  Panel,
+  PanelHeader,
+  QuietNote,
+} from '@/components/ui/page-header'
 import { EmptyState } from '@/components/ui/empty-state'
 import { LoadingBlock } from '@/components/ui/loading'
 import { toastError, toastSuccess } from '@/lib/toast'
@@ -173,76 +178,69 @@ function AdminSettingsPage() {
         </Panel>
 
         <aside className="space-y-4">
-          <Panel className="p-4">
-            <div className="flex items-center gap-2">
-              <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
-                <GearSix className="size-4" />
-              </span>
-              <h2 className="text-base font-semibold text-kumo-strong">
-                当前配置
-              </h2>
-            </div>
-            <div className="mt-4 space-y-3 text-xs">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-kumo-subtle">站点名称</span>
-                <span className="truncate font-medium text-kumo-default">
+          <Panel>
+            <PanelHeader
+              title="当前配置"
+              description="已保存并对外生效的站点值"
+            />
+            <dl className="divide-y divide-kumo-hairline text-xs">
+              <div className="flex items-center justify-between gap-3 px-4 py-3">
+                <dt className="text-kumo-subtle">站点名称</dt>
+                <dd className="truncate font-medium text-kumo-default">
                   {settingsQuery.data?.siteName ?? '—'}
-                </span>
+                </dd>
               </div>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-kumo-subtle">站点地址</span>
-                <span className="max-w-48 truncate text-kumo-default">
+              <div className="flex items-center justify-between gap-3 px-4 py-3">
+                <dt className="text-kumo-subtle">站点地址</dt>
+                <dd
+                  className="max-w-48 truncate text-kumo-default"
+                  title={settingsQuery.data?.siteUrl || '使用请求地址'}
+                >
                   {settingsQuery.data?.siteUrl || '使用请求地址'}
-                </span>
+                </dd>
               </div>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-kumo-subtle">小时限额</span>
-                <span className="numeric text-kumo-default">
+              <div className="flex items-center justify-between gap-3 px-4 py-3">
+                <dt className="text-kumo-subtle">小时限额</dt>
+                <dd className="numeric text-kumo-default">
                   {settingsQuery.data?.userMaxLinksPerHour ?? '—'}
-                </span>
+                </dd>
               </div>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-kumo-subtle">Telegram Bot</span>
-                <span className="truncate text-kumo-default">
+              <div className="flex items-center justify-between gap-3 px-4 py-3">
+                <dt className="text-kumo-subtle">Telegram Bot</dt>
+                <dd className="truncate text-kumo-default">
                   {settingsQuery.data?.telegramBotUsername
                     ? `@${settingsQuery.data.telegramBotUsername.replace(/^@+/, '')}`
                     : '未配置'}
-                </span>
+                </dd>
               </div>
+            </dl>
+            <div className="border-t border-kumo-hairline p-4">
+              <div className="flex items-center gap-2">
+                <TelegramLogo className="size-4 text-kumo-placeholder" />
+                <h2 className="text-sm font-semibold text-kumo-strong">
+                  Telegram 通知
+                </h2>
+              </div>
+              <p className="mt-2 text-sm leading-6 text-kumo-subtle">
+                配置 Bot 用户名后，用户可以在 Telegram 中发送{' '}
+                <code className="rounded border border-kumo-hairline bg-kumo-canvas px-1 py-0.5 font-mono text-[0.9em] text-kumo-default">
+                  /setkey &lt;api_key&gt;
+                </code>{' '}
+                绑定通知。主程序需要同时配置 TELEGRAM_BOT_TOKEN
+                才会推送新邮件提醒。
+              </p>
             </div>
           </Panel>
 
-          <Panel className="p-4">
-            <div className="flex items-center gap-2">
-              <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
-                <TelegramLogo className="size-4" />
-              </span>
-              <h2 className="text-base font-semibold text-kumo-strong">
-                Telegram 通知
-              </h2>
-            </div>
-            <p className="mt-3 text-sm leading-5 text-kumo-subtle">
-              配置 Bot 用户名后，用户可以在 Telegram 中发送{' '}
-              <code className="rounded bg-kumo-control px-1 py-0.5 font-mono text-[0.9em] text-kumo-default ring ring-kumo-hairline">
-                /setkey &lt;api_key&gt;
-              </code>{' '}
-              绑定通知。主程序需要同时配置 TELEGRAM_BOT_TOKEN
-              才会推送新邮件提醒。
-            </p>
-          </Panel>
-
-          <Panel className="bg-kumo-success-tint p-4">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="size-4 text-kumo-success" weight="fill" />
-              <h2 className="text-base font-semibold text-kumo-strong">
-                保存后即时生效
-              </h2>
-            </div>
-            <p className="mt-2 text-sm leading-5 text-kumo-default/80">
-              站点名称、Telegram
-              用户名和创建限额会立即刷新；域名配置请前往「域名管理」。
-            </p>
-          </Panel>
+          <QuietNote
+            icon={<CheckCircle className="size-4 text-kumo-success" />}
+          >
+            <span className="font-medium text-kumo-default">
+              保存后即时生效。
+            </span>
+            站点名称、Telegram
+            用户名和创建限额会立即刷新；域名配置请前往「域名管理」。
+          </QuietNote>
         </aside>
       </div>
     </>

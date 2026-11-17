@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Input } from '@cloudflare/kumo'
 import {
   ArrowLeft,
@@ -31,10 +31,12 @@ export function AuthForm({
   const [otp, setOtp] = useState('')
   const [step, setStep] = useState<Step>('email')
   const [loading, setLoading] = useState(false)
+  const [supportsPasskey, setSupportsPasskey] = useState(false)
 
-  const supportsPasskey =
-    typeof window !== 'undefined' &&
-    typeof window.PublicKeyCredential !== 'undefined'
+  useEffect(() => {
+    setSupportsPasskey(typeof window.PublicKeyCredential !== 'undefined')
+  }, [])
+
   const hasPasskeyLogin = mode === 'login' && supportsPasskey
   const hasSecondaryProviders = enableGithub || hasPasskeyLogin
   const providerCount = (enableGithub ? 1 : 0) + (hasPasskeyLogin ? 1 : 0)
@@ -157,7 +159,7 @@ export function AuthForm({
   if (step === 'add-passkey') {
     return (
       <div className="flex flex-col items-center gap-6 py-2 text-center">
-        <span className="flex size-12 items-center justify-center rounded-lg bg-kumo-success-tint text-kumo-success">
+        <span className="flex size-12 items-center justify-center rounded-full border border-kumo-hairline bg-kumo-base text-kumo-success">
           <CheckCircle className="size-6" weight="fill" />
         </span>
         <div>
@@ -191,7 +193,7 @@ export function AuthForm({
 
   if (!enableEmail && !hasSecondaryProviders) {
     return (
-      <div className="rounded-lg bg-kumo-elevated p-4 text-sm leading-5 text-kumo-subtle ring ring-kumo-hairline">
+      <div className="app-note">
         当前没有启用可用的登录方式。请稍后再试，或联系站点管理员。
       </div>
     )
@@ -248,7 +250,7 @@ export function AuthForm({
               >
                 输入验证码
               </label>
-              <div className="mb-3 rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
+              <div className="app-note mb-3">
                 <p className="text-xs text-kumo-placeholder">验证码已发送至</p>
                 <p className="mt-1 break-all text-sm font-medium text-kumo-default">
                   {email}
@@ -319,7 +321,7 @@ export function AuthForm({
       ) : null}
 
       {!enableEmail && !enableGithub && hasPasskeyLogin ? (
-        <div className="rounded-lg bg-kumo-elevated p-3 text-sm leading-5 text-kumo-subtle ring ring-kumo-hairline">
+        <div className="app-note">
           当前站点仅启用了 Passkey 登录。请使用已注册通行密钥的设备，并在 HTTPS
           或 localhost 环境下继续。
         </div>

@@ -88,7 +88,7 @@ export function AccountMenu({
             {user.email}
           </p>
           <Badge
-            variant={user.role === 'admin' ? 'orange' : 'secondary'}
+            variant={user.role === 'admin' ? 'blue' : 'secondary'}
             className="mt-2"
           >
             {user.role === 'admin' ? '管理员' : '用户'}

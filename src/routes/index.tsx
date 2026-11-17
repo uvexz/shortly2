@@ -182,10 +182,10 @@ function LandingPage() {
 
       <main id="main-content" className="bg-kumo-canvas text-kumo-default">
         <section className="mx-auto md:my-20 my-10 max-w-6xl px-4 pb-16 pt-24 sm:px-6 md:pb-24 lg:px-8">
-          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_420px] xl:gap-16">
-            <div>
+          <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_420px] xl:gap-16">
+            <div className="min-w-0">
               <div className="inline-flex items-center gap-2 rounded-full bg-kumo-base px-3 py-2 text-xs font-medium text-kumo-subtle ring-1 ring-kumo-line">
-                <span className="size-1.5 rounded-full bg-[var(--text-color-kumo-brand)]" />
+                <span className="size-1.5 rounded-full bg-kumo-brand" />
                 短链接 · 临时邮箱 · 开放 API
               </div>
 
@@ -217,7 +217,7 @@ function LandingPage() {
               </div>
             </div>
 
-            <div className="mx-auto w-full max-w-[420px] lg:mx-0 lg:justify-self-end">
+            <div className="mx-auto min-w-0 w-full max-w-[420px] lg:mx-0 lg:justify-self-end">
               <LandingPreview />
             </div>
           </div>

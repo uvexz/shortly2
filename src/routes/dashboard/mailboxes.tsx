@@ -154,7 +154,7 @@ function MailboxesPage() {
                       </Table.Cell>
                       <Table.Cell className="numeric text-right text-sm">
                         {mailbox.unreadCount > 0 ? (
-                          <span className="font-medium text-kumo-brand">
+                          <span className="font-medium text-kumo-brand-hover">
                             {mailbox.unreadCount}
                           </span>
                         ) : (

@@ -25,7 +25,7 @@ export function Logo({
       aria-label={`${siteName} 首页`}
       aria-current={currentPage ? 'page' : undefined}
     >
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--text-color-kumo-brand)] text-white">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-kumo-brand text-white">
         <LinkSimple className="size-[18px]" weight="bold" />
       </span>
       {compact ? null : (

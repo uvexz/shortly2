@@ -16,9 +16,15 @@ import { useAdminDomains, useDeleteAdminDomain } from '@/hooks/admin'
 import { getErrorMessage } from '@/lib/api-client'
 import { formatDate } from '@/lib/format'
 import { DomainFormDialog } from '@/components/admin/domain-form-dialog'
-import { PageHeader, Panel, QuietNote } from '@/components/ui/page-header'
+import {
+  PageHeader,
+  Panel,
+  PanelHeader,
+  QuietNote,
+} from '@/components/ui/page-header'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyState } from '@/components/ui/empty-state'
+import { TableLoading } from '@/components/ui/loading'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { toastError, toastSuccess } from '@/lib/toast'
 
@@ -87,17 +93,20 @@ function AdminDomainsPage() {
         解析和邮件路由需在域名服务商侧配置。
       </QuietNote>
 
-      <Panel className="p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-medium text-kumo-strong">全部域名</h2>
-          <Button
-            variant="ghost"
-            onClick={() => void domainsQuery.refetch()}
-            icon={<ArrowsClockwise className="size-3.5" />}
-          >
-            刷新
-          </Button>
-        </div>
+      <Panel>
+        <PanelHeader
+          title="全部域名"
+          description="查看启用状态、默认用途和地址格式要求"
+          action={
+            <Button
+              variant="ghost"
+              onClick={() => void domainsQuery.refetch()}
+              icon={<ArrowsClockwise className="size-3.5" />}
+            >
+              刷新
+            </Button>
+          }
+        />
 
         {domainsQuery.isError ? (
           <EmptyState
@@ -113,14 +122,7 @@ function AdminDomainsPage() {
             }
           />
         ) : domainsQuery.isPending ? (
-          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-            {Array.from({ length: 2 }).map((_, index) => (
-              <div
-                key={index}
-                className="h-40 animate-pulse rounded-lg bg-kumo-tint"
-              />
-            ))}
-          </div>
+          <TableLoading rows={3} />
         ) : !domains.length ? (
           <EmptyState
             icon={<GlobeHemisphereWest className="size-5" />}
@@ -133,104 +135,101 @@ function AdminDomainsPage() {
             }
           />
         ) : (
-          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+          <div className="divide-y divide-kumo-hairline">
             {domains.map((domain) => (
               <div
                 key={domain.id}
-                className="rounded-panel border border-kumo-hairline p-4"
+                className="group flex flex-col gap-4 px-4 py-4 hover:bg-kumo-tint/40 lg:grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_auto] lg:items-center"
               >
-                <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
                   <div className="flex min-w-0 items-center gap-2">
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
-                      <GlobeHemisphereWest className="size-4" />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="truncate text-base font-semibold text-kumo-strong">
-                        {domain.host}
-                      </p>
-                      <p className="mt-0.5 text-xs text-kumo-placeholder">
-                        创建于 {formatDate(domain.createdAt)}
-                      </p>
-                    </div>
+                    <GlobeHemisphereWest className="size-4 shrink-0 text-kumo-placeholder" />
+                    <p
+                      className="truncate text-[15px] font-semibold text-kumo-strong"
+                      title={domain.host}
+                    >
+                      {domain.host}
+                    </p>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      shape="square"
-                      size="sm"
-                      icon={<PencilSimple className="size-4" />}
-                      aria-label="编辑域名"
-                      onClick={() => openEdit(domain)}
+                  <p className="ml-6 mt-0.5 text-xs text-kumo-placeholder">
+                    创建于 {formatDate(domain.createdAt)}
+                  </p>
+                  <div className="ml-6 mt-2 flex flex-wrap gap-1.5">
+                    <StatusBadge
+                      label={domain.isActive ? '启用中' : '已停用'}
+                      tone={domain.isActive ? 'success' : 'neutral'}
                     />
-                    <Button
-                      variant="ghost"
-                      shape="square"
-                      size="sm"
-                      icon={<Trash className="size-4" />}
-                      aria-label="删除域名"
-                      disabled={
-                        domain.isDefaultShortDomain ||
-                        domain.isDefaultEmailDomain
-                      }
-                      title={
-                        domain.isDefaultShortDomain ||
-                        domain.isDefaultEmailDomain
-                          ? '默认域名不能删除'
-                          : '删除域名'
-                      }
-                      onClick={() => setPendingDelete(domain)}
-                    />
+                    {domain.isDefaultShortDomain ? (
+                      <StatusBadge
+                        label="默认短链"
+                        tone="info"
+                        className="[&>i]:hidden"
+                      >
+                        <Star className="size-2.5" weight="fill" />
+                      </StatusBadge>
+                    ) : null}
+                    {domain.isDefaultEmailDomain ? (
+                      <StatusBadge
+                        label="默认邮箱"
+                        tone="info"
+                        className="[&>i]:hidden"
+                      >
+                        <Star className="size-2.5" weight="fill" />
+                      </StatusBadge>
+                    ) : null}
                   </div>
                 </div>
 
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  <StatusBadge
-                    label={domain.isActive ? '启用中' : '已停用'}
-                    tone={domain.isActive ? 'success' : 'neutral'}
-                  />
-                  {domain.isDefaultShortDomain ? (
-                    <StatusBadge
-                      label="默认短链"
-                      tone="info"
-                      className="[&>i]:hidden"
-                    >
-                      <Star className="size-2.5" weight="fill" />
-                    </StatusBadge>
-                  ) : null}
-                  {domain.isDefaultEmailDomain ? (
-                    <StatusBadge
-                      label="默认邮箱"
-                      tone="info"
-                      className="[&>i]:hidden"
-                    >
-                      <Star className="size-2.5" weight="fill" />
-                    </StatusBadge>
-                  ) : null}
-                </div>
-
-                <div className="mt-3 grid grid-cols-2 gap-3 border-t border-kumo-hairline pt-2.5 text-xs">
-                  <div>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="min-w-0">
                     <p className="flex items-center gap-1 text-kumo-placeholder">
                       <LinkSimple className="size-3" />
                       短链接
                     </p>
-                    <p className="mt-1 font-medium text-kumo-default">
+                    <p className="mt-1 truncate font-medium text-kumo-default">
                       {domain.supportsShortLinks
                         ? `支持 · 最短 ${domain.shortLinkMinSlugLength} 字符`
                         : '未启用'}
                     </p>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <p className="flex items-center gap-1 text-kumo-placeholder">
                       <EnvelopeSimple className="size-3" />
                       临时邮箱
                     </p>
-                    <p className="mt-1 font-medium text-kumo-default">
+                    <p className="mt-1 truncate font-medium text-kumo-default">
                       {domain.supportsTempEmail
                         ? `支持 · 最短 ${domain.tempEmailMinLocalPartLength} 字符`
                         : '未启用'}
                     </p>
                   </div>
+                </div>
+
+                <div className="row-actions flex items-center justify-end gap-1">
+                  <Button
+                    variant="ghost"
+                    shape="square"
+                    size="sm"
+                    icon={<PencilSimple className="size-4" />}
+                    aria-label={`编辑域名 ${domain.host}`}
+                    onClick={() => openEdit(domain)}
+                  />
+                  <Button
+                    variant="ghost"
+                    shape="square"
+                    size="sm"
+                    icon={<Trash className="size-4" />}
+                    aria-label={`删除域名 ${domain.host}`}
+                    disabled={
+                      domain.isDefaultShortDomain || domain.isDefaultEmailDomain
+                    }
+                    title={
+                      domain.isDefaultShortDomain || domain.isDefaultEmailDomain
+                        ? '默认域名不能删除'
+                        : '删除域名'
+                    }
+                    onClick={() => setPendingDelete(domain)}
+                  />
                 </div>
               </div>
             ))}
