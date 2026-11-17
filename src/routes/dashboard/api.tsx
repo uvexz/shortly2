@@ -22,6 +22,7 @@ import { getErrorMessage } from '@/lib/api-client'
 import { copyText } from '@/lib/clipboard'
 import { formatDateTime, formatNumber } from '@/lib/format'
 import { PageHeader, Panel } from '@/components/ui/page-header'
+import { Metric, MetricStrip } from '@/components/ui/metric-strip'
 import { CopyButton } from '@/components/ui/copy-button'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -131,24 +132,31 @@ function ApiPage() {
         description="创建密钥，接入 OpenAPI、ShareX 和别名工具。"
       />
 
-      <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric label="活跃密钥" value={formatNumber(keys.length)} icon={Key} />
+      <MetricStrip className="mb-4">
         <Metric
+          icon={Key}
+          label="活跃密钥"
+          value={formatNumber(keys.length)}
+          meta="可随时吊销"
+        />
+        <Metric
+          icon={ArrowSquareOut}
           label="短链域名"
           value={formatNumber(shortDomains.length)}
-          icon={ArrowSquareOut}
+          meta="可用于短链"
         />
         <Metric
+          icon={PaperPlaneTilt}
           label="邮箱域名"
           value={formatNumber(emailDomains.length)}
-          icon={PaperPlaneTilt}
+          meta="可用于收件"
         />
         <Metric
+          icon={PaperPlaneTilt}
           label="Telegram"
           value={telegramBotUsername ? `@${telegramBotUsername}` : '未配置'}
-          icon={PaperPlaneTilt}
         />
-      </div>
+      </MetricStrip>
 
       <Panel className="overflow-hidden">
         <div className="border-b border-kumo-hairline px-4 pt-3">
@@ -233,7 +241,7 @@ function ApiPage() {
               />
             ) : (
               <div className="overflow-x-auto">
-                <Table className="min-w-[620px]">
+                <Table className="min-w-[620px] app-table">
                   <Table.Header>
                     <Table.Row>
                       <Table.Head className="px-4 py-3">名称</Table.Head>
@@ -441,28 +449,6 @@ function ApiPage() {
         destructive
       />
     </>
-  )
-}
-
-function Metric({
-  label,
-  value,
-  icon: Icon,
-}: {
-  label: string
-  value: string
-  icon: React.ComponentType<{ className?: string }>
-}) {
-  return (
-    <div className="rounded-lg bg-kumo-base p-4 shadow-xs ring ring-kumo-line">
-      <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
-        <Icon className="size-4" />
-      </span>
-      <p className="mt-3 text-sm text-kumo-subtle">{label}</p>
-      <p className="mt-1 truncate text-xl font-semibold text-kumo-strong">
-        {value}
-      </p>
-    </div>
   )
 }
 

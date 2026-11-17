@@ -21,7 +21,6 @@ import { formatNumber, formatRelativeTime } from '@/lib/format'
 import { getLinkHealth } from '@/lib/link-ui'
 import type { ShortLinkDto } from '@/lib/api-types'
 import { useQuickActions } from '@/components/dashboard/quick-actions'
-import { StatCard } from '@/components/dashboard/stat-card'
 import { BarChart } from '@/components/dashboard/bar-chart'
 import { StatusDonut } from '@/components/dashboard/status-donut'
 import {
@@ -32,6 +31,7 @@ import { LinkTable } from '@/components/dashboard/link-table'
 import { LinkLogsDialog } from '@/components/dashboard/link-logs-dialog'
 import { CopyButton } from '@/components/ui/copy-button'
 import { MailboxExpiryBadge } from '@/components/ui/mailbox-expiry-badge'
+import { Metric, MetricStrip } from '@/components/ui/metric-strip'
 import { PageHeader, Panel, PanelHeader } from '@/components/ui/page-header'
 import { EmptyState } from '@/components/ui/empty-state'
 
@@ -152,7 +152,7 @@ function DashboardOverview() {
       />
 
       {hasQueryError ? (
-        <div className="mb-4 flex flex-col gap-3 rounded-lg bg-kumo-danger-tint p-3 text-kumo-danger sm:flex-row sm:items-center">
+        <div className="mb-4 flex flex-col gap-3 rounded-panel border border-kumo-danger/20 bg-kumo-danger-tint px-3 py-2.5 text-kumo-danger sm:flex-row sm:items-center">
           <div className="flex min-w-0 items-start gap-2 text-sm">
             <WarningCircle className="mt-0.5 size-4 shrink-0" />
             <span>部分仪表盘数据加载失败，统计可能不完整。</span>
@@ -172,27 +172,27 @@ function DashboardOverview() {
         </div>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
+      <MetricStrip>
+        <Metric
           icon={LinkSimple}
           label="短链接总数"
           value={recentLinks.data ? formatNumber(recentLinks.data.total) : '—'}
           meta="全部时间"
           hint="精确值"
         />
-        <StatCard
+        <Metric
           icon={Eye}
           label="累计访问量"
           value={recentLinks.data ? formatNumber(totalClicks) : '—'}
           meta={sampled ? `最近 ${links.length} 条` : '全部链接'}
         />
-        <StatCard
+        <Metric
           icon={EnvelopeSimple}
           label="可用临时邮箱"
           value={mailboxes.data ? formatNumber(mailboxes.data.total) : '—'}
           meta="不含已失效地址"
         />
-        <StatCard
+        <Metric
           icon={Tray}
           label="邮件总数"
           value={messages.data ? formatNumber(messages.data.total) : '—'}
@@ -203,31 +203,28 @@ function DashboardOverview() {
               : undefined
           }
         />
-      </div>
+      </MetricStrip>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 2xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
         <div className="min-w-0 space-y-4">
           <Panel>
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-kumo-hairline px-4 py-3">
-              <div>
-                <h2 className="text-base font-semibold text-kumo-strong">
-                  最近链接表现
-                </h2>
-                <p className="mt-1 text-xs text-kumo-placeholder">
-                  基于最近 {links.length || 0} 条短链接的真实点击数据
-                </p>
-              </div>
-              <Link
-                to="/dashboard/analytics"
-                className="text-sm font-medium text-kumo-link hover:underline"
-              >
-                访问分析 →
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 gap-5 p-4 lg:grid-cols-[minmax(0,1fr)_210px]">
-              <div>
-                <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-base font-semibold text-kumo-strong">
+            <PanelHeader
+              title="最近链接表现"
+              description={`基于最近 ${links.length || 0} 条短链接的真实点击数据`}
+              action={
+                <Link
+                  to="/dashboard/analytics"
+                  className="app-focus inline-flex items-center gap-1 rounded text-xs font-medium text-kumo-link hover:underline"
+                >
+                  访问分析
+                  <ArrowRight className="size-3" />
+                </Link>
+              }
+            />
+            <div className="grid grid-cols-1 gap-5 p-4 lg:grid-cols-[minmax(0,1fr)_200px]">
+              <div className="min-w-0">
+                <div className="mb-3 flex items-baseline justify-between gap-3">
+                  <h3 className="text-sm font-medium text-kumo-strong">
                     链接访问排行
                   </h3>
                   <span className="text-xs text-kumo-placeholder">
@@ -240,11 +237,11 @@ function DashboardOverview() {
                   className="min-h-52 content-center"
                 />
               </div>
-              <div className="border-t border-kumo-hairline pt-4 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0">
-                <h3 className="text-base font-semibold text-kumo-strong">
+              <div className="border-t border-kumo-hairline pt-4 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-5">
+                <h3 className="text-sm font-medium text-kumo-strong">
                   链接状态构成
                 </h3>
-                <div className="mt-5">
+                <div className="mt-4">
                   <StatusDonut
                     segments={statusSegments}
                     totalLabel="链接总数"
@@ -253,22 +250,23 @@ function DashboardOverview() {
               </div>
             </div>
             {sampled ? (
-              <p className="border-t border-kumo-hairline px-4 py-2.5 text-xs text-kumo-placeholder">
+              <p className="border-t border-kumo-hairline px-4 py-2 text-xs text-kumo-placeholder">
                 为保证零后端新增，图表只统计最近最多 500
                 条短链接；完整数据请在链接管理中分页查看。
               </p>
             ) : null}
           </Panel>
 
-          <Panel className="overflow-hidden">
+          <Panel>
             <PanelHeader
               title="最近创建的短链接"
               action={
                 <Link
                   to="/dashboard/links"
-                  className="text-sm font-medium text-kumo-link hover:underline"
+                  className="app-focus inline-flex items-center gap-1 rounded text-xs font-medium text-kumo-link hover:underline"
                 >
-                  查看全部 →
+                  查看全部
+                  <ArrowRight className="size-3" />
                 </Link>
               }
             />
@@ -285,163 +283,125 @@ function DashboardOverview() {
           </Panel>
         </div>
 
-        <aside className="space-y-4">
-          <Panel className="p-4">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-kumo-strong">
-                最近动态
-              </h2>
-              <Link
-                to="/dashboard/inbox"
-                className="text-xs font-medium text-kumo-link hover:underline"
-              >
-                全部 →
-              </Link>
+        <aside className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
+          <Panel>
+            <PanelHeader
+              title="最近动态"
+              action={
+                <Link
+                  to="/dashboard/inbox"
+                  className="app-focus rounded text-xs font-medium text-kumo-link hover:underline"
+                >
+                  全部
+                </Link>
+              }
+            />
+            <div className="px-4 pt-1 pb-3">
+              <ActivityFeed items={activityItems} />
             </div>
-            <ActivityFeed items={activityItems} />
           </Panel>
 
-          <Panel className="p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-kumo-strong">
-                临时邮箱
-              </h2>
-              <Link
-                to="/dashboard/inbox"
-                className="text-xs font-medium text-kumo-link hover:underline"
-              >
-                收件箱 →
-              </Link>
-            </div>
-            {latestMailbox ? (
-              <div className="rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="truncate text-sm font-medium text-kumo-default">
-                    {latestMailbox.emailAddress}
-                  </span>
-                  <CopyButton
-                    value={latestMailbox.emailAddress}
-                    successMessage="邮箱地址已复制"
-                    variant="secondary"
-                  />
-                </div>
-                {latestMailbox.expiresAt ? (
-                  <div className="mt-2">
-                    <MailboxExpiryBadge expiresAt={latestMailbox.expiresAt} />
+          <Panel>
+            <PanelHeader
+              title="临时邮箱"
+              action={
+                <Link
+                  to="/dashboard/inbox"
+                  className="app-focus rounded text-xs font-medium text-kumo-link hover:underline"
+                >
+                  收件箱
+                </Link>
+              }
+            />
+            <div className="p-4">
+              {latestMailbox ? (
+                <>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="app-mono min-w-0 truncate text-sm text-kumo-default">
+                      {latestMailbox.emailAddress}
+                    </span>
+                    <CopyButton
+                      value={latestMailbox.emailAddress}
+                      successMessage="邮箱地址已复制"
+                      variant="secondary"
+                    />
                   </div>
-                ) : null}
-                <div className="mt-2 flex items-center justify-between text-xs text-kumo-subtle">
-                  <span>{latestMailbox.messageCount} 封邮件</span>
-                  <span>{latestMailbox.unreadCount} 封未读</span>
-                </div>
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-kumo-fill">
-                  <div
-                    className="h-full rounded-full bg-kumo-brand"
-                    style={{
-                      width: `${
-                        latestMailbox.messageCount
-                          ? Math.max(
-                              8,
-                              (latestMailbox.unreadCount /
-                                latestMailbox.messageCount) *
-                                100,
-                            )
-                          : 8
-                      }%`,
-                    }}
-                  />
-                </div>
-              </div>
-            ) : (
-              <EmptyState
-                icon={<EnvelopeSimple className="size-5" />}
-                title="还没有临时邮箱"
-                description="生成一个地址，用于接收验证码或测试邮件。"
-                className="py-6"
-              />
-            )}
-            <Button
-              variant="secondary"
-              className="mt-3 w-full"
-              onClick={openCreateMailbox}
-              icon={<Plus className="size-4" />}
-            >
-              生成新邮箱
-            </Button>
-            <p className="mt-3 text-xs leading-4 text-kumo-placeholder">
-              临时邮箱用于接收邮件，1
-              小时内未收件会自动失效；请勿用于重要账户或敏感信息。
-            </p>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-kumo-subtle">
+                    {latestMailbox.expiresAt ? (
+                      <MailboxExpiryBadge expiresAt={latestMailbox.expiresAt} />
+                    ) : null}
+                    <span className="numeric">
+                      {latestMailbox.messageCount} 封 ·{' '}
+                      {latestMailbox.unreadCount} 未读
+                    </span>
+                  </div>
+                  {latestMailbox.messageCount > 0 ? (
+                    <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-kumo-fill">
+                      <div
+                        className="h-full rounded-full bg-kumo-brand"
+                        style={{
+                          width: `${Math.max(
+                            8,
+                            (latestMailbox.unreadCount /
+                              latestMailbox.messageCount) *
+                              100,
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                  ) : null}
+                </>
+              ) : (
+                <EmptyState
+                  icon={<EnvelopeSimple />}
+                  title="还没有临时邮箱"
+                  description="生成一个地址，用于接收验证码或测试邮件。"
+                  className="py-4"
+                />
+              )}
+              <Button
+                variant="secondary"
+                className="mt-3 w-full"
+                onClick={openCreateMailbox}
+                icon={<Plus className="size-4" />}
+              >
+                生成新邮箱
+              </Button>
+              <p className="mt-3 text-xs leading-5 text-kumo-placeholder">
+                1 小时内未收件会自动失效；请勿用于重要账户或敏感信息。
+              </p>
+            </div>
           </Panel>
 
-          <Panel className="bg-kumo-info-tint p-4">
-            <div className="flex items-center gap-2">
-              <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-base text-kumo-link ring ring-kumo-line">
-                <ShieldCheck className="size-4" />
-              </span>
-              <h2 className="text-base font-semibold text-kumo-strong">
-                隐私优先的工具体验
-              </h2>
+          <Panel className="sm:col-span-2 xl:col-span-1">
+            <PanelHeader title="快捷入口" />
+            <div className="grid grid-cols-2 gap-px bg-kumo-hairline">
+              <Shortcut
+                icon={<ChartLineUp className="size-4" />}
+                label="访问分析"
+                to="/dashboard/analytics"
+              />
+              <Shortcut
+                icon={<Tray className="size-4" />}
+                label="收件箱"
+                to="/dashboard/inbox"
+              />
+              <Shortcut
+                icon={<Key className="size-4" />}
+                label="API 管理"
+                to="/dashboard/api"
+              />
+              <Shortcut
+                icon={<ShieldCheck className="size-4" />}
+                label="账户安全"
+                to="/dashboard/security"
+              />
             </div>
-            <p className="mt-3 text-sm leading-6 text-kumo-default/80">
-              集中管理短链接与临时邮箱，让日常网络操作更简单。你的链接数据只属于你。
-            </p>
-            <Link
-              to="/dashboard/settings"
-              className="mt-3 inline-block text-sm font-medium text-kumo-link hover:underline"
-            >
-              查看账户设置
-            </Link>
           </Panel>
         </aside>
       </div>
 
-      <section className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Panel className="p-4">
-          <h2 className="text-base font-semibold text-kumo-strong">快速创建</h2>
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <QuickAction
-              icon={<LinkSimple className="size-5" />}
-              title="创建短链接"
-              description="自定义后缀与有效期"
-              onClick={openCreateLink}
-            />
-            <QuickAction
-              icon={<EnvelopeSimple className="size-5" />}
-              title="生成临时邮箱"
-              description="快速获取临时收件地址"
-              onClick={openCreateMailbox}
-            />
-          </div>
-        </Panel>
-        <Panel className="p-4">
-          <h2 className="text-base font-semibold text-kumo-strong">快捷入口</h2>
-          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <Shortcut
-              icon={<ChartLineUp className="size-4" />}
-              label="访问分析"
-              to="/dashboard/analytics"
-            />
-            <Shortcut
-              icon={<Tray className="size-4" />}
-              label="收件箱"
-              to="/dashboard/inbox"
-            />
-            <Shortcut
-              icon={<Key className="size-4" />}
-              label="API 管理"
-              to="/dashboard/api"
-            />
-            <Shortcut
-              icon={<ShieldCheck className="size-4" />}
-              label="账户安全"
-              to="/dashboard/security"
-            />
-          </div>
-        </Panel>
-      </section>
-
-      <p className="mt-5 text-xs text-kumo-placeholder">
+      <p className="mt-4 text-xs text-kumo-placeholder">
         可用短链域名 {publicDomains.data?.shortDomains.length ?? 0} 个 ·
         可用邮箱域名 {publicDomains.data?.emailDomains.length ?? 0} 个 ·
         数据刷新于 {formatRelativeTime(new Date())}
@@ -458,39 +418,6 @@ function DashboardOverview() {
   )
 }
 
-function QuickAction({
-  icon,
-  title,
-  description,
-  onClick,
-}: {
-  icon: React.ReactNode
-  title: string
-  description: string
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="group flex items-center gap-3 rounded-lg p-3 text-left ring ring-kumo-line hover:bg-kumo-tint hover:ring-kumo-interact"
-    >
-      <span className="flex size-10 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
-        {icon}
-      </span>
-      <span className="min-w-0 flex-1">
-        <strong className="block text-sm font-medium text-kumo-default">
-          {title}
-        </strong>
-        <small className="mt-1 block text-xs text-kumo-subtle">
-          {description}
-        </small>
-      </span>
-      <ArrowRight className="size-4 text-kumo-placeholder transition-transform group-hover:translate-x-0.5" />
-    </button>
-  )
-}
-
 function Shortcut({
   icon,
   label,
@@ -503,12 +430,12 @@ function Shortcut({
   return (
     <Link
       to={to as never}
-      className="rounded-lg p-3 text-center ring ring-kumo-hairline hover:bg-kumo-tint"
+      className="app-focus group flex items-center gap-2.5 bg-kumo-base px-4 py-3 text-sm text-kumo-default transition-colors hover:bg-kumo-tint"
     >
-      <span className="mx-auto flex size-8 items-center justify-center rounded-lg bg-kumo-tint text-kumo-subtle">
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-kumo-tint text-kumo-subtle group-hover:bg-kumo-base group-hover:text-kumo-strong">
         {icon}
       </span>
-      <span className="mt-2 block text-sm text-kumo-default">{label}</span>
+      <span className="truncate">{label}</span>
     </Link>
   )
 }

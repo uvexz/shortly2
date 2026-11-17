@@ -42,7 +42,7 @@ export function MobileNav({ admin = false }: { admin?: boolean }) {
             className={cn(
               'flex min-w-16 flex-col items-center gap-1 rounded-lg px-3 py-1.5 text-xs',
               active
-                ? 'font-medium text-kumo-brand'
+                ? 'font-medium text-[color:var(--color-kumo-brand)]'
                 : 'text-kumo-subtle hover:text-kumo-strong',
             )}
           >

@@ -6,6 +6,8 @@
 
 @theme {
   --ease-base: cubic-bezier(0.22, 1, 0.36, 1);
+  /* 面板与控件半径：沿用 openwren 的 10px 面板 / 8px 控件节奏 */
+  --radius-panel: 0.625rem;
 }
 
 :root {
@@ -61,6 +63,33 @@
   .font-mono,
   .numeric {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* 一个平面只靠 1px 细线与底色分层，不再叠阴影 */
+  .app-surface {
+    @apply rounded-panel border border-kumo-hairline bg-kumo-base;
+  }
+
+  /* 列表行：细线分隔、整行可点、hover 只做轻微底色变化 */
+  .app-row {
+    @apply border-b border-kumo-hairline transition-colors last:border-b-0;
+  }
+
+  .app-row-hover {
+    @apply hover:bg-kumo-tint/70;
+  }
+
+  .app-mono {
+    font-family: var(--font-mono);
+    letter-spacing: -0.01em;
+  }
+
+  .app-kbd {
+    @apply rounded border border-kumo-hairline bg-kumo-base px-1 py-0.5 font-mono text-[11px] leading-none text-kumo-placeholder;
+  }
+
+  .app-note {
+    @apply border-l-2 border-kumo-line pl-3 text-sm leading-6 text-kumo-subtle;
   }
 
   .app-focus {
@@ -124,6 +153,89 @@
     border-radius: 9999px;
     background: var(--color-kumo-interact);
   }
+}
+
+/*
+ * 指标条：一块平面承载 2–4 个指标，用 1px 细线分格。
+ * 移动端 2 列（上排下方有线、右列左侧有线），md 起一行铺开。
+ */
+.metric-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--color-kumo-hairline);
+  border-radius: var(--radius-panel);
+  background: var(--color-kumo-base);
+}
+
+.metric-strip > * {
+  min-width: 0;
+  border-top: 1px solid var(--color-kumo-hairline);
+}
+
+.metric-strip > *:nth-child(-n + 2) {
+  border-top: 0;
+}
+
+.metric-strip > *:nth-child(even) {
+  border-left: 1px solid var(--color-kumo-hairline);
+}
+
+@media (min-width: 768px) {
+  .metric-strip {
+    grid-template-columns: repeat(var(--metric-cols, 4), minmax(0, 1fr));
+  }
+
+  .metric-strip > * {
+    border-top: 0;
+    border-left: 1px solid var(--color-kumo-hairline);
+  }
+
+  .metric-strip > *:first-child {
+    border-left: 0;
+  }
+}
+
+/* 数据表：与 openwren 的列表一致的 36px 表头、10px 行距、细线分隔 */
+.app-table thead th {
+  height: 36px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-color-kumo-subtle);
+  border-bottom: 1px solid var(--color-kumo-hairline);
+  white-space: nowrap;
+}
+
+.app-table tbody td {
+  padding: 10px 12px;
+  vertical-align: middle;
+}
+
+.app-table tbody tr {
+  border-bottom: 1px solid var(--color-kumo-hairline);
+}
+
+.app-table tbody tr:last-child {
+  border-bottom: 0;
+}
+
+/* 桌面端行内操作：hover / 键盘聚焦时才出现，避免每行堆一排按钮 */
+.row-actions {
+  opacity: 0;
+  transition: opacity 150ms var(--ease-base);
+}
+
+@media (hover: none) {
+  .row-actions {
+    opacity: 1;
+  }
+}
+
+.group:hover .row-actions,
+.group:focus-within .row-actions,
+.row-actions:focus-within {
+  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {

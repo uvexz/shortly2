@@ -6,14 +6,14 @@ import {
   EnvelopeSimple,
   Plus,
   Trash,
-  Tray,
+  Info,
 } from '@phosphor-icons/react'
 import type { TempMailboxDto } from '@/lib/api-types'
 import { useDeleteMailbox, useMailboxesPage } from '@/hooks/mail'
 import { getErrorMessage } from '@/lib/api-client'
 import { formatDateTime, formatNumber } from '@/lib/format'
 import { useQuickActions } from '@/components/dashboard/quick-actions'
-import { PageHeader, Panel } from '@/components/ui/page-header'
+import { PageHeader, Panel, QuietNote } from '@/components/ui/page-header'
 import { PaginationBar } from '@/components/ui/pagination-bar'
 import { CopyButton } from '@/components/ui/copy-button'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
@@ -86,19 +86,15 @@ function MailboxesPage() {
         }
       />
 
-      <div className="mb-4 flex items-start gap-3 rounded-lg bg-kumo-info-tint p-4">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-kumo-base text-kumo-link ring ring-kumo-line">
-          <Tray className="size-4" />
-        </span>
-        <div>
-          <p className="text-sm font-medium text-kumo-default">
-            1 小时内未收件会自动失效
-          </p>
-          <p className="mt-1 text-sm leading-5 text-kumo-subtle">
-            {PENDING_WINDOW_HINT}
-          </p>
-        </div>
-      </div>
+      <QuietNote
+        icon={<Info className="size-3.5" />}
+        className="mb-4 max-w-3xl"
+      >
+        <span className="font-medium text-kumo-default">
+          1 小时内未收件会自动失效。
+        </span>{' '}
+        {PENDING_WINDOW_HINT}
+      </QuietNote>
 
       <Panel className="overflow-hidden">
         {query.isError ? (
@@ -127,62 +123,63 @@ function MailboxesPage() {
         ) : (
           <>
             <div className="hidden overflow-x-auto md:block">
-              <Table className="min-w-[620px]">
+              <Table className="min-w-[620px] app-table">
                 <Table.Header>
                   <Table.Row>
-                    <Table.Head className="px-4 py-3">邮箱地址</Table.Head>
-                    <Table.Head className="px-4 py-3">邮件</Table.Head>
-                    <Table.Head className="px-4 py-3">未读</Table.Head>
-                    <Table.Head className="px-4 py-3">创建时间</Table.Head>
-                    <Table.Head className="px-4 py-3 text-right">
-                      操作
-                    </Table.Head>
+                    <Table.Head>邮箱地址</Table.Head>
+                    <Table.Head className="w-16 text-right">邮件</Table.Head>
+                    <Table.Head className="w-16 text-right">未读</Table.Head>
+                    <Table.Head className="w-28">创建时间</Table.Head>
+                    <Table.Head className="w-32 text-right">操作</Table.Head>
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
                   {mailboxes.map((mailbox) => (
-                    <Table.Row key={mailbox.id}>
-                      <Table.Cell className="px-4 py-3">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-medium text-kumo-default">
+                    <Table.Row
+                      key={mailbox.id}
+                      className="group border-b border-kumo-hairline last:border-0 hover:bg-kumo-tint/60"
+                    >
+                      <Table.Cell>
+                        <div className="flex min-w-0 items-center gap-2">
+                          <span className="app-mono truncate text-sm text-kumo-default">
                             {mailbox.emailAddress}
                           </span>
-                          <CopyButton
-                            value={mailbox.emailAddress}
-                            successMessage="邮箱地址已复制"
-                          />
-                        </div>
-                        {mailbox.expiresAt ? (
-                          <div className="mt-1.5">
+                          {mailbox.expiresAt ? (
                             <MailboxExpiryBadge expiresAt={mailbox.expiresAt} />
-                          </div>
-                        ) : null}
+                          ) : null}
+                        </div>
                       </Table.Cell>
-                      <Table.Cell className="numeric px-4 py-3 text-kumo-default">
+                      <Table.Cell className="numeric text-right text-sm text-kumo-subtle">
                         {formatNumber(mailbox.messageCount)}
                       </Table.Cell>
-                      <Table.Cell className="px-4 py-3">
+                      <Table.Cell className="numeric text-right text-sm">
                         {mailbox.unreadCount > 0 ? (
-                          <span className="numeric rounded-md bg-kumo-brand px-1.5 py-0.5 text-xs font-medium text-white">
+                          <span className="font-medium text-kumo-brand">
                             {mailbox.unreadCount}
                           </span>
                         ) : (
                           <span className="text-kumo-placeholder">0</span>
                         )}
                       </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap px-4 py-3 text-kumo-subtle">
+                      <Table.Cell className="whitespace-nowrap text-xs text-kumo-subtle">
                         {formatDateTime(mailbox.createdAt)}
                       </Table.Cell>
-                      <Table.Cell className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <Link
-                            to="/dashboard/inbox"
-                            search={{ mailboxId: mailbox.id }}
-                            className="app-focus inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-medium text-kumo-link hover:bg-kumo-tint"
-                          >
-                            收件箱
-                            <ArrowRight className="size-3" />
-                          </Link>
+                      <Table.Cell className="text-right">
+                        <div className="flex items-center justify-end gap-0.5">
+                          <span className="row-actions flex items-center gap-0.5">
+                            <CopyButton
+                              value={mailbox.emailAddress}
+                              successMessage="邮箱地址已复制"
+                            />
+                            <Link
+                              to="/dashboard/inbox"
+                              search={{ mailboxId: mailbox.id }}
+                              className="app-focus inline-flex h-7 items-center gap-1 rounded-lg px-2 text-xs font-medium text-kumo-link hover:bg-kumo-tint"
+                            >
+                              收件箱
+                              <ArrowRight className="size-3" />
+                            </Link>
+                          </span>
                           <Button
                             type="button"
                             variant="ghost"
@@ -203,10 +200,10 @@ function MailboxesPage() {
 
             <div className="divide-y divide-kumo-hairline md:hidden">
               {mailboxes.map((mailbox) => (
-                <div key={mailbox.id} className="p-4">
+                <div key={mailbox.id} className="px-4 py-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-kumo-strong">
+                      <p className="app-mono truncate text-sm font-medium text-kumo-default">
                         {mailbox.emailAddress}
                       </p>
                       <p className="mt-1 text-xs text-kumo-subtle">
@@ -224,15 +221,15 @@ function MailboxesPage() {
                       successMessage="邮箱地址已复制"
                     />
                   </div>
-                  <div className="mt-3 flex items-center justify-between">
+                  <div className="mt-2.5 flex items-center justify-between">
                     <span className="text-xs text-kumo-placeholder">
                       {formatDateTime(mailbox.createdAt)}
                     </span>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-0.5">
                       <Link
                         to="/dashboard/inbox"
                         search={{ mailboxId: mailbox.id }}
-                        className="inline-flex h-8 items-center rounded-lg px-2.5 text-sm font-medium text-kumo-link ring ring-kumo-line"
+                        className="app-focus inline-flex h-7 items-center rounded-lg px-2 text-xs font-medium text-kumo-link hover:bg-kumo-tint"
                       >
                         查看收件箱
                       </Link>

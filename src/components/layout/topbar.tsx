@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from '@tanstack/react-router'
 import { Sidebar } from '@cloudflare/kumo'
-import { Bell, MagnifyingGlass } from '@phosphor-icons/react'
+import { Bell, MagnifyingGlass, X } from '@phosphor-icons/react'
 import { useBootstrap } from '@/lib/bootstrap'
 import { useUnreadCount } from '@/hooks/mail'
 import { AccountMenu } from '@/components/layout/account-menu'
@@ -28,8 +28,27 @@ export function Topbar({ admin = false }: { admin?: boolean }) {
   const navigate = useNavigate()
   const unreadQuery = useUnreadCount()
   const [search, setSearch] = useState('')
+  const searchInput = useRef<HTMLInputElement>(null)
   const unread = unreadQuery.data ?? 0
   const title = pageTitles[location.pathname] ?? (admin ? '管理后台' : '工作台')
+
+  // ⌘K / Ctrl+K 随时回到搜索框，对应 openwren 的键盘优先。
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if (
+        !(event.metaKey || event.ctrlKey) ||
+        event.key.toLowerCase() !== 'k'
+      ) {
+        return
+      }
+      if (admin) return
+      event.preventDefault()
+      searchInput.current?.focus()
+      searchInput.current?.select()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [admin])
 
   function handleSearch(event: React.FormEvent) {
     event.preventDefault()
@@ -48,33 +67,34 @@ export function Topbar({ admin = false }: { admin?: boolean }) {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-kumo-line bg-kumo-base/90 px-4 backdrop-blur md:px-8">
-      <div className="flex min-w-0 items-center gap-2 text-sm text-kumo-placeholder">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-kumo-hairline bg-kumo-base/85 px-4 backdrop-blur md:px-8">
+      <div className="flex min-w-0 items-center gap-2 text-xs">
         <Sidebar.Trigger />
-        <span className="hidden font-semibold text-kumo-strong sm:inline">
+        <span className="hidden text-kumo-placeholder sm:inline">
           {siteName}
         </span>
         <span className="hidden text-kumo-placeholder sm:inline">/</span>
-        <span className="truncate font-medium text-kumo-subtle">
+        <span className="truncate text-sm font-medium text-kumo-default">
           {admin ? `管理 · ${title}` : title}
         </span>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         {!admin ? (
           <form
             onSubmit={handleSearch}
-            className="hidden items-center gap-2 rounded-lg bg-kumo-base px-2.5 ring ring-kumo-line focus-within:ring-2 focus-within:ring-kumo-focus/25 sm:flex"
+            className="hidden h-8 items-center gap-1.5 rounded-lg bg-kumo-tint px-2.5 transition-colors focus-within:bg-kumo-base focus-within:ring-1 focus-within:ring-kumo-brand/40 sm:flex"
           >
-            <MagnifyingGlass className="size-4 text-kumo-placeholder" />
+            <MagnifyingGlass className="size-3.5 text-kumo-placeholder" />
             <input
+              ref={searchInput}
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              className="h-8 w-40 bg-transparent text-base outline-none placeholder:text-kumo-placeholder lg:w-48"
+              className="h-full w-36 bg-transparent text-sm text-kumo-default outline-none placeholder:text-kumo-placeholder lg:w-52"
               placeholder={
                 location.pathname === '/dashboard/inbox'
-                  ? '搜索邮件...'
-                  : '搜索短链接...'
+                  ? '搜索邮件…'
+                  : '搜索短链接…'
               }
               aria-label={
                 location.pathname === '/dashboard/inbox'
@@ -82,18 +102,35 @@ export function Topbar({ admin = false }: { admin?: boolean }) {
                   : '搜索短链接'
               }
             />
+            {search ? (
+              <button
+                type="button"
+                aria-label="清除搜索"
+                className="text-kumo-placeholder hover:text-kumo-strong"
+                onClick={() => {
+                  setSearch('')
+                  searchInput.current?.focus()
+                }}
+              >
+                <X className="size-3" />
+              </button>
+            ) : (
+              <kbd className="app-kbd inline-flex items-center justify-center">
+                ⌘K
+              </kbd>
+            )}
           </form>
         ) : null}
 
         {!admin ? (
           <Link
             to="/dashboard/inbox"
-            className="app-focus relative flex size-9 items-center justify-center rounded-lg text-kumo-subtle hover:bg-kumo-tint"
+            className="app-focus relative flex size-8 items-center justify-center rounded-lg text-kumo-subtle hover:bg-kumo-tint hover:text-kumo-default"
             aria-label={unread > 0 ? `收件箱，${unread} 封未读` : '收件箱'}
           >
-            <Bell className="size-[18px]" />
+            <Bell className="size-[17px]" />
             {unread > 0 ? (
-              <span className="absolute right-1.5 top-1.5 flex min-w-3.5 items-center justify-center rounded-full bg-kumo-brand px-1 text-xs font-medium leading-3.5 text-white">
+              <span className="absolute right-1 top-1 flex min-w-3 items-center justify-center rounded-full bg-kumo-brand px-1 text-[10px] font-medium leading-3 text-white">
                 {unread > 99 ? '99+' : unread}
               </span>
             ) : null}

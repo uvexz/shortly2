@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Button, Input } from '@cloudflare/kumo'
-import { MagnifyingGlass, ArrowsClockwise } from '@phosphor-icons/react'
+import { Button } from '@cloudflare/kumo'
+import { ArrowsClockwise } from '@phosphor-icons/react'
 import type { AdminLinkDto } from '@/lib/api-types'
 import { useAdminLinks, useDeleteAdminLink } from '@/hooks/admin'
 import { getErrorMessage } from '@/lib/api-client'
 import { AdminLinkTable } from '@/components/admin/admin-link-table'
 import { LinkLogsDialog } from '@/components/dashboard/link-logs-dialog'
 import { PageHeader, Panel } from '@/components/ui/page-header'
+import { SearchField } from '@/components/ui/search-field'
 import { PaginationBar } from '@/components/ui/pagination-bar'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -74,53 +75,43 @@ function AdminLinksPage() {
       />
 
       <Panel className="overflow-hidden">
-        <div className="flex flex-col gap-3 border-b border-kumo-hairline p-4 sm:flex-row sm:items-center sm:justify-between">
-          <form
-            className="flex flex-1 items-center gap-2"
-            onSubmit={(event) => {
-              event.preventDefault()
+        <div className="flex items-center gap-2 border-b border-kumo-hairline px-4 py-3">
+          <SearchField
+            value={query}
+            onChange={(value) => {
+              setQuery(value)
+              if (!value.trim() && q) {
+                void navigate({ to: '/admin/links', search: { page: 1 } })
+              }
+            }}
+            onSubmit={() => {
               void navigate({
                 to: '/admin/links',
                 search: { page: 1, q: query.trim() || undefined },
               })
             }}
-          >
-            <div className="relative flex-1 sm:max-w-sm">
-              <MagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-kumo-placeholder" />
-              <Input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="在当前页筛选..."
-                className="w-full pl-9"
-                aria-label="筛选当前页链接"
-              />
-            </div>
-            <Button type="submit" variant="secondary">
-              筛选
-            </Button>
-            {q ? (
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => {
-                  setQuery('')
-                  void navigate({
-                    to: '/admin/links',
-                    search: { page: 1 },
-                  })
-                }}
-              >
-                清除
-              </Button>
-            ) : null}
-          </form>
-          <Button
-            variant="ghost"
-            onClick={() => void linksQuery.refetch()}
-            icon={<ArrowsClockwise className="size-3.5" />}
-          >
-            刷新
-          </Button>
+            placeholder="在当前页筛选…"
+            label="筛选当前页链接"
+            shortcut
+            className="min-w-0 flex-1 sm:max-w-sm"
+          />
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <Button
+              variant="ghost"
+              shape="square"
+              size="sm"
+              aria-label="刷新"
+              title="刷新"
+              icon={
+                <ArrowsClockwise
+                  className={
+                    linksQuery.isFetching ? 'size-4 animate-spin' : 'size-4'
+                  }
+                />
+              }
+              onClick={() => void linksQuery.refetch()}
+            />
+          </div>
         </div>
 
         {q ? (

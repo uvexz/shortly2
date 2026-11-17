@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Button, Input, Table, Tabs } from '@cloudflare/kumo'
-import {
-  Archive,
-  EnvelopeSimple,
-  MagnifyingGlass,
-  Tray,
-} from '@phosphor-icons/react'
+import { Button, Table, Tabs } from '@cloudflare/kumo'
+import { Archive, EnvelopeSimple, Tray } from '@phosphor-icons/react'
 import type {
   AdminArchiveSummary,
   AdminMailboxDto,
@@ -22,6 +17,7 @@ import { formatDateTime, formatNumber, formatRelativeTime } from '@/lib/format'
 import { getSenderLabel } from '@/lib/email-html'
 import { AdminEmailViewerDialog } from '@/components/admin/admin-email-viewer-dialog'
 import { PageHeader, Panel } from '@/components/ui/page-header'
+import { SearchField } from '@/components/ui/search-field'
 import { PaginationBar } from '@/components/ui/pagination-bar'
 import { EmptyState } from '@/components/ui/empty-state'
 import { TableLoading } from '@/components/ui/loading'
@@ -118,43 +114,22 @@ function AdminEmailsPage() {
             variant="underline"
             size="sm"
           />
-          <form
-            className="flex items-center gap-2 pb-3"
-            onSubmit={(event) => {
-              event.preventDefault()
-              updateSearch({
-                tab,
-                search: searchInput.trim(),
-                page: 1,
-              })
+          <SearchField
+            value={searchInput}
+            onChange={(value) => {
+              setSearchInput(value)
+              if (!value.trim() && searchTerm) {
+                updateSearch({ tab, search: '', page: 1 })
+              }
             }}
-          >
-            <div className="relative">
-              <MagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-kumo-placeholder" />
-              <Input
-                value={searchInput}
-                onChange={(event) => setSearchInput(event.target.value)}
-                placeholder="搜索邮箱、主题、用户..."
-                className="w-64 pl-9"
-                aria-label="搜索邮件"
-              />
-            </div>
-            <Button type="submit" variant="secondary">
-              搜索
-            </Button>
-            {searchTerm ? (
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => {
-                  setSearchInput('')
-                  updateSearch({ tab, search: '', page: 1 })
-                }}
-              >
-                清除
-              </Button>
-            ) : null}
-          </form>
+            onSubmit={() =>
+              updateSearch({ tab, search: searchInput.trim(), page: 1 })
+            }
+            placeholder="搜索邮箱、主题、用户…"
+            label="搜索邮件"
+            shortcut
+            className="max-w-sm pb-3"
+          />
         </div>
 
         {activeQuery.isError ? (
@@ -225,7 +200,7 @@ function MailboxesTable({ data }: { data: AdminMailboxDto[] }) {
 
   return (
     <div className="overflow-x-auto">
-      <Table className="min-w-[820px]">
+      <Table className="min-w-[820px] app-table">
         <Table.Header>
           <Table.Row>
             <Table.Head className="px-4 py-3">邮箱地址</Table.Head>
@@ -308,7 +283,7 @@ function MessagesTable({
 
   return (
     <div className="overflow-x-auto">
-      <Table className="min-w-[900px]">
+      <Table className="min-w-[900px] app-table">
         <Table.Header>
           <Table.Row>
             <Table.Head className="px-4 py-3">主题 / 发件人</Table.Head>
@@ -396,7 +371,7 @@ function ArchivesTable({
 
   return (
     <div className="overflow-x-auto">
-      <Table className="min-w-[860px]">
+      <Table className="min-w-[860px] app-table">
         <Table.Header>
           <Table.Row>
             <Table.Head className="px-4 py-3">主题 / 发件人</Table.Head>

@@ -162,7 +162,7 @@ export function AppShell({
       style={{ '--sidebar-width': '208px' } as React.CSSProperties}
     >
       <Sidebar className="border-kumo-line max-md:w-[280px] md:sticky md:top-0 md:h-svh md:self-start">
-        <Sidebar.Header className="h-16 px-3">
+        <Sidebar.Header className="h-14 px-3">
           <SidebarBrand siteName={siteName} admin={admin} />
         </Sidebar.Header>
 
@@ -224,7 +224,9 @@ export function AppShell({
 
       <div className="flex min-h-screen min-w-0 flex-1 flex-col pb-16 md:pb-0">
         <Topbar admin={admin} />
-        <div className="flex-1 px-4 py-6 md:px-8 md:py-7">{children}</div>
+        <main className="flex-1 px-4 py-5 md:px-8 md:py-6">
+          <div className="mx-auto w-full max-w-[1320px]">{children}</div>
+        </main>
       </div>
 
       <MobileNav admin={admin} />

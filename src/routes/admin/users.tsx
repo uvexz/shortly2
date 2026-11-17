@@ -116,7 +116,7 @@ function AdminUsersPage() {
         ) : (
           <>
             <div className="hidden overflow-x-auto md:block">
-              <Table className="min-w-[820px]">
+              <Table className="min-w-[820px] app-table">
                 <Table.Header>
                   <Table.Row>
                     <Table.Head className="px-4 py-3">用户</Table.Head>

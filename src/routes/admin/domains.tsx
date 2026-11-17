@@ -16,7 +16,7 @@ import { useAdminDomains, useDeleteAdminDomain } from '@/hooks/admin'
 import { getErrorMessage } from '@/lib/api-client'
 import { formatDate } from '@/lib/format'
 import { DomainFormDialog } from '@/components/admin/domain-form-dialog'
-import { PageHeader, Panel } from '@/components/ui/page-header'
+import { PageHeader, Panel, QuietNote } from '@/components/ui/page-header'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -76,24 +76,20 @@ function AdminDomainsPage() {
         }
       />
 
-      <div className="mb-4 flex items-start gap-3 rounded-lg bg-kumo-info-tint p-4">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-kumo-base text-kumo-link ring ring-kumo-line">
-          <GlobeHemisphereWest className="size-4" />
-        </span>
-        <div>
-          <p className="text-sm font-medium text-kumo-default">
-            域名配置会即时影响创建表单和 API 发现结果
-          </p>
-          <p className="mt-1 text-sm leading-5 text-kumo-subtle">
-            默认短链域名和默认邮箱域名各只能有一个；默认域名不能删除。DNS
-            解析和邮件路由需在域名服务商侧配置。
-          </p>
-        </div>
-      </div>
+      <QuietNote
+        icon={<GlobeHemisphereWest className="size-3.5" />}
+        className="mb-4 max-w-3xl"
+      >
+        <span className="font-medium text-kumo-default">
+          域名配置会即时影响创建表单和 API 发现结果。
+        </span>{' '}
+        默认短链域名和默认邮箱域名各只能有一个；默认域名不能删除。DNS
+        解析和邮件路由需在域名服务商侧配置。
+      </QuietNote>
 
       <Panel className="p-4">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-kumo-strong">全部域名</h2>
+          <h2 className="text-sm font-medium text-kumo-strong">全部域名</h2>
           <Button
             variant="ghost"
             onClick={() => void domainsQuery.refetch()}
@@ -141,7 +137,7 @@ function AdminDomainsPage() {
             {domains.map((domain) => (
               <div
                 key={domain.id}
-                className="rounded-lg p-4 ring ring-kumo-line"
+                className="rounded-panel border border-kumo-hairline p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-2">
@@ -212,8 +208,8 @@ function AdminDomainsPage() {
                   ) : null}
                 </div>
 
-                <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                  <div className="rounded-lg bg-kumo-elevated p-2.5">
+                <div className="mt-3 grid grid-cols-2 gap-3 border-t border-kumo-hairline pt-2.5 text-xs">
+                  <div>
                     <p className="flex items-center gap-1 text-kumo-placeholder">
                       <LinkSimple className="size-3" />
                       短链接
@@ -224,7 +220,7 @@ function AdminDomainsPage() {
                         : '未启用'}
                     </p>
                   </div>
-                  <div className="rounded-lg bg-kumo-elevated p-2.5">
+                  <div>
                     <p className="flex items-center gap-1 text-kumo-placeholder">
                       <EnvelopeSimple className="size-3" />
                       临时邮箱

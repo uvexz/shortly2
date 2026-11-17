@@ -82,6 +82,8 @@ src/
 - 页面外壳：`src/components/layout/app-shell.tsx`；桌面侧栏 208px、移动端底部导航、顶栏面包屑/搜索/通知。
 - 数据请求用 `src/hooks/**`，同源 `fetch` 已封装在 `src/lib/api-client.ts`；不要绕过 hooks 直连数据库。
 - 错误/空态/加载态要齐全；删除操作使用 `ConfirmDialog`；复制使用 `CopyButton`；Toast 用 `src/lib/toast.ts`。
+- 版式语言（参考 openwren）：一个平面只靠 1px 细线与底色分层，不叠阴影。页面块统一用 `PageHeader` + `Panel` / `PanelHeader` + `QuietNote`；指标用 `MetricStrip` / `Metric`；列表搜索用 `SearchField`（`/` 聚焦）；表格加 `app-table`；行内次级操作加 `row-actions`（hover/聚焦才出现，触屏常驻）。
+- 一屏只用一个强调色。主操作用 `bg-kumo-brand`（蓝）；`text-kumo-brand` 是 Cloudflare 橙，只作品牌点缀，不要拿来做按钮/导航选中色。
 - Kumo Dialog 宽度用 `size` 属性（`lg` / `xl`），不要只靠 `max-w-*`。
 - 临时邮箱 HTML 在 sandbox iframe 中渲染，不要加 `allow-scripts`。
 

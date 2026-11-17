@@ -1,6 +1,10 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
+/**
+ * 页面标题：左侧标题 + 说明，右侧操作。
+ * 与 openwren 的面板标题一致，标题紧、说明轻，不使用卡片包裹。
+ */
 export function PageHeader({
   title,
   description,
@@ -13,16 +17,18 @@ export function PageHeader({
   eyebrow?: string
 }) {
   return (
-    <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+    <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
       <div className="min-w-0">
         {eyebrow ? (
-          <p className="mb-1.5 text-xs font-medium text-kumo-subtle">
-            {eyebrow}
-          </p>
+          <p className="mb-1 text-xs font-medium text-kumo-subtle">{eyebrow}</p>
         ) : null}
-        <h1 className="text-2xl font-semibold text-kumo-strong">{title}</h1>
+        <h1 className="text-[22px] font-semibold leading-7 tracking-[-0.01em] text-kumo-strong sm:text-2xl">
+          {title}
+        </h1>
         {description ? (
-          <p className="mt-1.5 text-base text-kumo-subtle">{description}</p>
+          <p className="mt-1 text-sm leading-5 text-kumo-subtle">
+            {description}
+          </p>
         ) : null}
       </div>
       {actions ? (
@@ -32,6 +38,7 @@ export function PageHeader({
   )
 }
 
+/** 一块平面：1px 细线 + 白底，不再叠阴影。 */
 export function Panel({
   children,
   className,
@@ -42,12 +49,7 @@ export function Panel({
   as?: 'section' | 'div' | 'aside'
 }) {
   return (
-    <Component
-      className={cn(
-        'rounded-lg bg-kumo-base shadow-xs ring ring-kumo-line',
-        className,
-      )}
-    >
+    <Component className={cn('app-surface min-w-0 overflow-hidden', className)}>
       {children}
     </Component>
   )
@@ -67,17 +69,64 @@ export function PanelHeader({
   return (
     <div
       className={cn(
-        'flex flex-wrap items-center justify-between gap-3 border-b border-kumo-hairline px-4 py-3.5',
+        'flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-kumo-hairline px-4 py-2.5',
         className,
       )}
     >
       <div className="min-w-0">
-        <h2 className="text-base font-semibold text-kumo-strong">{title}</h2>
+        <h2 className="truncate text-[15px] font-semibold leading-5 text-kumo-strong">
+          {title}
+        </h2>
         {description ? (
-          <p className="mt-1 text-sm text-kumo-subtle">{description}</p>
+          <p className="mt-0.5 text-xs leading-4 text-kumo-subtle">
+            {description}
+          </p>
         ) : null}
       </div>
       {action}
+    </div>
+  )
+}
+
+/** 分组小标题：用于一块平面内部的分段（对应 openwren 的 xs 灰标签）。 */
+export function SectionLabel({
+  children,
+  action,
+  className,
+}: {
+  children: ReactNode
+  action?: ReactNode
+  className?: string
+}) {
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-between gap-3 px-4 pt-3 pb-2 text-xs text-kumo-subtle',
+        className,
+      )}
+    >
+      <span className="truncate">{children}</span>
+      {action}
+    </div>
+  )
+}
+
+/** 安静提示：左侧 2px 细线，替代大色块横幅。 */
+export function QuietNote({
+  icon,
+  children,
+  className,
+}: {
+  icon?: ReactNode
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <div className={cn('app-note flex items-start gap-2', className)}>
+      {icon ? (
+        <span className="mt-0.5 shrink-0 text-kumo-placeholder">{icon}</span>
+      ) : null}
+      <p className="min-w-0">{children}</p>
     </div>
   )
 }

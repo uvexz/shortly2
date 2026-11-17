@@ -1,6 +1,10 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
+/**
+ * 空态：不安图标底座、不加大块留白，一句标题 + 一句说明 + 一个主操作。
+ * 与 openwren 的 “This folder is empty.” 同一语气。
+ */
 export function EmptyState({
   icon,
   title,
@@ -21,12 +25,19 @@ export function EmptyState({
         className,
       )}
     >
-      <div className="flex size-12 items-center justify-center rounded-lg bg-kumo-tint text-kumo-subtle">
-        {icon ?? <span className="text-lg">⌘</span>}
-      </div>
-      <p className="mt-3 text-base font-medium text-kumo-default">{title}</p>
+      {icon ? (
+        <span className="text-kumo-placeholder [&>svg]:size-7">{icon}</span>
+      ) : null}
+      <p
+        className={cn(
+          'text-sm font-medium text-kumo-strong',
+          icon ? 'mt-2.5' : null,
+        )}
+      >
+        {title}
+      </p>
       {description ? (
-        <p className="mt-1.5 max-w-sm text-sm leading-6 text-kumo-subtle">
+        <p className="mt-1 max-w-xs text-sm leading-5 text-kumo-subtle">
           {description}
         </p>
       ) : null}

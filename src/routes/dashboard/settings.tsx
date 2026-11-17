@@ -94,7 +94,7 @@ function SettingsPage() {
                 </div>
               </div>
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="mt-5 grid gap-px overflow-hidden rounded-lg border border-kumo-hairline bg-kumo-hairline sm:grid-cols-2">
                 <Info
                   label="账户角色"
                   value={role === 'admin' ? '管理员' : '用户'}
@@ -110,7 +110,7 @@ function SettingsPage() {
                 <Info label="账户 ID" value={user?.id ?? '—'} mono />
               </div>
 
-              <p className="mt-4 rounded-lg bg-kumo-elevated p-3 text-sm leading-5 text-kumo-placeholder ring ring-kumo-hairline">
+              <p className="mt-4 border-l-2 border-kumo-line pl-3 text-xs leading-5 text-kumo-placeholder">
                 为保证后端接口不变，v2
                 暂不提供资料编辑接口；邮箱与姓名由登录方式提供。
               </p>
@@ -145,9 +145,7 @@ function SettingsPage() {
               <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
                 <GlobeHemisphereWest className="size-4" />
               </span>
-              <h2 className="text-base font-semibold text-kumo-strong">
-                站点信息
-              </h2>
+              <h2 className="text-sm font-medium text-kumo-strong">站点信息</h2>
             </div>
             <div className="mt-4 space-y-3 text-sm">
               <div className="flex items-center justify-between gap-3">
@@ -188,7 +186,7 @@ function SettingsPage() {
               <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
                 <EnvelopeSimple className="size-4" />
               </span>
-              <h2 className="text-base font-semibold text-kumo-strong">
+              <h2 className="text-sm font-medium text-kumo-strong">
                 本版本说明
               </h2>
             </div>
@@ -209,7 +207,7 @@ function SettingsPage() {
           </Panel>
 
           <Panel className="p-4">
-            <h2 className="text-base font-semibold text-kumo-strong">
+            <h2 className="text-sm font-medium text-kumo-strong">
               退出当前账户
             </h2>
             <p className="mt-2 text-sm leading-5 text-kumo-subtle">
@@ -240,10 +238,10 @@ function Info({
   mono?: boolean
 }) {
   return (
-    <div className="rounded-lg bg-kumo-elevated p-3 ring ring-kumo-hairline">
+    <div className="bg-kumo-base px-3 py-2.5">
       <p className="text-xs text-kumo-placeholder">{label}</p>
       <p
-        className={`mt-1 truncate text-sm text-kumo-default ${mono ? 'font-mono' : ''}`}
+        className={`mt-0.5 truncate text-sm text-kumo-default ${mono ? 'font-mono' : ''}`}
         title={value}
       >
         {value}

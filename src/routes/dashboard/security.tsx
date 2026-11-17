@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button, Table } from '@cloudflare/kumo'
 import {
@@ -13,6 +13,7 @@ import { authClient } from '@/lib/auth-client'
 import { useBootstrap } from '@/lib/bootstrap'
 import { formatDate } from '@/lib/format'
 import { PageHeader, Panel, PanelHeader } from '@/components/ui/page-header'
+import { Metric, MetricStrip } from '@/components/ui/metric-strip'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { CopyButton } from '@/components/ui/copy-button'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -76,9 +77,11 @@ function SecurityPage() {
   const [deleting, setDeleting] = useState(false)
 
   const passkeys = (data ?? []) as PasskeyRecord[]
-  const supportsPasskey =
-    typeof window !== 'undefined' &&
-    typeof window.PublicKeyCredential !== 'undefined'
+  // WebAuthn 只在浏览器可用；放到挂载后再判断，避免服务端与客户端首屏不一致
+  const [supportsPasskey, setSupportsPasskey] = useState(false)
+  useEffect(() => {
+    setSupportsPasskey(typeof window.PublicKeyCredential !== 'undefined')
+  }, [])
   const backedUpCount = passkeys.filter((passkey) => passkey.backedUp).length
 
   async function handleAddPasskey() {
@@ -140,32 +143,32 @@ function SecurityPage() {
         }
       />
 
-      <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <MetricStrip cols={3} className="mb-4">
         <Metric
           icon={supportsPasskey ? ShieldCheck : Fingerprint}
           label="安全状态"
           value={
             !supportsPasskey
-              ? '当前设备不支持'
+              ? '不支持'
               : passkeys.length
                 ? '已启用'
                 : '建议启用'
           }
-          description={user?.email ?? ''}
+          hint={user?.email ?? ''}
         />
         <Metric
           icon={Key}
           label="已注册密钥"
           value={isPending ? '同步中' : `${passkeys.length}`}
-          description="至少保留一枚常用设备密钥"
+          hint="至少保留一枚常用设备密钥"
         />
         <Metric
           icon={Laptop}
           label="备份覆盖"
           value={isPending ? '同步中' : `${backedUpCount}`}
-          description="已由平台标记备份的凭证"
+          hint="已由平台标记备份的凭证"
         />
-      </div>
+      </MetricStrip>
 
       <Panel className="overflow-hidden">
         <PanelHeader
@@ -210,7 +213,7 @@ function SecurityPage() {
         ) : (
           <>
             <div className="hidden overflow-x-auto md:block">
-              <Table className="min-w-[640px]">
+              <Table className="min-w-[640px] app-table">
                 <Table.Header>
                   <Table.Row>
                     <Table.Head className="px-4 py-3">名称</Table.Head>
@@ -315,21 +318,21 @@ function SecurityPage() {
         )}
       </Panel>
 
-      <div className="mt-4 rounded-lg bg-kumo-info-tint p-4">
-        <h2 className="text-base font-semibold text-kumo-strong">
-          登录保护说明
-        </h2>
-        <ul className="mt-2 space-y-1.5 text-sm leading-5 text-kumo-default/80">
-          <li>
-            · 通行密钥使用指纹、面容或设备密码完成验证，不依赖短信或邮箱验证码。
+      <Panel className="mt-4">
+        <PanelHeader title="登录保护说明" />
+        <ul className="divide-y divide-kumo-hairline text-sm leading-5 text-kumo-subtle">
+          <li className="px-4 py-2.5">
+            通行密钥使用指纹、面容或设备密码完成验证，不依赖短信或邮箱验证码。
           </li>
-          <li>· 完整凭证保存在你的设备或平台账户中，站点只保存公钥。</li>
-          <li>
-            · 通行密钥需要 HTTPS 或 localhost 环境；当前站点如果使用 http
+          <li className="px-4 py-2.5">
+            完整凭证保存在你的设备或平台账户中，站点只保存公钥。
+          </li>
+          <li className="px-4 py-2.5">
+            通行密钥需要 HTTPS 或 localhost 环境；当前站点如果使用 http
             域名，浏览器会拒绝注册。
           </li>
         </ul>
-      </div>
+      </Panel>
 
       <ConfirmDialog
         open={Boolean(pendingDelete)}
@@ -348,32 +351,5 @@ function SecurityPage() {
         destructive
       />
     </>
-  )
-}
-
-function Metric({
-  icon: Icon,
-  label,
-  value,
-  description,
-}: {
-  icon: React.ComponentType<{ className?: string }>
-  label: string
-  value: string
-  description: string
-}) {
-  return (
-    <div className="rounded-lg bg-kumo-base p-4 shadow-xs ring ring-kumo-line">
-      <span className="flex size-8 items-center justify-center rounded-lg bg-kumo-brand/10 text-kumo-brand-hover">
-        <Icon className="size-4" />
-      </span>
-      <p className="mt-3 text-sm text-kumo-subtle">{label}</p>
-      <p className="mt-1 truncate text-lg font-semibold text-kumo-strong">
-        {value}
-      </p>
-      <p className="mt-1 truncate text-xs text-kumo-placeholder">
-        {description}
-      </p>
-    </div>
   )
 }

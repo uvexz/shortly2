@@ -10,6 +10,8 @@ import { BarChart } from '@/components/dashboard/bar-chart'
 import { StatusDonut } from '@/components/dashboard/status-donut'
 import { LinkLogsDialog } from '@/components/dashboard/link-logs-dialog'
 import { PageHeader, Panel, PanelHeader } from '@/components/ui/page-header'
+import { Metric, MetricStrip } from '@/components/ui/metric-strip'
+import { Chip, ChipRow } from '@/components/ui/chip'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { CopyButton } from '@/components/ui/copy-button'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -30,6 +32,7 @@ function AnalyticsPage() {
   const recent = useRecentLinks()
   const links = recent.data?.links ?? []
   const [logsOpen, setLogsOpen] = useState(false)
+  const [eventFilter, setEventFilter] = useState<'all' | 'ok' | 'bad'>('all')
 
   const selectedLink = useMemo(() => {
     if (search.linkId) {
@@ -109,6 +112,18 @@ function AnalyticsPage() {
         log.eventType.includes('max_clicks'),
     ).length ?? 0
 
+  // 只在已加载的样本内筛选，条数随筛选变化并标明范围
+  const eventRows = useMemo(() => {
+    const all = logs.data?.data ?? []
+    if (eventFilter === 'all') return all
+    return all.filter((log) => {
+      const tone = getLogEventTone(log.eventType)
+      return eventFilter === 'bad'
+        ? tone === 'danger' || tone === 'warning'
+        : log.eventType === 'redirect_success'
+    })
+  }, [logs.data?.data, eventFilter])
+
   return (
     <>
       <PageHeader
@@ -141,36 +156,35 @@ function AnalyticsPage() {
         </Panel>
       ) : (
         <div className="space-y-4">
-          <Panel className="p-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0">
-                <h2 className="text-base font-semibold text-kumo-strong">
-                  选择短链接
-                </h2>
-                <p className="mt-0.5 text-xs text-kumo-placeholder">
-                  数据来自现有 /api/logs/:linkId，不进行跨链接聚合
-                </p>
-              </div>
-              <Select
-                aria-label="选择短链接"
-                className="w-full sm:w-80"
-                value={selectedLink?.id ?? ''}
-                onValueChange={(value) => {
-                  if (!value) return
-                  void navigate({
-                    to: '/dashboard/analytics',
-                    search: { linkId: value },
-                  })
-                }}
-                items={linkItems}
-              />
+          <div className="flex flex-col gap-3 rounded-panel border border-kumo-hairline bg-kumo-base px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <h2 className="text-sm font-medium text-kumo-strong">
+                选择短链接
+              </h2>
+              <p className="mt-0.5 text-xs text-kumo-placeholder">
+                数据来自现有 /api/logs/:linkId，不进行跨链接聚合
+              </p>
             </div>
-          </Panel>
+            <Select
+              aria-label="选择短链接"
+              className="w-full sm:w-72"
+              value={selectedLink?.id ?? ''}
+              onValueChange={(value) => {
+                if (!value) return
+                void navigate({
+                  to: '/dashboard/analytics',
+                  search: { linkId: value },
+                })
+              }}
+              items={linkItems}
+            />
+          </div>
 
           {selectedLink ? (
             <>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <MetricStrip>
                 <Metric
+                  icon={ChartLineUp}
                   label="总点击"
                   value={formatNumber(selectedLink.clicks)}
                   meta="精确值"
@@ -190,9 +204,9 @@ function AnalyticsPage() {
                   value={formatNumber(blockedCount)}
                   meta={`最近 ${LOG_SAMPLE_SIZE} 条`}
                 />
-              </div>
+              </MetricStrip>
 
-              <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+              <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
                 <Panel className="overflow-hidden">
                   <PanelHeader
                     title="最近事件"
@@ -215,48 +229,88 @@ function AnalyticsPage() {
                       description="链接被访问后，成功跳转、拦截和自动删除事件会显示在这里。"
                     />
                   ) : (
-                    <div className="overflow-x-auto">
-                      <Table className="min-w-[620px]">
-                        <Table.Header>
-                          <Table.Row>
-                            <Table.Head>事件</Table.Head>
-                            <Table.Head>时间</Table.Head>
-                            <Table.Head>来源</Table.Head>
-                            <Table.Head>状态码</Table.Head>
-                          </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                          {logs.data.data.slice(0, 20).map((log) => (
-                            <Table.Row key={log.id}>
-                              <Table.Cell>
-                                <StatusBadge
-                                  label={getLogEventLabel(log.eventType)}
-                                  tone={getLogEventTone(log.eventType)}
-                                />
-                              </Table.Cell>
-                              <Table.Cell className="whitespace-nowrap text-kumo-subtle">
-                                {formatDateTime(log.createdAt)}
-                              </Table.Cell>
-                              <Table.Cell className="text-kumo-subtle">
-                                {getSourceLabel(log.referrer)}
-                              </Table.Cell>
-                              <Table.Cell className="numeric text-kumo-subtle">
-                                {log.statusCode ?? '—'}
-                              </Table.Cell>
-                            </Table.Row>
-                          ))}
-                        </Table.Body>
-                      </Table>
-                    </div>
+                    <>
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-kumo-hairline px-4 py-2">
+                        <ChipRow label="按事件结果筛选">
+                          <Chip
+                            active={eventFilter === 'all'}
+                            onClick={() => setEventFilter('all')}
+                          >
+                            全部
+                          </Chip>
+                          <Chip
+                            active={eventFilter === 'ok'}
+                            onClick={() => setEventFilter('ok')}
+                          >
+                            成功跳转
+                          </Chip>
+                          <Chip
+                            active={eventFilter === 'bad'}
+                            onClick={() => setEventFilter('bad')}
+                          >
+                            异常
+                          </Chip>
+                        </ChipRow>
+                        <span className="numeric text-xs text-kumo-placeholder">
+                          {formatNumber(eventRows.length)} 条 · 样本内筛选
+                        </span>
+                      </div>
+                      {eventRows.length ? (
+                        <div className="overflow-x-auto">
+                          <Table className="min-w-[620px] app-table">
+                            <Table.Header>
+                              <Table.Row>
+                                <Table.Head>事件</Table.Head>
+                                <Table.Head>时间</Table.Head>
+                                <Table.Head>来源</Table.Head>
+                                <Table.Head className="w-20 text-right">
+                                  状态码
+                                </Table.Head>
+                              </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                              {eventRows.slice(0, 20).map((log) => (
+                                <Table.Row
+                                  key={log.id}
+                                  className="border-b border-kumo-hairline last:border-0 hover:bg-kumo-tint/60"
+                                >
+                                  <Table.Cell>
+                                    <StatusBadge
+                                      label={getLogEventLabel(log.eventType)}
+                                      tone={getLogEventTone(log.eventType)}
+                                    />
+                                  </Table.Cell>
+                                  <Table.Cell className="whitespace-nowrap text-xs text-kumo-subtle">
+                                    {formatDateTime(log.createdAt)}
+                                  </Table.Cell>
+                                  <Table.Cell className="text-xs text-kumo-subtle">
+                                    {getSourceLabel(log.referrer)}
+                                  </Table.Cell>
+                                  <Table.Cell className="numeric text-right text-xs text-kumo-subtle">
+                                    {log.statusCode ?? '—'}
+                                  </Table.Cell>
+                                </Table.Row>
+                              ))}
+                            </Table.Body>
+                          </Table>
+                        </div>
+                      ) : (
+                        <EmptyState
+                          title="没有匹配的事件"
+                          description="换一个筛选项，或查看完整日志。"
+                          className="py-8"
+                        />
+                      )}
+                    </>
                   )}
                 </Panel>
 
                 <aside className="space-y-4">
                   <Panel className="p-4">
-                    <h2 className="text-base font-semibold text-kumo-strong">
+                    <h2 className="text-sm font-medium text-kumo-strong">
                       链接概况
                     </h2>
-                    <div className="mt-3 space-y-3 text-xs">
+                    <div className="mt-3 space-y-2.5 text-xs">
                       <div className="flex items-center justify-between gap-3">
                         <span className="text-kumo-subtle">短链接</span>
                         <span className="flex min-w-0 items-center gap-1">
@@ -303,11 +357,9 @@ function AnalyticsPage() {
                     </div>
                   </Panel>
 
-                  <Panel className="p-4">
-                    <h2 className="text-base font-semibold text-kumo-strong">
-                      事件构成
-                    </h2>
-                    <div className="mt-4">
+                  <Panel>
+                    <PanelHeader title="事件构成" />
+                    <div className="p-4">
                       {eventBreakdown.length ? (
                         <StatusDonut
                           segments={eventBreakdown.map((item, index) => ({
@@ -330,11 +382,9 @@ function AnalyticsPage() {
                     </div>
                   </Panel>
 
-                  <Panel className="p-4">
-                    <h2 className="text-base font-semibold text-kumo-strong">
-                      访问来源
-                    </h2>
-                    <div className="mt-4">
+                  <Panel>
+                    <PanelHeader title="访问来源" />
+                    <div className="p-4">
                       <BarChart
                         items={sourceBreakdown}
                         emptyLabel="暂无来源数据"
@@ -361,25 +411,5 @@ function AnalyticsPage() {
         onOpenChange={setLogsOpen}
       />
     </>
-  )
-}
-
-function Metric({
-  label,
-  value,
-  meta,
-}: {
-  label: string
-  value: string
-  meta: string
-}) {
-  return (
-    <div className="rounded-lg bg-kumo-base p-4 shadow-xs ring ring-kumo-line">
-      <p className="text-base text-kumo-subtle">{label}</p>
-      <p className="numeric mt-1 text-2xl font-semibold text-kumo-strong">
-        {value}
-      </p>
-      <p className="mt-1 text-xs text-kumo-placeholder">{meta}</p>
-    </div>
   )
 }

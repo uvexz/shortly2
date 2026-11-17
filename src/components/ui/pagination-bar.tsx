@@ -17,8 +17,8 @@ export function PaginationBar({
   itemLabel?: string
 }) {
   return (
-    <div className="flex flex-col gap-3 border-t border-kumo-hairline px-4 py-3 text-kumo-placeholder sm:flex-row sm:items-center sm:justify-between">
-      <span>
+    <div className="flex flex-col gap-2 border-t border-kumo-hairline px-4 py-2.5 text-xs text-kumo-subtle sm:flex-row sm:items-center sm:justify-between">
+      <span className="numeric">
         共 {formatNumber(totalCount)} {itemLabel}
         {totalPages > 1 ? ` · 第 ${page} / ${totalPages} 页` : ''}
       </span>

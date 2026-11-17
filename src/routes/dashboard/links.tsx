@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, createFileRoute } from '@tanstack/react-router'
-import { Button, Input } from '@cloudflare/kumo'
-import { ArrowClockwise, MagnifyingGlass, Plus } from '@phosphor-icons/react'
+import { Button } from '@cloudflare/kumo'
+import { ArrowClockwise, Plus } from '@phosphor-icons/react'
 import type { ShortLinkDto } from '@/lib/api-types'
 import { useDeleteLink, useLinksPage, useRecentLinks } from '@/hooks/links'
 import { getErrorMessage } from '@/lib/api-client'
+import { cn } from '@/lib/utils'
 import { useQuickActions } from '@/components/dashboard/quick-actions'
 import { LinkTable } from '@/components/dashboard/link-table'
 import { LinkLogsDialog } from '@/components/dashboard/link-logs-dialog'
 import { PageHeader, Panel } from '@/components/ui/page-header'
+import { SearchField } from '@/components/ui/search-field'
 import { PaginationBar } from '@/components/ui/pagination-bar'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -69,8 +71,7 @@ function LinksPage() {
   const loading = isSearching ? recent.isPending : linksPage.isPending
   const error = isSearching ? recent.error : linksPage.error
 
-  function handleSearch(event: React.FormEvent) {
-    event.preventDefault()
+  function handleSearch() {
     const value = query.trim()
     void navigate({
       to: '/dashboard/links',
@@ -111,55 +112,56 @@ function LinksPage() {
       />
 
       <Panel className="overflow-hidden">
-        <div className="flex flex-col gap-3 border-b border-kumo-hairline p-4 sm:flex-row sm:items-center sm:justify-between">
-          <form
-            onSubmit={handleSearch}
-            className="flex flex-1 items-center gap-2"
-          >
-            <div className="relative flex-1 sm:max-w-sm">
-              <MagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-kumo-placeholder" />
-              <Input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="搜索短链接、目标地址..."
-                className="w-full pl-9"
-                aria-label="搜索短链接"
-              />
-            </div>
-            <Button type="submit" variant="secondary">
-              搜索
-            </Button>
-            {isSearching ? (
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => {
-                  setQuery('')
-                  void navigate({ to: '/dashboard/links', search: {} })
-                }}
-              >
-                清除
-              </Button>
-            ) : null}
-          </form>
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => {
-              if (isSearching) void recent.refetch()
-              else void linksPage.refetch()
+        <div className="flex items-center gap-2 border-b border-kumo-hairline px-4 py-3">
+          <SearchField
+            value={query}
+            onChange={(value) => {
+              setQuery(value)
+              if (!value.trim() && isSearching) {
+                void navigate({ to: '/dashboard/links', search: {} })
+              }
             }}
-            icon={<ArrowClockwise className="size-3.5" />}
-          >
-            刷新
-          </Button>
+            onSubmit={handleSearch}
+            placeholder="搜索短链接、目标地址…"
+            label="搜索短链接"
+            shortcut
+            className="min-w-0 flex-1 sm:max-w-sm"
+          />
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            {isSearching ? (
+              <span className="hidden text-xs text-kumo-placeholder sm:inline">
+                最近 500 条内筛选
+              </span>
+            ) : null}
+            <Button
+              type="button"
+              variant="ghost"
+              shape="square"
+              size="sm"
+              aria-label="刷新"
+              title="刷新"
+              icon={
+                <ArrowClockwise
+                  className={cn(
+                    'size-4',
+                    (isSearching ? recent.isFetching : linksPage.isFetching) &&
+                      'animate-spin',
+                  )}
+                />
+              }
+              onClick={() => {
+                if (isSearching) void recent.refetch()
+                else void linksPage.refetch()
+              }}
+            />
+          </div>
         </div>
 
         {isSearching ? (
-          <div className="border-b border-kumo-hairline bg-kumo-elevated px-4 py-2 text-xs text-kumo-subtle">
+          <p className="border-b border-kumo-hairline bg-kumo-elevated px-4 py-2 text-xs text-kumo-subtle">
             当前搜索最近最多 500 条链接，找到 {filtered.length} 条结果
             {recent.data?.sampled ? '（更早的记录未包含）' : ''}。
-          </div>
+          </p>
         ) : null}
 
         {error ? (
